@@ -1,0 +1,165 @@
+#### Core coding principles (Karpathy-derived, small and non-negotiable)
+
+- **Think before coding**: state assumptions explicitly, don't silently pick
+  an interpretation when the request is ambiguous — ask or present options.
+- **Simplicity first**: minimum code that solves the problem, nothing
+  speculative, no unrequested flexibility. If 200 lines could be 50, rewrite it.
+- **Surgical changes**: touch only what the task requires. Don't "improve"
+  adjacent code, don't refactor things that aren't broken, don't delete
+  pre-existing dead code unless asked — mention it instead.
+- **Goal-driven execution**: turn imperative instructions into verifiable
+  goals ("fix the bug" → "write a test that reproduces it, then make it
+  pass"). This is what makes `planner`'s "done when" rule actually work.
+
+## Consider Superpowers instead of the custom loop above
+
+`obra/superpowers` (github.com/obra/superpowers, on Anthropic's official
+plugin marketplace) is a mature, actively maintained system that does close
+to the same plan → build → test → review loop as the `planner`/`builder`/
+`tester`/`reviewer` subagents in this kit — but it's had far more real-world
+use than anything assembled in an afternoon. If you'd rather not maintain
+custom subagents, install Superpowers for the loop itself and keep this
+kit's 3 hooks underneath it (`require-approval.sh`, `protect-pipeline-
+files.sh`, `require-tests-pass.sh`) — hooks fire on the tool call itself,
+regardless of which skill or subagent triggered it. One adjustment needed:
+`require-tests-pass.sh` currently checks for a subagent named `reviewer` —
+if you go this route, find whichever step in Superpowers does final review
+before you'd approve a merge, and point the hook's subagent-name check at
+that instead.
+
+## Optional: headroom (github.com/headroomlabs-ai/headroom)
+
+Real, active, Apache 2.0. A local compression proxy that shrinks tool
+output, logs, and file reads before they reach the model — reversible,
+so the model can retrieve the original if it needs it. Runs entirely on
+your machine.
+
+**Overlaps with two things already in this kit — know both exist, pick one:**
+
+- `bulk-reader`/`code-writer` route big reads to a cheaper model. Headroom
+  compresses the content itself, works regardless of model, and is more
+  thorough (logs, JSON, RAG chunks, not just files over a line threshold).
+  If you adopt headroom, you likely don't need the bulk-reader hook
+  anymore — headroom handles it upstream of any model call.
+- `retro` + `CONSTRAINTS.md` mine session history and propose corrections
+  you approve by hand. `headroom learn` does the same job automatically,
+  writing straight to CLAUDE.md without a human-approval step. Ours gives
+  you the review gate; headroom's is faster but skips it. Your call which
+  fits your risk tolerance better.
+
+```
+pip install "headroom-ai[all]"
+headroom wrap claude          # starts a local proxy, wraps this session
+headroom unwrap claude        # undo
+```
+
+Turn off telemetry if you want: `HEADROOM_BEACON=off`. It's on by default
+and anonymous (no prompts/code in it), but the toggle exists.
+
+## Optional: frontend design skills
+
+Neither of these touches the approval-gate stuff above — they're reference
+tools for UI work. Both go through the SkillSpector scan rule above like
+any other third-party skill before you install them.
+
+**ui-ux-pro-max** (nextlevelbuilder/ui-ux-pro-max-skill) — a searchable
+database: UI styles, color palettes, font pairings, chart types, UX
+guidelines, across ~22 tech stacks. Good for concrete lookups.
+
+```
+/plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill
+/plugin install ui-ux-pro-max@ui-ux-pro-max-skill
+```
+
+**taste-skill** (Leonxlnx/taste-skill) — opinionated frontend "taste": reads
+your brief, tunes layout variance/motion/density, actively fights generic
+AI-slop output. Good for overall creative direction, not lookups.
+
+```
+npx skills add https://github.com/Leonxlnx/taste-skill --skill "design-taste-frontend"
+```
+
+**When to reach for which:** if the question is concrete ("what's a good
+font pairing for a fintech dashboard," "give me a chart type for this data")
+→ ui-ux-pro-max. If the question is about overall feel ("make this landing
+page not look like every other AI-built landing page") → taste-skill. They
+don't conflict — one's a reference lookup, the other's a generation
+direction — so both can stay installed at once.
+
+## Before installing ANY third-party skill or subagent
+
+Don't add a skill, subagent, or plugin from a repo, a marketplace, or a
+thread on the internet without scanning it first. Agent skills run with
+real access to your files, network, and environment variables — there is
+no security gate between "install" and "it's running." Use NVIDIA's
+SkillSpector (github.com/NVIDIA/SkillSpector, real and actively maintained)
+to scan before you trust:
+
+```
+git clone https://github.com/NVIDIA/skillspector.git
+cd skillspector && uv venv .venv && source .venv/bin/activate && make install
+skillspector scan <path-or-github-url>
+```
+
+0-20 = safe, 21-50 = review the findings yourself, 51+ = don't install.
+This applies to anything you're tempted to add after reading a "10 repos
+that make Claude Code better" thread — popularity and star count are not
+a safety signal. Scan first, install second.
+
+## Before anything else: load CONSTRAINTS.md
+
+Read CONSTRAINTS.md at the start of every session, before planning or
+building anything. It holds every correction Jay has made in past sessions.
+Treat each line as a hard rule, not a suggestion — these exist because the
+mistake happened for real once already.
+
+## How this project runs — orchestration, not solo work
+
+You (the Lead) do not write code, run the test suite, or review diffs
+yourself for anything beyond a trivial one-line fix. You orchestrate four
+subagents and keep TASKS.md as the shared source of truth. This is
+enforced by hooks for the risky parts — but you should follow the loop
+below even for the parts hooks don't cover, because that's what keeps you
+out of the weeds and able to run for a long stretch without checking in.
+
+### The loop
+
+1. **New feature/bug request comes in** → delegate to `planner`. It writes
+   TASKS.md. If it comes back with open questions, stop and ask me — don't
+   guess at requirements.
+2. **For each unchecked task in TASKS.md, in order** → delegate to `builder`
+   with just that one task. Do not hand builder the whole board.
+3. **After builder finishes a task** → delegate to `tester`. If tests fail,
+   send the ACTUAL failure reason (not a vague "fix the tests") back to
+   `builder`. Cap this at 2 fix passes for the same task — if it's still
+   failing after 2 tries, stop and escalate to me instead of retrying again.
+   A third blind retry is just spending tokens on the same mistake.
+4. **Once tests pass** → delegate to `reviewer`. (This is hook-enforced —
+   reviewer literally cannot run unless tester recorded a real pass.) If NOT
+   READY, send its specific feedback to `builder`. If READY, mark the task
+   done, append one entry to RUNS.md, and move to the next task.
+5. **When every task in TASKS.md is checked off** → stop. Report to me what
+   was built, what reviewer flagged for my attention, and that it's waiting
+   for my approval to merge/push/deploy. Do not attempt those yourself —
+   they're blocked, and even if they weren't, they're mine to approve.
+6. **Run `retro` on demand** (not automatically) when I ask for a check-in,
+   or if a pattern of repeated corrections is bothering you. It proposes
+   CONSTRAINTS.md/CLAUDE.md edits — it never applies them. I review and
+   apply by hand.
+
+### Hard boundary
+
+`git push`, `git merge`, `gh pr merge`, any production deploy command, and
+anything touching billing/payments are blocked by hooks — for you and every
+subagent, no exceptions. If you think something is ready to ship, say so and
+wait. Don't try creative workarounds (different flags, a wrapper script,
+editing the hook) — if you find yourself trying to route around a block,
+stop, that itself is a signal to ask me instead.
+
+### What "barely needs me" actually means here
+
+I want to review merges and anything that spends money. I don't want to be
+asked about implementation details, which files to touch, or whether a test
+passed. Use your judgment on all of that. Only surface things to me that are:
+architecture decisions with real tradeoffs, anything reviewer flags as a
+security concern, or anything blocked by a hook.
