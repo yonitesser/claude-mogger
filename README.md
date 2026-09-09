@@ -106,16 +106,24 @@ override with `MOGGER_PROTECTED_BRANCHES`. Reviewer agent name defaults to
 `reviewer`; override with `MOGGER_REVIEWER_NAME` if you use Superpowers or
 your own.
 
+## Bundled — no separate install
+
+These two used to be a manual step. They're not anymore:
+
+| Tool | How it's included | Status |
+|---|---|---|
+| [Context7](https://github.com/upstash/context7) | `.mcp.json` at the plugin root, pointed at Context7's hosted remote server | Live the moment the plugin installs. No npx, no local server, nothing to run. |
+| [SkillSpector](https://github.com/NVIDIA/SkillSpector) | `mogger-init` detects it's missing and runs `uv tool install` itself | Installed the first time you run "mogger init" (needs `uv` on the machine — if `uv` itself is missing, init tells you the one command for that instead). |
+
 ## Recommended companions (external, install separately)
 
-Real tools, verified, that cover things a config file can't:
+These two are genuinely optional and overlap with something already in the
+kit — install them only if you want to swap in the more mature version:
 
 | Tool | Why | Overlaps with |
 |---|---|---|
-| [Context7](https://github.com/upstash/context7) | Current library docs in-prompt; kills hallucinated APIs | nothing — pure add |
-| [headroom](https://github.com/headroomlabs-ai/headroom) | Local compression proxy; reversible; `headroom wrap claude` | bulk-reader/code-writer (pick one) |
-| [SkillSpector](https://github.com/NVIDIA/SkillSpector) | Scan any third-party skill before installing it | nothing — pure add |
-| [Superpowers](https://github.com/obra/superpowers) | Mature plan/build/test/review loop | this kit's agents (pick one; keep the hooks either way) |
+| [headroom](https://github.com/headroomlabs-ai/headroom) | Local compression proxy; reversible; `headroom wrap claude` | `check-file-size.sh`/`check-bash-read.sh` on big-file reads only — `bulk-reader`/`explorer`/`code-writer`/`tester` stay regardless, they route by model not by compression |
+| [Superpowers](https://github.com/obra/superpowers) | Mature brainstorming/TDD/git-worktree workflow | this kit's `planner`/`builder`/`reviewer` agents specifically — keep this kit's hooks either way, they fire on the tool call regardless of which skill triggered it |
 
 Details and the one-adjustment-each notes are in `CLAUDE.md.snippet`.
 
