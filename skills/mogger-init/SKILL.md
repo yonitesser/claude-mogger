@@ -1,9 +1,9 @@
 ---
-name: moggage-init
-description: First-run setup for the moggage plugin in a project. Creates CONSTRAINTS.md, RUNS.md, STACK.md, and .claude/state/ if missing, fills STACK.md from existing dependency files, checks jq/python3 are present, and reports what's now gated. Run once per project, or when the user says "set up moggage" / "init moggage".
+name: mogger-init
+description: First-run setup for the mogger plugin in a project. Creates CONSTRAINTS.md, RUNS.md, STACK.md, and .claude/state/ if missing, fills STACK.md from existing dependency files, checks jq/python3 are present, and reports what's now gated. Run once per project, or when the user says "set up mogger" / "init mogger".
 ---
 
-# moggage init
+# mogger init
 
 A plugin can't create files in the user's project at install time. This
 skill does that on first run. It's idempotent — re-running it never
@@ -32,7 +32,7 @@ overwrites a file that already exists.
    auto-format hook reads those directly, but the record helps humans.
 
 4. **Check for conflicting project config.** If `.claude/settings.json`
-   exists with its own hooks, list them. If any duplicate a moggage hook
+   exists with its own hooks, list them. If any duplicate a mogger hook
    (a second formatter on PostToolUse, a second push-blocker), tell the
    user — don't silently run two. If `CLAUDE.md` says anything that
    contradicts the approval boundary (e.g. "auto-merge when tests pass"),

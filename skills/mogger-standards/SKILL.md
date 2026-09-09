@@ -1,9 +1,9 @@
 ---
-name: moggage-standards
+name: mogger-standards
 description: Coding standards enforced by this plugin — Karpathy principles (think first, simplicity, surgical changes, goal-driven), library selection via STACK.md and Context7, output-token discipline, what "clean" means beyond the auto-formatter, and the SkillSpector rule before installing anything third-party. Load before writing or reviewing code, or when about to add a dependency.
 ---
 
-# moggage coding standards
+# mogger coding standards
 
 ## Coding standards
 

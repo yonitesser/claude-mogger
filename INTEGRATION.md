@@ -6,9 +6,9 @@ repo). Everything to install lives under `incoming/` — a generated mirror of
 the plugin in project-relative shape. First, figure out which situation
 you're in — the steps are different.
 
-If the user just wants the plugin: `/plugin marketplace add <owner>/jays-claude-moggage`
-then `/plugin install moggage@jays-claude-moggage`, then run the
-`moggage-init` skill. This file is not needed for that path.
+If the user just wants the plugin: `/plugin marketplace add <owner>/claude-mogger`
+then `/plugin install mogger@claude-mogger`, then run the
+`mogger-init` skill. This file is not needed for that path.
 
 ## Step 0: which path?
 

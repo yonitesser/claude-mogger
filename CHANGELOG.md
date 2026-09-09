@@ -6,7 +6,7 @@ First plugin release.
 
 **Added**
 - Plugin shape (`.claude-plugin/plugin.json`, `marketplace.json`); installable via `/plugin marketplace add`.
-- Three skills: `moggage-loop`, `moggage-standards`, `moggage-init`.
+- Three skills: `mogger-loop`, `mogger-standards`, `mogger-init`.
 - `session-start` hook — injects CONSTRAINTS.md, STACK.md, and TASKS.md status into context automatically.
 - `stop-done-means-done` hook — blocks ending the turn with open tasks and no recorded blocker.
 - `explorer` agent (Haiku) — codebase navigation so the Lead never greps.

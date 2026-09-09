@@ -7,7 +7,7 @@ source "$(dirname "$0")/lib.sh"
 
 # Dependency check — the other hooks need jq or python3 to parse tool input.
 if ! command -v jq >/dev/null 2>&1 && ! command -v python3 >/dev/null 2>&1; then
-  echo "⚠ moggage: neither jq nor python3 found. The approval-gate hooks will FAIL OPEN (not block anything) until one is installed. Tell the user this before doing any work."
+  echo "⚠ mogger: neither jq nor python3 found. The approval-gate hooks will FAIL OPEN (not block anything) until one is installed. Tell the user this before doing any work."
   echo
 fi
 
@@ -37,5 +37,5 @@ if [ -f TASKS.md ]; then
   echo
 fi
 
-echo "moggage active: git push/merge-to-protected/deploy/money are hook-blocked. Haiku reads, Sonnet builds, you orchestrate. Don't Read or Grep yourself — use explorer/bulk-reader."
+echo "mogger active: git push/merge-to-protected/deploy/money are hook-blocked. Haiku reads, Sonnet builds, you orchestrate. Don't Read or Grep yourself — use explorer/bulk-reader."
 exit 0

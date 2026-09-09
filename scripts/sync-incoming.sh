@@ -14,7 +14,7 @@ cp templates/CONSTRAINTS.md templates/RUNS.md templates/STACK.md incoming/
 sed 's|bash \\"${CLAUDE_PLUGIN_ROOT}\\"/hooks/scripts/|bash .claude/hooks/|g' hooks/hooks.json > incoming/.claude/settings.json
 # CLAUDE.md.snippet = the two skills' bodies (minus frontmatter), for people who'd rather have it in CLAUDE.md
 {
-  echo "# --- moggage: append everything below to your CLAUDE.md ---"
+  echo "# --- mogger: append everything below to your CLAUDE.md ---"
   echo
   echo "## Before anything else"
   echo
@@ -22,7 +22,7 @@ sed 's|bash \\"${CLAUDE_PLUGIN_ROOT}\\"/hooks/scripts/|bash .claude/hooks/|g' ho
   echo "injects it automatically when installed as a plugin; in manual installs,"
   echo "read it yourself). Every line is a hard rule."
   echo
-  for s in skills/moggage-loop/SKILL.md skills/moggage-standards/SKILL.md; do
+  for s in skills/mogger-loop/SKILL.md skills/mogger-standards/SKILL.md; do
     awk 'BEGIN{fm=0} /^---$/{fm++; next} fm>=2' "$s"
     echo
   done

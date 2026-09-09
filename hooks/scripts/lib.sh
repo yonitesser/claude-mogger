@@ -31,8 +31,8 @@ git_branch() {
   git rev-parse --abbrev-ref HEAD 2>/dev/null || printf ''
 }
 
-# Is this branch one we treat as protected? Override with MOGGAGE_PROTECTED_BRANCHES="main|master|prod|release/.*"
+# Is this branch one we treat as protected? Override with MOGGER_PROTECTED_BRANCHES="main|master|prod|release/.*"
 is_protected_branch() {
-  local b="$1" pat="${MOGGAGE_PROTECTED_BRANCHES:-main|master|prod|production|release/.*}"
+  local b="$1" pat="${MOGGER_PROTECTED_BRANCHES:-main|master|prod|production|release/.*}"
   [[ "$b" =~ ^($pat)$ ]]
 }

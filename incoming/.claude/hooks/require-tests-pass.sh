@@ -7,7 +7,7 @@ source "$(dirname "$0")/lib.sh"
 
 INPUT=$(cat)
 SUBAGENT=$(json_get "$INPUT" '.tool_input.subagent_type')
-[ "$SUBAGENT" != "${MOGGAGE_REVIEWER_NAME:-reviewer}" ] && exit 0
+[ "$SUBAGENT" != "${MOGGER_REVIEWER_NAME:-reviewer}" ] && exit 0
 
 MARKER=".claude/state/last_test_result.json"
 
