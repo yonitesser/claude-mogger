@@ -71,3 +71,23 @@ Verdict key:
 | @undefinedKi "Spotify Portal" thread | Pattern extracted, thread not cited | Pointed at a real Spotify engineering post. The pattern is good. The thread is a summary of it. |
 | @undefinedKi "10 repos" thread | Tools checked individually | Every repo it named turned out to be real. Star counts and "most-starred software on GitHub" framing were inflated. Ends in a follow-me funnel. Verdicts above are from checking the repos, not from the thread. |
 | @polydao "300 agents, one graph" thread | 4 ideas extracted, rest rejected | Real engineering ideas: countable stop conditions, corrections file, external gate not self-graded, capped retries with reason. All four are in this kit. The 300-agent knowledge-graph framing is for a different job and plugs a specific product. Ends in a Telegram funnel. |
+
+## Batch 2 — Github-Ranking-AI Top 100 Claude list (2026-09-09)
+
+Most of this 100-repo ranking is out of scope (general AI chat clients, job-search
+tools, video generation, unrelated agent frameworks) or already evaluated above.
+New findings:
+
+| Tool | Verdict | Why |
+|---|---|---|
+| [OthmanAdi/planning-with-files](https://github.com/OthmanAdi/planning-with-files) | COMPANION | Real, v3.0.0, 178 tests, MIT, works across 17+ platforms. A more mature version of this kit's TASKS.md + stop-done-means-done.sh completion gate. Published benchmark (96.7% pass rate) with an explicit methodology caveat stating what it does and doesn't measure — exactly the honesty this rubric rewards. Genuine overlap: pick one. If you adopt it, `stop-done-means-done.sh` becomes redundant — its "gated mode" Stop hook does the same job with 5 conditions to avoid false-block loops. |
+| [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | OUT (integrity) | Real, 93k stars, but: rebranded to "Grok Mem," defaults to a hosted-account sign-up with a free-trial-then-subscribe funnel, and the README promotes an associated cryptocurrency token with a contract address. A coin attached to a memory tool is disqualifying on its own regardless of star count or technical merit. |
+| [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) | Reference | The actual official directory. Submission form: clau.de/plugin-directory-submission. Answers the earlier open question about official-marketplace listing. |
+| [oraios/serena](https://github.com/oraios/serena) | OPTIONAL (lightly verified) | Real per the ranking data — MCP toolkit for semantic code retrieval/editing. Plausible companion to `explorer` for large codebases. Only checked via the ranking table, not independently fetched — verify yourself before relying on it. |
+| [musistudio/claude-code-router](https://github.com/musistudio/claude-code-router) | OPTIONAL (lightly verified) | Real per the ranking data — local control plane for routing across models. Infra-level version of this kit's per-agent `model:` convention. Not independently fetched; if you want proxy-level model routing instead of per-agent frontmatter, worth a look yourself first. |
+| free-claude-code, 9router, OmniRoute, CLIProxyAPI, sub2api, one-api, new-api | OUT (ToS risk, as a group) | Not individually deep-verified, but all seven follow the same pattern: pooling/routing around provider free-tier limits across multiple accounts or providers ("unlimited free AI"). Consistent enough as a group to flag rather than recommend — check your provider's ToS before using any of them. |
+
+Everything else in the ranking (general chat clients, job-search agents, video
+generation, unrelated multi-agent frameworks, marketing/academic/scientific skill
+packs) — OUT (scope): not built for a coding discipline loop, however good they
+may be at their actual job.
