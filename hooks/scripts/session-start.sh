@@ -5,10 +5,13 @@
 # it's already there. Enforced, not requested.
 source "$(dirname "$0")/lib.sh"
 
-# Dependency check — the other hooks need jq or python3 to parse tool input.
-if ! command -v jq >/dev/null 2>&1 && ! command -v python3 >/dev/null 2>&1; then
-  echo "⚠ mogger: neither jq nor python3 found. The approval-gate hooks will FAIL OPEN (not block anything) until one is installed. Tell the user this before doing any work."
-  echo
+# Dependency check — the other hooks need jq, or a REAL python3 (not the
+# Windows Store stub, which sits on PATH but only prints an install nag).
+if ! command -v jq >/dev/null 2>&1; then
+  if ! command -v python3 >/dev/null 2>&1 || ! python3 -c '1' >/dev/null 2>&1; then
+    echo "⚠ mogger: no working jq or python3 found. The approval-gate hooks will FAIL OPEN (not block anything) until one is installed. On Windows, 'python3' on PATH is often the Microsoft Store stub — install jq instead: winget install jqlang.jq"
+    echo
+  fi
 fi
 
 if [ -f CONSTRAINTS.md ]; then

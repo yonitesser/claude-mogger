@@ -21,7 +21,21 @@ expect() {  # expect <exit_code> <hook> <json> <description>
   if [ "$got" -eq "$want" ]; then PASS=$((PASS+1)); printf '  ok   %-28s %s\n' "$hook" "$desc"
   else FAIL=$((FAIL+1)); printf '  FAIL %-28s %s (want %s, got %s)\n' "$hook" "$desc" "$want" "$got"; fi
 }
-bash_cmd() { printf '{"tool_name":"Bash","tool_input":{"command":%s}}' "$(printf '%s' "$1" | python3 -c 'import json,sys;print(json.dumps(sys.stdin.read()))')"; }
+bash_cmd() {  # builds {"tool_name":"Bash","tool_input":{"command":"..."}} without requiring python3
+  local raw="$1" esc
+  if command -v jq >/dev/null 2>&1; then
+    esc=$(printf '%s' "$raw" | jq -Rs .)
+  elif command -v python3 >/dev/null 2>&1 && python3 -c '1' >/dev/null 2>&1; then
+    # only trust python3 if it can actually execute, not a Windows Store stub
+    esc=$(printf '%s' "$raw" | python3 -c 'import json,sys;print(json.dumps(sys.stdin.read()))')
+  else
+    # pure-bash fallback: escape backslash and double-quote, good enough for test commands
+    local body="${raw//\\/\\\\}"
+    body="${body//\"/\\\"}"
+    esc="\"$body\""
+  fi
+  printf '{"tool_name":"Bash","tool_input":{"command":%s}}' "$esc"
+}
 file_json() { printf '{"tool_name":"%s","tool_input":{"file_path":"%s"}}' "$1" "$2"; }
 task_json() { printf '{"tool_name":"Task","tool_input":{"subagent_type":"%s"}}' "$1"; }
 

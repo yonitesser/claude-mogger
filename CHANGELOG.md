@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.0.1 — 2026-09-09
+
+**Fixed**
+- `tests/hooks.test.sh`: the `bash_cmd` test helper unconditionally shelled
+  out to `python3` to build sample JSON, even when `jq` alone was sufficient.
+  On Windows, `python3` on PATH is frequently a Microsoft Store stub that
+  prints an install nag and exits without running anything — this silently
+  produced empty/broken test input and made working hooks look like they'd
+  failed. Helper now prefers `jq -Rs`, falls back to a verified-executable
+  `python3`, then a pure-bash escape — never trusts `python3` presence alone.
+- `hooks/scripts/lib.sh`: `json_get` now probes `python3 -c '1'` before
+  trusting it as a fallback, for the same reason — a real hook running on
+  a Windows machine with no `jq` installed would otherwise fail open
+  (parse nothing, block nothing) without any warning.
+- `session-start.sh`: dependency check updated to use the same probe, and
+  now explicitly recommends installing `jq` on Windows rather than relying
+  on `python3`.
+
 ## 1.0.0 — 2026-09-09
 
 First plugin release.

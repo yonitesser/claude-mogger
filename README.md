@@ -77,8 +77,14 @@ both fresh projects and existing setups.
 
 **Try before you install:** `claude --plugin-dir /path/to/claude-mogger`
 
-**Requirements:** `jq` or `python3` (hooks parse JSON with one of them);
-bash (macOS/Linux native, Windows via WSL or Git Bash).
+**Requirements:** `jq` (recommended — install with `winget install jqlang.jq`
+on Windows, `brew install jq` on Mac, or your package manager on Linux) or a
+real `python3`. bash native on macOS/Linux; on Windows use Git Bash (comes
+with Git for Windows) — the tests and hooks both run fine there once `jq`
+is installed. **Watch out on Windows:** `python3` often exists on PATH as a
+Microsoft Store stub that prints an install nag instead of running —
+`lib.sh` detects and ignores that stub, but installing `jq` sidesteps the
+question entirely and is the more reliable path.
 
 ## What the hooks enforce — the part that doesn't depend on the model behaving
 

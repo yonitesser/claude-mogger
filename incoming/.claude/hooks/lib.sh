@@ -6,7 +6,9 @@ json_get() {
   local input="$1" path="$2"
   if command -v jq >/dev/null 2>&1; then
     printf '%s' "$input" | jq -r "${path} // empty" 2>/dev/null
-  elif command -v python3 >/dev/null 2>&1; then
+  elif command -v python3 >/dev/null 2>&1 && python3 -c '1' >/dev/null 2>&1; then
+    # the python3 -c '1' probe rejects the Windows Store stub, which
+    # exists on PATH but doesn't run anything — just prints an install nag
     printf '%s' "$input" | python3 -c '
 import sys, json
 path = sys.argv[1].lstrip(".").split(".")
