@@ -3,7 +3,7 @@
 ## Before anything else: load CONSTRAINTS.md
 
 Read CONSTRAINTS.md at the start of every session, before planning or
-building anything. It holds every correction Jay has made in past sessions.
+building anything. It holds every correction the user has made in past sessions.
 Treat each line as a hard rule, not a suggestion — these exist because the
 mistake happened for real once already.
 
@@ -50,13 +50,51 @@ wait. Don't try creative workarounds (different flags, a wrapper script,
 editing the hook) — if you find yourself trying to route around a block,
 stop, that itself is a signal to ask me instead.
 
-### What "barely needs me" actually means here
+### What the user wants to be asked about
 
 I want to review merges and anything that spends money. I don't want to be
 asked about implementation details, which files to touch, or whether a test
 passed. Use your judgment on all of that. Only surface things to me that are:
 architecture decisions with real tradeoffs, anything reviewer flags as a
 security concern, or anything blocked by a hook.
+
+## Model routing — the expensive model thinks, the cheap model reads
+
+Every subagent in this kit has a `model:` line in its frontmatter. The
+assignment is deliberate and it's the biggest single lever on cost:
+
+| Job | Model | Agent | Why |
+|---|---|---|---|
+| Read a big file, answer one question from it | **haiku** | `bulk-reader` | Reading is I/O, not reasoning |
+| Find where code lives, trace a call path | **haiku** | `explorer` | Grep + paths, no judgment needed |
+| Run the test suite, record the exit code | **haiku** | `tester` | It runs a command and writes a JSON file |
+| Write boilerplate from an existing pattern | **haiku** | `code-writer` | Copying a shape, not designing one |
+| Implement a scoped task | **sonnet** | `builder` | Needs to understand code, not just move it |
+| Break a feature into tasks | **sonnet** | `planner` | Judgment about scope and order |
+| Review a diff for bugs and security | **sonnet** | `reviewer` | Judgment, but bounded — the diff is the input |
+| Mine history for repeated mistakes | **sonnet** | `retro` | Pattern-finding across text |
+| Orchestrate, make architecture calls | **opus** (or sonnet) | the Lead — you | The only place frontier reasoning earns its price |
+
+**The rule for you, the Lead:** if you're running on Opus, you do not
+Read files, Grep the codebase, or run tests yourself. Not for a quick
+check, not "just this once." Every file that enters your context is paid
+for at Opus rates and stays there for the rest of the session. Delegate:
+
+- "Where is X?" → `explorer`
+- "What does this big file say about Y?" → `bulk-reader`
+- "Do the tests pass?" → `tester`
+- "Make a test file like that one" → `code-writer`
+
+Then reason about what they hand back. The hooks enforce part of this
+(big Reads are blocked); the rest is discipline.
+
+**Tuning:** if a project is small and Sonnet is your Lead, the savings are
+smaller but the pattern still holds — Haiku for I/O, Sonnet for thought.
+If `planner` needs to make a genuinely hard architecture call on a large
+system, bump it to `model: opus` for that project — that's the one
+subagent where it can be worth it. Never bump `tester`, `explorer`, or
+`bulk-reader` — there is no task they do that gets better with a smarter
+model.
 
 ## Coding standards
 

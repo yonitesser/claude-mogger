@@ -23,9 +23,12 @@ one does:
 3. **Feed it current facts, not stale memory.** Context7 for
    version-specific library docs. A STACK.md so library choices are made
    once, deliberately, and stay consistent.
-4. **Cut waste.** Big reads and boilerplate routed to a cheap model.
-   Output-token discipline (no preambles, no re-printing unchanged code).
-   Optional compression proxy (headroom) for heavy tool output.
+4. **Cut waste.** Every agent has a `model:` assignment: Haiku reads
+   files, greps the codebase, and runs tests; Sonnet builds and reviews;
+   only the orchestrating Lead needs a frontier model. The Lead is told, in
+   writing, not to Read or Grep itself. Output-token discipline on top (no
+   preambles, no re-printing unchanged code). Optional compression proxy
+   (headroom) for heavy tool output.
 5. **Remember corrections.** CONSTRAINTS.md is a permanent, append-only
    home for every "don't do that again." A `retro` agent proposes new
    entries from run history; a human approves them.
@@ -43,9 +46,9 @@ CONSIDERED.md        every tool we evaluated, with verdicts
 INTEGRATION.md       how to merge this into a project that already has a .claude/ setup
 incoming/            the actual files, staged — nothing auto-copies
   .claude/hooks/     approval gates, test gate, cost routing, auto-format
-  .claude/agents/    planner, builder, tester, reviewer, retro, bulk-reader, code-writer
+  .claude/agents/    planner, builder, tester, reviewer, retro, explorer, bulk-reader, code-writer
   .claude/settings.json
-  CLAUDE.md.snippet  orchestration loop, coding principles, library rules, token discipline
+  CLAUDE.md.snippet  orchestration loop, model routing, coding principles, library rules, token discipline
   CONSTRAINTS.md     append-only corrections
   RUNS.md            append-only run log
   STACK.md           library choices for this project
@@ -53,14 +56,16 @@ incoming/            the actual files, staged — nothing auto-copies
 
 ## Install
 
-Do **not** copy `incoming/.claude` over an existing `.claude/`. Instead,
-drop the whole repo into your project root and tell Claude Code:
+Drop the whole repo into your project root and tell Claude Code:
 
-> Read INTEGRATION.md and merge incoming/ into this project.
+> Read INTEGRATION.md and install this kit into the project.
 
-It reads the intent behind each file and grafts the missing pieces into
-what's already there. For a fresh project with no `.claude/` yet, you can
-copy `incoming/` contents directly.
+INTEGRATION.md handles both cases: a **fresh project** with no `.claude/`
+yet (it copies things in and fills what it can), and an **existing setup**
+with its own agents and hooks (it merges by intent instead of overwriting).
+Either way it tells you what it did and what's now gated.
+
+Needs `jq` on the machine — the hooks use it to parse tool input.
 
 ## Recommended companions (external, install separately)
 

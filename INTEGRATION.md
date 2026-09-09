@@ -1,20 +1,66 @@
 # INTEGRATION.md — read this before touching anything
 
-You are a Claude Code agent working inside a project that already has a
-fleshed-out `.claude/` setup. This zip is NOT meant to be copied over that
-setup. Everything you need to merge lives under `incoming/`. Your job is to
-fold the *intent* of these files into what already exists, not paste files
-on top of it.
+You are a Claude Code agent installing this kit into a project. Everything
+to install lives under `incoming/`. First, figure out which situation
+you're in — the steps are different.
 
-Do not run `cp -r incoming/.claude .claude` or anything like it. Read this
-whole file first, then look at what's actually in the project's `.claude/`,
+## Step 0: which path?
+
+Run `ls -la .claude/ CLAUDE.md 2>/dev/null` in the project root.
+
+**Path A — fresh project.** No `.claude/` directory, or an empty one, and no
+CLAUDE.md (or one with nothing about agents/hooks in it). → Follow
+"Path A" below. It's mostly copying.
+
+**Path B — existing setup.** A `.claude/` with its own agents, hooks, or
+settings.json, and/or a CLAUDE.md that already describes how the project
+runs. → Follow "Path B" below. It's merging by intent, and the rest of this
+file is mostly for you.
+
+If you're unsure, it's Path B — merging carefully into an empty setup costs
+nothing extra; copying blindly over a real one breaks things.
+
+---
+
+## Path A — fresh project
+
+1. `cp -r incoming/.claude .claude` and `chmod +x .claude/hooks/*.sh`.
+2. Copy `incoming/CONSTRAINTS.md`, `incoming/RUNS.md`, and
+   `incoming/STACK.md` to the project root.
+3. If no CLAUDE.md exists, `cp incoming/CLAUDE.md.snippet CLAUDE.md` and
+   remove the first line (the "append everything below" banner). If a
+   minimal CLAUDE.md exists (project description, build commands), append
+   the snippet's contents below what's there.
+4. Confirm `jq` is installed (`command -v jq`) — the hooks depend on it.
+   If it's missing, say so; the hooks won't run without it.
+5. Open `STACK.md` and fill in what you can see from the existing
+   dependencies (package.json, pyproject.toml, go.mod, Cargo.toml). Leave
+   rows you can't fill blank — don't guess.
+6. Tell the user: what was installed, that the three approval-gate hooks
+   are now active (`git push`/merge/deploy/money are blocked until they
+   approve), which model each agent runs on, and that `jq` is (or isn't)
+   present. Then stop.
+
+Skip the rest of this file. It's about reconciling with things you don't
+have.
+
+---
+
+## Path B — existing setup
+
+This kit is NOT meant to be copied over an existing `.claude/`. Your job is
+to fold the *intent* of these files into what already exists, not paste
+files on top of it.
+
+Do not run `cp -r incoming/.claude .claude` or anything like it. Read the
+rest of this file, then look at what's actually in the project's `.claude/`,
 then merge piece by piece.
 
 ---
 
 ## What this is trying to do, in one paragraph
 
-Jay wants Claude Code to plan → build → test → review with minimal
+The user wants Claude Code to plan → build → test → review with minimal
 check-ins, but with a hard, non-negotiable boundary: no agent, however
 persuasive its reasoning, may push to git, merge, deploy, or touch anything
 money-related without a human approving it first. Everything in `incoming/`
@@ -126,12 +172,18 @@ constraint that's inconvenient.
 using project's actual file names for its own constraints/changelog file
 if different from CONSTRAINTS.md/RUNS.md.
 
-### `incoming/.claude/agents/bulk-reader.md` and `code-writer.md`
-**Intent:** cost-routing — cheap model (Haiku) handles big-file reads and
-boilerplate so the frontier model isn't spending budget on I/O.
-**Merge action:** unrelated to the approval-gate stuff above. Skip entirely
-if the project already has its own cost-routing subagents or doesn't need
-this. Not part of the safety boundary — purely optional.
+### `incoming/.claude/agents/bulk-reader.md`, `code-writer.md`, and `explorer.md`
+**Intent:** cost-routing — all three run on Haiku so the expensive Lead
+model never spends its context on I/O. `bulk-reader` reads big files and
+answers one question. `explorer` finds where code lives (grep + paths).
+`code-writer` copies an existing pattern into boilerplate.
+**Merge action:** unrelated to the approval-gate stuff. If the project
+already has cheap-model subagents for reading/searching, keep theirs —
+but check their `model:` line. If an existing read/search/test agent is
+running on Sonnet or Opus, that's the single easiest cost win in this
+whole merge: change it to `haiku`. Nothing those agents do gets better
+with a smarter model. Skip these files entirely if headroom is installed —
+it handles the same job upstream.
 
 ### `incoming/.claude/hooks/auto-format.sh`
 **Intent:** PostToolUse hook — after every Edit/Write, runs the project's
@@ -155,7 +207,7 @@ still useful because the rule says "check here first."
 
 ### `incoming/CONSTRAINTS.md` and `incoming/RUNS.md`
 **Intent:** CONSTRAINTS.md is a permanent, append-only home for corrections
-Jay makes, loaded at the start of every session. RUNS.md is an append-only
+the user makes, loaded at the start of every session. RUNS.md is an append-only
 log of completed tasks, feeding `retro`.
 **Merge action:** check for an existing file serving either purpose first
 (a CHANGELOG, a NOTES.md, a lessons-learned doc). If one exists, redirect
@@ -173,11 +225,11 @@ existing loop description. Only add the specific sentences that state the
 approval boundary (the "Hard boundary" section) if the project's CLAUDE.md
 doesn't already say something equivalent. If it contradicts (e.g. the
 project's CLAUDE.md currently permits auto-merge), stop and flag this to
-Jay rather than silently overriding either one.
+the user rather than silently overriding either one.
 
 ---
 
-## Checklist for you (the integrating agent)
+## Path B checklist
 
 1. Read the project's current `.claude/settings.json`, `.claude/agents/*`,
    and `CLAUDE.md` in full before changing anything.
@@ -192,6 +244,6 @@ Jay rather than silently overriding either one.
 5. Reconcile CONSTRAINTS.md/RUNS.md against any existing equivalent files.
 6. Reconcile CLAUDE.md.snippet against the existing CLAUDE.md — merge
    language, don't duplicate or contradict.
-7. Before finishing, state back to Jay in plain terms: what was added, what
+7. Before finishing, state back to the user in plain terms: what was added, what
    was skipped as redundant, and any contradiction you found and didn't
    resolve on your own.

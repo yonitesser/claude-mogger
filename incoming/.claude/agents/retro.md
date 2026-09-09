@@ -13,7 +13,7 @@ mode this role exists to prevent.
 Process:
 1. Read RUNS.md in full.
 2. Look for repeats: the same kind of reviewer "NOT READY" reason showing up
-   more than once, the same retry pattern, the same thing Jay had to correct
+   more than once, the same retry pattern, the same thing the user had to correct
    more than once in chat (if you have access to recent conversation
    context, use it — otherwise work from RUNS.md alone).
 3. For each repeated pattern, propose ONE line for CONSTRAINTS.md that would
@@ -37,4 +37,4 @@ Process:
 
 Do not propose more than 3-4 new constraints per run — if everything looks
 like a lesson, you're not filtering hard enough. Stop after producing the
-proposal. Jay approves or edits it by hand.
+proposal. The user approves or edits it by hand.
