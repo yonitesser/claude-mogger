@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Curated Claude Code enhancements with receipts. See CURATION.md for what earns a place and CONSIDERED.md for what didn't.",
-    "version": "1.0.1"
+    "version": "1.0.2"
   },
   "plugins": [
     {
       "name": "mogger",
       "source": "./",
       "description": "Hook-enforced approval gates, test-gated review, done-means-done, Haiku-for-I/O routing, auto-format, persistent corrections.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "category": "productivity",
       "tags": [
         "hooks",

@@ -40,3 +40,10 @@ First plugin release.
 - `require-tests-pass`: removed dead `date -d` code (GNU-only, unused); stale check now ignores node_modules/.venv/target/dist/build and RUNS.md/TASKS.md.
 - `tester` moved from Sonnet to Haiku — it runs a command and writes a JSON file.
 - Depersonalized all text for sharing.
+
+## 1.0.2 — 2026-09-09
+
+**Added**
+- `CONSIDERED.md`: evaluated the Github-Ranking-AI Top 100 Claude list. Added `planning-with-files` as a documented companion/alternative to TASKS.md + stop-done-means-done.sh. Rejected `claude-mem` (crypto token attached — disqualifying regardless of star count).
+- README: real submission path for Anthropic's official plugin directory (clau.de/plugin-directory-submission).
+- `skills/mogger-standards`: planning-with-files companion note, with the specific conflict to resolve (disable this kit's Stop hook if you adopt it).

@@ -198,6 +198,19 @@ a safety signal. Scan first, install second.
 
 ## Optional companions (pick what fits — see CONSIDERED.md for verdicts)
 
+### planning-with-files — alternative to TASKS.md + stop-done-means-done.sh
+
+`OthmanAdi/planning-with-files` (github.com/OthmanAdi/planning-with-files)
+is a more mature, cross-platform version of this kit's completion-gate
+idea: a 3-file pattern (task_plan.md / findings.md / progress.md) plus a
+Stop hook that blocks ending a turn on unfinished work — v3.0.0, 178
+tests, works across 17+ platforms, published benchmark with an honest
+methodology caveat. Genuine overlap with `TASKS.md` +
+`stop-done-means-done.sh`. If you adopt it, disable this kit's Stop hook
+(remove the `Stop` entry from settings.json / hooks.json) — running both
+means two different completion gates arguing with each other over the
+same turn.
+
 ### Superpowers — alternative to the custom agents above
 
 `obra/superpowers` (github.com/obra/superpowers, on Anthropic's official

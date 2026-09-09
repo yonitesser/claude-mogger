@@ -116,6 +116,15 @@ Real tools, verified, that cover things a config file can't:
 
 Details and the one-adjustment-each notes are in `CLAUDE.md.snippet`.
 
+## Getting listed on Anthropic's official directory
+
+Self-hosted install (`/plugin marketplace add ...`) works today, no
+approval needed. To get into Anthropic's own curated directory
+(`anthropics/claude-plugins-official`), submit via
+https://clau.de/plugin-directory-submission — external plugins are
+reviewed for quality and security before inclusion. Worth doing once
+this is battle-tested on real projects, not before.
+
 ## Run the tests
 
 ```
