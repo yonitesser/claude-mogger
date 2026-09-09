@@ -47,3 +47,13 @@ First plugin release.
 - `CONSIDERED.md`: evaluated the Github-Ranking-AI Top 100 Claude list. Added `planning-with-files` as a documented companion/alternative to TASKS.md + stop-done-means-done.sh. Rejected `claude-mem` (crypto token attached — disqualifying regardless of star count).
 - README: real submission path for Anthropic's official plugin directory (clau.de/plugin-directory-submission).
 - `skills/mogger-standards`: planning-with-files companion note, with the specific conflict to resolve (disable this kit's Stop hook if you adopt it).
+
+## 1.1.0 — 2026-09-09
+
+**Added**
+- `.mcp.json`: bundles Context7 as a hosted remote MCP server. Registers automatically on plugin install — confirmed via Anthropic's own official marketplace using the identical pattern. No local npx, no separate step.
+- `mogger-init`: now auto-installs SkillSpector via `uv tool install` when missing (reversible CLI install, done without asking first, per this kit's own "act on cheap reversible things" standard).
+
+**Changed**
+- Rewrote the Superpowers comparison from a blanket "pick one" into a real structural comparison based on reading Superpowers' actual skill list: where it's stronger (brainstorming, TDD-first enforcement, git worktrees), where this kit is stronger (non-bypassable hooks, Haiku cost routing), and a compose recommendation instead of an either/or.
+- Rewrote the headroom comparison: overlap is narrower than previously stated — only the big-file-read hooks (`check-file-size.sh`/`check-bash-read.sh`) genuinely duplicate headroom's compression. Model-routing agents (`bulk-reader`/`explorer`/`code-writer`/`tester`) are a different axis and stay regardless of whether headroom is adopted.

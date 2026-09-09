@@ -211,41 +211,84 @@ methodology caveat. Genuine overlap with `TASKS.md` +
 means two different completion gates arguing with each other over the
 same turn.
 
-### Superpowers — alternative to the custom agents above
+### Superpowers vs this kit's agents — a real comparison, not "pick one"
 
-`obra/superpowers` (github.com/obra/superpowers, on Anthropic's official
-plugin marketplace) is a mature, actively maintained system that does close
-to the same plan → build → test → review loop as the `planner`/`builder`/
-`tester`/`reviewer` subagents in this kit — but it's had far more real-world
-use than anything assembled in an afternoon. If you'd rather not maintain
-custom subagents, install Superpowers for the loop itself and keep this
-kit's 3 hooks underneath it (`require-approval.sh`, `protect-pipeline-
-files.sh`, `require-tests-pass.sh`) — hooks fire on the tool call itself,
-regardless of which skill or subagent triggered it. One adjustment needed:
-`require-tests-pass.sh` currently checks for a subagent named `reviewer` —
-if you go this route, find whichever step in Superpowers does final review
-before you'd approve a merge, and point the hook's subagent-name check at
-that instead.
+Read Superpowers' actual skill list (`obra/superpowers`, 283k stars, on
+Anthropic's official marketplace) before assuming it's simply better.
+Here's where each one actually wins:
 
-### headroom — compression proxy (github.com/headroomlabs-ai/headroom)
+**Superpowers is stronger at:**
+- **Requirements-gathering.** Its `brainstorming` skill interrogates the
+  request with Socratic questions before any plan exists. This kit's
+  `planner` assumes the request is already well-specified and jumps
+  straight to task breakdown — a real gap if the request is vague.
+- **TDD rigor.** `test-driven-development` enforces RED-GREEN-REFACTOR
+  and explicitly deletes code written before its test existed. This kit's
+  `tester` only checks that tests pass after the fact — it doesn't care
+  whether the test was written first.
+- **Branch isolation.** `using-git-worktrees` gives each unit of work an
+  isolated workspace. This kit works directly on whatever branch you're
+  on.
+- **Breadth.** 13 skills including systematic debugging and parallel
+  agent dispatch; this kit has 8 agents covering a narrower slice.
 
-Real, active, Apache 2.0. A local compression proxy that shrinks tool
-output, logs, and file reads before they reach the model — reversible,
-so the model can retrieve the original if it needs it. Runs entirely on
-your machine.
+**This kit is stronger at:**
+- **A gate that can't be talked around.** Superpowers' discipline is
+  skill/prompt-level — "the agent checks for relevant skills before any
+  task," which is real but still something the model has to choose to
+  honor. This kit's `require-tests-pass.sh` and the approval hooks are
+  bash scripts checking actual exit codes and actual branch names,
+  outside any model's judgment. Notably, Superpowers'
+  `finishing-a-development-branch` skill *offers* merge/PR/discard as
+  conversational options — it doesn't appear to hard-block a merge the
+  way `require-approval.sh` does. If a hard, unconditional block on
+  push/merge/deploy/money matters to you, that's not something Superpowers
+  replaces.
+- **Cost-aware model routing.** Nothing in Superpowers' skill list assigns
+  cheaper models to I/O-only work. This kit's `bulk-reader`/`explorer`/
+  `tester`/`code-writer` run on Haiku specifically so reads, searches, and
+  test runs don't burn frontier-model tokens. That's orthogonal to what
+  Superpowers does and not something adopting it gives you.
 
-**Overlaps with two things already in this kit — know both exist, pick one:**
+**The honest recommendation: compose them, don't choose one.** Install
+Superpowers for brainstorming/TDD/worktrees — it's more mature there than
+anything built in an afternoon. Keep this kit's hooks running underneath
+regardless (`require-approval.sh`, `protect-pipeline-files.sh`,
+`require-tests-pass.sh`, `stop-done-means-done.sh`) — they fire on the
+tool call itself, regardless of which skill or subagent triggered it, so
+they layer under Superpowers without conflict. Retire this kit's
+`planner`/`builder`/`reviewer` agents at that point — running both
+loops on the same task is the actual redundancy, not the hooks. Keep
+`bulk-reader`/`explorer`/`tester`/`code-writer` (Haiku routing) since
+Superpowers has no equivalent. One adjustment: `require-tests-pass.sh`
+checks for a subagent named `reviewer` — point it at whichever Superpowers
+step does final review (`MOGGER_REVIEWER_NAME` env var) before you'd
+approve a merge.
 
-- `bulk-reader`/`code-writer` route big reads to a cheaper model. Headroom
-  compresses the content itself, works regardless of model, and is more
-  thorough (logs, JSON, RAG chunks, not just files over a line threshold).
-  If you adopt headroom, you likely don't need the bulk-reader hook
-  anymore — headroom handles it upstream of any model call.
-- `retro` + `CONSTRAINTS.md` mine session history and propose corrections
-  you approve by hand. `headroom learn` does the same job automatically,
-  writing straight to CLAUDE.md without a human-approval step. Ours gives
-  you the review gate; headroom's is faster but skips it. Your call which
-  fits your risk tolerance better.
+### headroom vs this kit's cost routing — partial overlap, not full
+
+`headroomlabs-ai/headroom` (Apache 2.0) is a local compression proxy that
+shrinks tool output, logs, and file reads before they reach the model —
+reversible, model-agnostic. It solves a different axis than this kit's
+Haiku routing, so they mostly stack rather than compete:
+
+- **Real overlap, on big-file reads only:** `check-file-size.sh` blocks a
+  direct Read over 350 lines and routes it to `bulk-reader` (Haiku).
+  Headroom's proxy would already have compressed that same file's bytes
+  before either the Lead or `bulk-reader` saw them. Running both means
+  the block-and-reroute is redundant for that one case — **if you adopt
+  headroom, drop `check-file-size.sh` and `check-bash-read.sh` specifically**
+  (not the whole `bulk-reader` agent).
+- **No overlap:** headroom doesn't choose *which model* handles a task —
+  it just shrinks whatever bytes flow through. `bulk-reader`/`explorer`/
+  `code-writer`/`tester` still matter on top of headroom, because they
+  route entire tasks to Haiku regardless of how compressed the content
+  is. Keep them.
+- **No overlap:** `retro` + `CONSTRAINTS.md` require human approval before
+  a correction becomes a permanent rule. `headroom learn` writes directly
+  to CLAUDE.md with no approval step — faster, but skips the gate. Keep
+  whichever matches your risk tolerance; they don't conflict technically,
+  just don't run both learning loops on the same file simultaneously.
 
 ```
 pip install "headroom-ai[all]"

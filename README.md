@@ -41,6 +41,7 @@ one does:
 
 ```
 .claude-plugin/         plugin.json + marketplace.json — install with two slash commands
+.mcp.json               bundles Context7 as a hosted remote MCP server — auto-registers on install
 agents/                 planner, builder, reviewer, retro (Sonnet) · tester, explorer, bulk-reader, code-writer (Haiku)
 hooks/hooks.json        8 hooks: SessionStart, 4× PreToolUse, PostToolUse, Stop
 hooks/scripts/          the actual bash — every one tested in tests/hooks.test.sh
@@ -66,8 +67,10 @@ INTEGRATION.md          manual merge guide for projects with an existing .claude
 
 Then in any project, once: ask Claude to **"run mogger init"**. It
 scaffolds CONSTRAINTS.md / RUNS.md / STACK.md, fills what it can from your
-dependency files, checks `jq` or `python3` is present, and tells you
-exactly what's now gated. Nothing else to configure.
+dependency files, checks `jq` or `python3` is present, auto-installs
+SkillSpector if `uv` is available, and tells you exactly what's now
+gated. Context7 is already live at this point — it registered as part of
+plugin install, nothing to do for it. Nothing else to configure.
 
 **Manually (if you'd rather have the files in your repo, or already have a
 `.claude/` you want to merge into):** the `incoming/` folder mirrors the

@@ -11,18 +11,37 @@ overwrites a file that already exists.
 
 ## Steps
 
-1. **Dependency check.** `command -v jq || command -v python3`. If neither
-   exists, stop and tell the user: the hooks parse JSON with one of these
-   and will fail open (block nothing) without them. Don't proceed as if
-   the gates work.
+1. **Dependency check.** `command -v jq || command -v python3` (and verify
+   python3 actually runs, not a Windows Store stub: `python3 -c '1'`). If
+   neither works, stop and tell the user: the hooks parse JSON with one of
+   these and will fail open (block nothing) without them.
 
-2. **Scaffold files, only if missing.** Templates live in the plugin at
+2. **Context7 — already active, nothing to do.** This plugin bundles
+   Context7 as a hosted remote MCP server (`.mcp.json` at the plugin root,
+   pointed at `https://mcp.context7.com/mcp`). It registered automatically
+   when the plugin installed — no local npx, no separate step. Works
+   anonymously; `CONTEXT7_API_KEY` in the environment raises rate limits
+   but isn't required. Just confirm it's in the tool list and mention it's
+   live, rather than re-explaining the mechanism.
+
+3. **SkillSpector — auto-install if missing.** Run `command -v skillspector`.
+   If absent: check for `uv` (`command -v uv`); if present, run
+   `uv tool install git+https://github.com/NVIDIA/skillspector.git`
+   automatically — a small, reversible CLI install, not a system change, so
+   don't ask first, just do it and report the result. If `uv` itself is
+   missing, tell the user the one command to install it
+   (`curl -LsSf https://astral.sh/uv/install.sh | sh` on macOS/Linux, docs
+   at https://docs.astral.sh/uv/ on Windows) rather than chaining a second
+   unrequested install — a language-level package manager is a bigger step
+   than one CLI on top of it.
+
+4. **Scaffold files, only if missing.** Templates live in the plugin at
    `${CLAUDE_PLUGIN_ROOT}/templates/`. For each of `CONSTRAINTS.md`,
    `RUNS.md`, `STACK.md`: if the project root doesn't have it, copy the
    template. If it does, leave it alone and say so. Also
    `mkdir -p .claude/state` (tester writes its result marker there).
 
-3. **Fill STACK.md from what's visible.** Read `package.json`,
+5. **Fill STACK.md from what's visible.** Read `package.json`,
    `pyproject.toml`, `go.mod`, `Cargo.toml`, `Gemfile`, `composer.json` —
    whichever exist. Fill the language/version and package manager lines,
    and any table rows you can determine from actual dependencies (the
@@ -31,15 +50,16 @@ overwrites a file that already exists.
    from config files present (`.prettierrc`, `ruff.toml`, etc.) — the
    auto-format hook reads those directly, but the record helps humans.
 
-4. **Check for conflicting project config.** If `.claude/settings.json`
+6. **Check for conflicting project config.** If `.claude/settings.json`
    exists with its own hooks, list them. If any duplicate a mogger hook
    (a second formatter on PostToolUse, a second push-blocker), tell the
    user — don't silently run two. If `CLAUDE.md` says anything that
    contradicts the approval boundary (e.g. "auto-merge when tests pass"),
    quote it and stop — the human resolves that, not you.
 
-5. **Report, briefly.** What was created, what was already there, which
-   dependency check passed, and this exact summary of what's now enforced:
+7. **Report, briefly.** What was created, what was already there, which
+   dependency check passed, whether SkillSpector got installed (and how),
+   that Context7 is live, and this exact summary of what's now enforced:
 
    - `git push`, merge while on a protected branch, PR merge, prod
      deploys, and money CLIs are blocked until a human approves.
@@ -49,6 +69,8 @@ overwrites a file that already exists.
    - Every edited file gets the project's own formatter run on it.
    - Haiku handles reads/searches/tests; Sonnet builds/reviews; the Lead
      orchestrates.
+   - Context7 is available for current library docs; SkillSpector is
+     installed (or the user has the one command to add it).
 
    Then suggest: "Add your first correction to CONSTRAINTS.md the first
    time I do something you have to fix twice."
@@ -56,7 +78,7 @@ overwrites a file that already exists.
 ## What this does NOT do
 
 - Doesn't touch git config, remotes, or branches.
-- Doesn't install jq, formatters, Context7, headroom, or anything else.
-  It reports what's missing; the human installs.
+- Doesn't install jq, formatters, headroom, or anything beyond
+  SkillSpector. Reports what else is missing; the human installs the rest.
 - Doesn't edit an existing CLAUDE.md. If the user wants the loop
   described there too, they can ask — the skills already cover it.

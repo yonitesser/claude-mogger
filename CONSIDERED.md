@@ -91,3 +91,31 @@ Everything else in the ranking (general chat clients, job-search agents, video
 generation, unrelated multi-agent frameworks, marketing/academic/scientific skill
 packs) — OUT (scope): not built for a coding discipline loop, however good they
 may be at their actual job.
+
+## Batch 3 — bundling and honest re-comparison (2026-09-09)
+
+- **Context7 bundling confirmed possible and implemented.** Anthropic's own
+  official marketplace bundles Context7 as a hosted remote MCP server
+  (`.mcp.json` → `https://mcp.context7.com/mcp`, works anonymously, no
+  local npx). This plugin now bundles the same `.mcp.json` at its root —
+  Context7 registers automatically on plugin install, zero extra steps.
+- **SkillSpector cannot be bundled the same way** — it's a standalone CLI,
+  not an MCP server, so there's no manifest field that auto-installs it at
+  plugin-install time. Closest real equivalent: `mogger-init` now detects
+  and auto-installs it via `uv tool install` on first run (a small,
+  reversible CLI install), rather than just telling the user the command.
+- **Superpowers vs this kit's agents — read in full, not just described.**
+  Superpowers is genuinely stronger at requirements-gathering
+  (`brainstorming`), TDD rigor (deletes code written before its test),
+  and git-worktree isolation. This kit is stronger at unconditional,
+  non-bypassable gates (Superpowers' `finishing-a-development-branch`
+  *offers* merge as a choice; it doesn't hard-block it the way
+  `require-approval.sh` does) and Haiku-routed cost savings (nothing in
+  Superpowers assigns cheaper models to I/O work). Verdict changed from
+  "pick one" to "compose": use Superpowers' skills, keep this kit's hooks,
+  retire this kit's planner/builder/reviewer agents specifically.
+- **headroom vs bulk-reader/explorer — narrower overlap than first stated.**
+  Only the big-file-read path (`check-file-size.sh`/`check-bash-read.sh` →
+  `bulk-reader`) genuinely duplicates headroom's compression. Model-routing
+  (which agent runs on which model) is a different axis headroom doesn't
+  touch — `bulk-reader`/`explorer`/`code-writer`/`tester` stay regardless.
