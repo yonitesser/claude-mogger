@@ -1,8 +1,14 @@
 # INTEGRATION.md — read this before touching anything
 
-You are a Claude Code agent installing this kit into a project. Everything
-to install lives under `incoming/`. First, figure out which situation
+You are a Claude Code agent installing this kit into a project **manually**
+(the user chose not to use the plugin install, or wants the files in their
+repo). Everything to install lives under `incoming/` — a generated mirror of
+the plugin in project-relative shape. First, figure out which situation
 you're in — the steps are different.
+
+If the user just wants the plugin: `/plugin marketplace add <owner>/jays-claude-moggage`
+then `/plugin install moggage@jays-claude-moggage`, then run the
+`moggage-init` skill. This file is not needed for that path.
 
 ## Step 0: which path?
 
@@ -31,8 +37,9 @@ nothing extra; copying blindly over a real one breaks things.
    remove the first line (the "append everything below" banner). If a
    minimal CLAUDE.md exists (project description, build commands), append
    the snippet's contents below what's there.
-4. Confirm `jq` is installed (`command -v jq`) — the hooks depend on it.
-   If it's missing, say so; the hooks won't run without it.
+4. Confirm `jq` or `python3` is installed — the hooks parse JSON with one
+   of them (see `hooks/lib.sh`). If neither is present, say so: the hooks
+   will fail open (block nothing) until one is installed.
 5. Open `STACK.md` and fill in what you can see from the existing
    dependencies (package.json, pyproject.toml, go.mod, Cargo.toml). Leave
    rows you can't fill blank — don't guess.
@@ -82,6 +89,9 @@ renamed or merged into existing files:**
 - The rule that a review/approval step cannot run on a self-reported test
   pass — it must check a real exit code
   (`incoming/.claude/hooks/require-tests-pass.sh`).
+- The Stop hook that refuses to end a turn with open tasks and no recorded
+  blocker (`incoming/.claude/hooks/stop-done-means-done.sh`). Without it,
+  "done" is whatever the model says it is.
 
 If the project already has hooks or subagents that cover any of these, do
 not add a duplicate — verify the existing one actually enforces the same
@@ -184,6 +194,29 @@ running on Sonnet or Opus, that's the single easiest cost win in this
 whole merge: change it to `haiku`. Nothing those agents do gets better
 with a smarter model. Skip these files entirely if headroom is installed —
 it handles the same job upstream.
+
+### `incoming/.claude/hooks/session-start.sh`
+**Intent:** SessionStart hook — prints CONSTRAINTS.md corrections, filled
+STACK.md rows, and TASKS.md status to stdout, which Claude Code adds to
+context. Turns "please read CONSTRAINTS.md" into "it's already there."
+Also warns if neither jq nor python3 is installed.
+**Merge action:** add under `SessionStart`. If the project already has a
+SessionStart hook, add ours alongside it — they don't conflict.
+
+### `incoming/.claude/hooks/stop-done-means-done.sh`
+**Intent:** Stop hook — exits 2 (sending the Lead back to work) if TASKS.md
+has unchecked items and no `BLOCKED:` line, no `## Status: awaiting-approval`,
+and no open questions. Checks `stop_hook_active` so it never loops.
+**Merge action:** add under `Stop`. If the project uses a different task
+file than TASKS.md, edit the filename in the script. If the project has no
+task-board convention at all, this hook is a no-op (no TASKS.md → allow).
+
+### `incoming/.claude/hooks/lib.sh`
+**Intent:** shared helper every hook sources — `json_get` (jq or python3),
+`git_branch`, `is_protected_branch`. Not a hook itself; has no entry in
+settings.json.
+**Merge action:** must be copied alongside the other scripts. Hooks
+`source "$(dirname "$0")/lib.sh"` so it has to sit in the same directory.
 
 ### `incoming/.claude/hooks/auto-format.sh`
 **Intent:** PostToolUse hook — after every Edit/Write, runs the project's

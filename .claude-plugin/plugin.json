@@ -1,0 +1,10 @@
+{
+  "name": "moggage",
+  "version": "1.0.0",
+  "description": "Curated Claude Code discipline kit: hook-enforced approval gates (push/merge/deploy/money), test-gated review, done-means-done Stop hook, Haiku-for-I/O model routing, auto-format on edit, persistent corrections. Every inclusion justified in CURATION.md, every rejection in CONSIDERED.md.",
+  "author": { "name": "Jay", "url": "https://github.com/jays-claude-moggage" },
+  "homepage": "https://github.com/jays-claude-moggage",
+  "repository": "https://github.com/jays-claude-moggage",
+  "license": "MIT",
+  "keywords": ["hooks", "approval-gate", "subagents", "model-routing", "token-efficiency", "tdd", "code-quality"]
+}

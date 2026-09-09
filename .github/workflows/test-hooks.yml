@@ -1,0 +1,19 @@
+name: test-hooks
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash tests/hooks.test.sh
+      - name: manifests are valid JSON
+        run: |
+          python3 -c "import json;[json.load(open(f)) for f in ['.claude-plugin/plugin.json','.claude-plugin/marketplace.json','hooks/hooks.json','incoming/.claude/settings.json']]"
+      - name: incoming/ is in sync with plugin
+        run: |
+          cp -r incoming /tmp/incoming-before
+          bash scripts/sync-incoming.sh >/dev/null
+          diff -r /tmp/incoming-before incoming
