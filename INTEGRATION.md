@@ -133,6 +133,26 @@ boilerplate so the frontier model isn't spending budget on I/O.
 if the project already has its own cost-routing subagents or doesn't need
 this. Not part of the safety boundary — purely optional.
 
+### `incoming/.claude/hooks/auto-format.sh`
+**Intent:** PostToolUse hook — after every Edit/Write, runs the project's
+*own* formatter and linter on the touched file. Detects prettier/biome/
+eslint/ruff/black/gofmt/rustfmt/rubocop/etc. from the project's existing
+config files. Installs nothing, imposes nothing the project didn't already
+choose. Always exits 0 — a formatter hiccup must never block an edit.
+**Merge action:** add under a `PostToolUse` → `Edit|Write` matcher. If the
+project already has a post-edit formatting hook, keep theirs — don't run
+two formatters. If the project has no formatter configured at all, the hook
+is a harmless no-op until one is added.
+
+### `incoming/STACK.md`
+**Intent:** one place where library choices are recorded so every agent
+uses the same dependency for the same job, and so the "why" survives.
+**Merge action:** if the project already documents its stack (an
+ARCHITECTURE.md, a tech-stack section in README), point the CLAUDE.md
+"Library selection" rule at that instead of adding a second file. Otherwise
+add it and let the team fill in the table over time — an empty STACK.md is
+still useful because the rule says "check here first."
+
 ### `incoming/CONSTRAINTS.md` and `incoming/RUNS.md`
 **Intent:** CONSTRAINTS.md is a permanent, append-only home for corrections
 Jay makes, loaded at the start of every session. RUNS.md is an append-only

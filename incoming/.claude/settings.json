@@ -26,6 +26,14 @@
           { "type": "command", "command": "bash .claude/hooks/require-tests-pass.sh" }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          { "type": "command", "command": "bash .claude/hooks/auto-format.sh" }
+        ]
+      }
     ]
   }
 }
