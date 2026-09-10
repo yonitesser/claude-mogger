@@ -21,3 +21,19 @@ Rules:
    checks) even if it looks boilerplate. Refuse and say why.
 5. When done, state in one line what file you wrote/edited and which pattern
    you followed. No further commentary.
+
+
+## Before you finish: log the savings estimate (optional but requested)
+
+Run this, filling in your actual input size (what you read/were given) and
+output size (your reply) in characters — a rough count is fine, this feeds
+an estimate, not an audit:
+
+```
+bash "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/log-savings.sh" code-writer haiku INPUT_CHARS OUTPUT_CHARS
+```
+
+This is self-reported — nobody
+verifies it — so estimate honestly rather than rounding in your own favor.
+It powers `scripts/savings-report.py`, an optional dashboard of estimated
+cost avoided by routing this work to Haiku instead of the Lead's model.

@@ -31,3 +31,19 @@ Do not edit any files other than the marker file above. Do not attempt fixes.
 Do not write "pass" to the marker file unless the exit code was actually 0 —
 this file is the only thing standing between a broken build and reviewer
 saying it's ready. Falsifying it defeats the entire point of your role.
+
+
+## Before you finish: log the savings estimate (optional but requested)
+
+Run this, filling in your actual input size (what you read/were given) and
+output size (your reply) in characters — a rough count is fine, this feeds
+an estimate, not an audit:
+
+```
+bash "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/log-savings.sh" tester haiku INPUT_CHARS OUTPUT_CHARS
+```
+
+This is self-reported — nobody
+verifies it — so estimate honestly rather than rounding in your own favor.
+It powers `scripts/savings-report.py`, an optional dashboard of estimated
+cost avoided by routing this work to Haiku instead of the Lead's model.

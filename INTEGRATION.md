@@ -238,6 +238,34 @@ ARCHITECTURE.md, a tech-stack section in README), point the CLAUDE.md
 add it and let the team fill in the table over time — an empty STACK.md is
 still useful because the rule says "check here first."
 
+### `incoming/.claude/hooks/log-savings.sh`
+**Intent:** not a lifecycle hook (no entry in settings.json) — a script the
+four Haiku agents call directly at the end of their own turn, self-reporting
+approximate input/output size. Feeds `savings-report.py`'s estimate of cost
+avoided by routing to a cheaper model. Self-reported, not verified — a
+different trust tier than everything else with "require" in its name.
+**Merge action:** copy alongside the other hook scripts (same directory,
+`lib.sh` isn't needed by this one specifically but keeping it in the same
+folder is simplest). No settings.json entry needed.
+
+### `incoming/pricing.json`
+**Intent:** editable, dated snapshot of per-model per-token pricing, with
+an explicit disclaimer to verify current rates. `savings-report.py` reads
+this rather than hardcoding numbers, so a price change is a one-line edit,
+not a code change.
+**Merge action:** copy to the project root (same level as CONSTRAINTS.md).
+Update the `as_of` date and rates if they've drifted from
+claude.com/pricing.
+
+### `incoming/savings-report.py` and `incoming/savings-report.sh`
+**Intent:** reads `.claude/state/savings.jsonl` + `pricing.json`, prints a
+table and writes `savings-dashboard.html`. Every number in its own output
+states the estimate's limits (chars/4 heuristic, self-reported input, no
+real counterfactual run) — read the script's own docstring before trusting
+its numbers for anything beyond a rough sense of where routing helps most.
+**Merge action:** copy both to the project root. Run with
+`bash savings-report.sh` (or `python3 savings-report.py` directly).
+
 ### `incoming/CONSTRAINTS.md` and `incoming/RUNS.md`
 **Intent:** CONSTRAINTS.md is a permanent, append-only home for corrections
 the user makes, loaded at the start of every session. RUNS.md is an append-only

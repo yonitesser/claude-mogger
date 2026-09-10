@@ -57,3 +57,18 @@ First plugin release.
 **Changed**
 - Rewrote the Superpowers comparison from a blanket "pick one" into a real structural comparison based on reading Superpowers' actual skill list: where it's stronger (brainstorming, TDD-first enforcement, git worktrees), where this kit is stronger (non-bypassable hooks, Haiku cost routing), and a compose recommendation instead of an either/or.
 - Rewrote the headroom comparison: overlap is narrower than previously stated — only the big-file-read hooks (`check-file-size.sh`/`check-bash-read.sh`) genuinely duplicate headroom's compression. Model-routing agents (`bulk-reader`/`explorer`/`code-writer`/`tester`) are a different axis and stay regardless of whether headroom is adopted.
+
+## 1.1.1 — 2026-09-09
+
+**Fixed**
+- README: the companions table still listed Context7 and SkillSpector as "install separately," left over from before they were bundled/auto-installed in 1.1.0. Split into a "Bundled — no separate install" table (Context7, SkillSpector) and a genuinely-optional "Recommended companions" table (headroom, Superpowers only).
+
+## 1.2.0 — 2026-09-09
+
+**Added**
+- Optional savings estimate: `hooks/scripts/log-savings.sh` (called by the four Haiku agents at the end of their turn, self-reported), `templates/pricing.json` (dated, editable, disclaimed rate snapshot), `scripts/savings-report.py`/`.sh` (prints a table, writes `savings-dashboard.html`).
+- Explicitly labeled throughout (terminal output, dashboard HTML, README, skill docs) as a disclosed estimate — output length × published per-token price difference — never as a comparison to a real session run without this kit, since no task here is ever run twice. Self-reported, not hook-verified, unlike the approval-gate hooks.
+- `mogger-init` now mentions the report script in its final summary; `mogger-loop` distinguishes it clearly from RUNS.md's real `/cost` totals.
+
+**Rejected (discussed, not built)**
+- A request to have agents narrate wins and token/line savings inline in every response was declined: no valid counterfactual exists to compare against within a single session, it fights the kit's own token-discipline rules (bragging is itself more output), and it conflicts with the terse, action-first tone this kit is meant to produce. See conversation history / CURATION.md principle 2 (falsifiable claims only).

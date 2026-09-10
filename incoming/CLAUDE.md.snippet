@@ -111,6 +111,19 @@ After each task clears reviewer, append one entry to RUNS.md. Include the
 way anyone (including you) can tell whether this kit is actually saving
 anything on this project. Claims without this number are just claims.
 
+## Optional: the savings estimate is a different thing than RUNS.md tokens
+
+RUNS.md's `tokens:` field is the real, actual session total from `/cost` —
+solid ground. `bash scripts/savings-report.py` is something weaker and
+should never be confused with it: an *estimate* of what Haiku-routed calls
+would have cost if billed at the Lead's model rate instead, based on
+self-reported (not verified) output length. No task here was ever run
+twice to produce a real before/after number — this is a disclosed
+calculation, not a measurement. Both the terminal output and the generated
+`savings-dashboard.html` state this plainly. If asked "how much did this
+kit save," point to RUNS.md's real totals first; mention the estimate
+second, with its caveat intact.
+
 
 # mogger coding standards
 

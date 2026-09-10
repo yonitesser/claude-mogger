@@ -9,7 +9,9 @@ mkdir -p incoming/.claude/agents incoming/.claude/hooks
 cp agents/*.md incoming/.claude/agents/
 cp hooks/scripts/*.sh incoming/.claude/hooks/
 chmod +x incoming/.claude/hooks/*.sh
-cp templates/CONSTRAINTS.md templates/RUNS.md templates/STACK.md incoming/
+cp templates/CONSTRAINTS.md templates/RUNS.md templates/STACK.md templates/pricing.json incoming/
+cp scripts/savings-report.py scripts/savings-report.sh incoming/
+chmod +x incoming/savings-report.sh incoming/savings-report.py
 # settings.json = hooks.json with plugin paths rewritten to project-relative paths
 sed 's|bash \\"${CLAUDE_PLUGIN_ROOT}\\"/hooks/scripts/|bash .claude/hooks/|g' hooks/hooks.json > incoming/.claude/settings.json
 # CLAUDE.md.snippet = the two skills' bodies (minus frontmatter), for people who'd rather have it in CLAUDE.md

@@ -39,7 +39,11 @@ overwrites a file that already exists.
    `${CLAUDE_PLUGIN_ROOT}/templates/`. For each of `CONSTRAINTS.md`,
    `RUNS.md`, `STACK.md`: if the project root doesn't have it, copy the
    template. If it does, leave it alone and say so. Also
-   `mkdir -p .claude/state` (tester writes its result marker there).
+   `mkdir -p .claude/state` (tester writes its result marker there, and
+   the Haiku agents append to `.claude/state/savings.jsonl` there too —
+   touch that file into existence if missing so the first agent call
+   doesn't fail on a missing directory, though the log script itself
+   already does `mkdir -p`).
 
 5. **Fill STACK.md from what's visible.** Read `package.json`,
    `pyproject.toml`, `go.mod`, `Cargo.toml`, `Gemfile`, `composer.json` —
@@ -71,6 +75,10 @@ overwrites a file that already exists.
      orchestrates.
    - Context7 is available for current library docs; SkillSpector is
      installed (or the user has the one command to add it).
+   - `bash scripts/savings-report.py` shows an *estimate* of cost avoided
+     by Haiku routing so far — self-reported by the agents, not verified,
+     and clearly labeled as such in its own output. Not required reading,
+     just available if the user is curious.
 
    Then suggest: "Add your first correction to CONSTRAINTS.md the first
    time I do something you have to fix twice."
