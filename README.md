@@ -1,13 +1,33 @@
-# claude-mogger
+<div align="center">
 
-A curated Claude Code enhancement kit. Everything in here was evaluated
-against a written rubric ([CURATION.md](CURATION.md)), and everything we
-looked at and *didn't* include is listed with the reason
-([CONSIDERED.md](CONSIDERED.md)). That's the whole point: the internet is
+<img src="assets/mogger-banner.svg" alt="claude-mogger" width="100%"/>
+
+<img src="assets/mogger-hero.jpg" alt="mogger" width="340"/>
+
+<br/>
+<br/>
+
+**Most "Claude enhancer" repos are a prompt that says "be a senior engineer" and a hope.**
+**This one is a bash script that says no and means it.**
+
+[![tests](https://img.shields.io/badge/hooks-43%20passing-ff5a1f?style=for-the-badge)](tests/hooks.test.sh)
+[![license](https://img.shields.io/badge/license-MIT-black?style=for-the-badge)](LICENSE)
+[![curated](https://img.shields.io/badge/curated-not%20vibes-ff5a1f?style=for-the-badge)](CURATION.md)
+
+</div>
+
+---
+
+Every claim in this kit is backed by an exit code, a benchmark you can
+re-run, or a diff you can read — not a testimonial. Everything that didn't
+clear that bar is in [CONSIDERED.md](CONSIDERED.md), with the reason,
+instead of quietly not existing. That's the whole pitch: the internet is
 full of "make Claude 1000x better" threads that are 80% noise. This is the
-20%, with receipts.
+20%, with receipts, and it doesn't ask your model nicely — it puts a bash
+script between it and anything that can't be undone.
 
 ## What this actually does
+
 
 No config file makes the model smarter. What a kit *can* do, and what this
 one does:

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="260" viewBox="0 0 1200 260">
+  <defs>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ff7a1a"/>
+      <stop offset="100%" stop-color="#ff3d00"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="260" fill="#000000"/>
+
+  <!-- faint circuit-line accents -->
+  <g stroke="#ff5a1f" stroke-width="1.5" opacity="0.35">
+    <line x1="0" y1="40" x2="220" y2="40"/>
+    <line x1="0" y1="220" x2="180" y2="220"/>
+    <line x1="980" y1="40" x2="1200" y2="40"/>
+    <line x1="1020" y1="220" x2="1200" y2="220"/>
+  </g>
+  <g fill="#ff5a1f" opacity="0.6">
+    <circle cx="220" cy="40" r="3"/>
+    <circle cx="180" cy="220" r="3"/>
+    <circle cx="980" cy="40" r="3"/>
+    <circle cx="1020" cy="220" r="3"/>
+  </g>
+
+  <text x="600" y="130" text-anchor="middle"
+        font-family="'Arial Black', 'Helvetica Neue', Impact, sans-serif"
+        font-weight="900" font-size="88" letter-spacing="4"
+        fill="url(#glow)" filter="url(#soft)">
+    CLAUDE MOGGER
+  </text>
+
+  <text x="600" y="180" text-anchor="middle"
+        font-family="'Courier New', monospace"
+        font-size="22" letter-spacing="6"
+        fill="#e8e8e8" opacity="0.85">
+    THE CURATED CLAUDE CODE ENHANCEMENT KIT
+  </text>
+
+  <text x="600" y="215" text-anchor="middle"
+        font-family="'Courier New', monospace"
+        font-size="14" letter-spacing="3"
+        fill="#ff5a1f" opacity="0.8">
+    HOOKS THAT DON'T ASK NICELY · MODELS THAT KNOW THEIR PLACE
+  </text>
+</svg>

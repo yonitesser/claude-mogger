@@ -72,3 +72,11 @@ First plugin release.
 
 **Rejected (discussed, not built)**
 - A request to have agents narrate wins and token/line savings inline in every response was declined: no valid counterfactual exists to compare against within a single session, it fights the kit's own token-discipline rules (bragging is itself more output), and it conflicts with the terse, action-first tone this kit is meant to produce. See conversation history / CURATION.md principle 2 (falsifiable claims only).
+
+## 1.2.1 — 2026-09-09
+
+**Added**
+- README hero: `assets/mogger-hero.jpg` (compressed from 2.3MB to ~300KB) and `assets/mogger-banner.svg` (self-contained title graphic — no third-party badge-generator dependency, so the banner doesn't break if an external service goes down). Rewrote the opening description with more attitude.
+
+**Note**
+- GitHub markdown can't force the page background black for every viewer (that follows each viewer's own light/dark theme setting) — the effect here comes from the banner and hero images themselves having black backgrounds, not from overriding GitHub's page chrome.

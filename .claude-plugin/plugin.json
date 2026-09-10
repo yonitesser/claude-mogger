@@ -1,6 +1,6 @@
 {
   "name": "mogger",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Curated Claude Code discipline kit: hook-enforced approval gates (push/merge/deploy/money), test-gated review, done-means-done Stop hook, Haiku-for-I/O model routing, auto-format on edit, persistent corrections. Every inclusion justified in CURATION.md, every rejection in CONSIDERED.md.",
   "author": {
     "name": "Jay",
