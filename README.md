@@ -1,10 +1,7 @@
 <div align="center">
 
-<img src="assets/mogger-banner.svg" alt="claude-mogger" width="100%"/>
+<img src="assets/claude mogger.png" alt="claude-mogger" width="100%"/>
 
-<img src="assets/mogger-hero.jpg" alt="mogger" width="340"/>
-
-<br/>
 <br/>
 
 **Most "Claude enhancer" repos are a prompt that says "be a senior engineer" and a hope.**
