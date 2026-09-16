@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/mogger.gif" alt="mogger-banner" width="100%"/>
+<img src="assets/mogger-banner.png" alt="mogger-banner" width="100%"/>
 
 <br/>
 
