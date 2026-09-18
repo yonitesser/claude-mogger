@@ -140,6 +140,36 @@ echo '{"status":"pass","exit_code":0}' > .claude/state/last_test_result.json
 sleep 1; touch -d '2000-01-01' small.txt big.txt 2>/dev/null || true
 expect 0 require-tests-pass.sh "$(task_json reviewer)"                          "allows reviewer when scope field absent (back-compat)"
 
+echo "== composition: gates fire regardless of which framework's agent calls the tool"
+# The premise of the Superpowers preset: mogger's hooks key off the TOOL CALL,
+# not off which skill/agent triggered it. These assert that directly.
+printf '# T\n\n- [ ] 1. task — files: src/http.ts — done when: y\n' > TASKS.md
+expect 2 scope-guard.sh "$(file_json Edit src/elsewhere.ts)"                    "scope-guard blocks regardless of caller identity"
+expect 2 require-approval.sh "$(bash_cmd 'git push origin main')"               "require-approval blocks push regardless of caller identity"
+expect 2 protect-pipeline-files.sh "$(file_json Edit .github/workflows/ci.yml)"  "pipeline guard blocks regardless of caller identity"
+rm -f TASKS.md
+
+echo "== require-tests-pass.sh MOGGER_GATE_ALL_TASKS mode"
+mkdir -p .claude/state
+echo '{"status":"fail","exit_code":1,"scope":"full"}' > .claude/state/last_test_result.json
+# default mode: only the named reviewer is gated
+expect 0 require-tests-pass.sh "$(task_json superpowers-code-reviewer)"          "default mode ignores an unrecognized agent name (the gap GATE_ALL_TASKS closes)"
+export MOGGER_GATE_ALL_TASKS=on
+expect 2 require-tests-pass.sh "$(task_json superpowers-code-reviewer)"          "GATE_ALL_TASKS blocks an arbitrarily-named external agent"
+expect 2 require-tests-pass.sh "$(task_json some-unknown-agent)"                "GATE_ALL_TASKS blocks any unknown agent on failing tests"
+expect 0 require-tests-pass.sh "$(task_json tester)"                            "GATE_ALL_TASKS exempts tester (would deadlock otherwise)"
+expect 0 require-tests-pass.sh "$(task_json builder)"                           "GATE_ALL_TASKS exempts builder"
+expect 0 require-tests-pass.sh "$(task_json library-scout)"                      "GATE_ALL_TASKS exempts library-scout"
+export MOGGER_GATE_EXEMPT='brainstorm.*|writing-plans'
+expect 0 require-tests-pass.sh "$(task_json brainstorming)"                     "MOGGER_GATE_EXEMPT regex exempts a named external agent"
+expect 0 require-tests-pass.sh "$(task_json writing-plans)"                     "MOGGER_GATE_EXEMPT matches a second pattern"
+expect 2 require-tests-pass.sh "$(task_json not-exempt-agent)"                  "MOGGER_GATE_EXEMPT does not over-exempt"
+unset MOGGER_GATE_EXEMPT
+echo '{"status":"pass","exit_code":0,"scope":"full"}' > .claude/state/last_test_result.json
+sleep 1; touch -d '2000-01-01' small.txt big.txt 2>/dev/null || true
+expect 0 require-tests-pass.sh "$(task_json superpowers-code-reviewer)"          "GATE_ALL_TASKS allows external agent once full suite passes"
+unset MOGGER_GATE_ALL_TASKS
+
 echo "== session-start.sh (count correctness)"
 printf '# T\n\n- [x] 1. done\n- [ ] 2. open\n- [ ] 3. open\n' > TASKS.md
 OUT=$(bash "$H/session-start.sh" 2>/dev/null)

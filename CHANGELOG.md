@@ -98,3 +98,15 @@ First plugin release.
 **Not built (considered, declined)**
 - Additional specialist agents beyond library-scout (security agent, perf agent): each is context to load and a handoff to pay for, and `reviewer` already covers security review. They earn a place only when there's something concrete they'd catch that nothing else does.
 - Auto-compaction on context pressure: would require guessing which hook event fires for it. Not shipping an unverified API surface.
+
+## 1.4.0 — 2026-09-09
+
+**Decision: Superpowers stays a companion, not a dependency.** Verified its license (MIT — vendoring would be legal) and its hooks (only `SessionStart`; no Stop or PreToolUse, so no double-fire with mogger's). Still declined a hard dependency: mogger's value is hooks that fire regardless of what's layered on top, which a dependency forfeits; vendoring means solo-maintaining a fork of a 287k-star project; and a cheaply-revisable verdict beats a locked-in one. Built the middle option instead.
+
+**Added**
+- `skills/mogger-superpowers-preset/SKILL.md` — the tested composition: which mogger agents to stop dispatching (planner/builder/reviewer/parallel-dispatch), which to keep (every hook, every Haiku-routed agent, library-scout, retro, STACK.md), the two required config changes, the Windows SessionStart caveat, and an explicit note on what remains untested.
+- `MOGGER_GATE_ALL_TASKS=on` in `require-tests-pass.sh` — gates every Task dispatch on a full-suite pass rather than only an agent literally named `reviewer`, with built-in exemptions for agents that must run before tests can pass and a `MOGGER_GATE_EXEMPT` regex for more. Opt-in because over-blocking is the failure mode to watch.
+- 13 new assertions (58 → 71): three proving mogger's gates fire regardless of which framework's agent calls the tool (the premise of the whole preset), ten covering the new gating mode and its exemptions.
+
+**Fixed**
+- Closed a real gap found while building the preset: name-based review gating silently matched nothing under an external framework, meaning the test gate looked installed and enforced nothing. That's the worst failure mode a safety gate can have.

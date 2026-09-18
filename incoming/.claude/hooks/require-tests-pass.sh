@@ -7,7 +7,28 @@ source "$(dirname "$0")/lib.sh"
 
 INPUT=$(cat)
 SUBAGENT=$(json_get "$INPUT" '.tool_input.subagent_type')
-[ "$SUBAGENT" != "${MOGGER_REVIEWER_NAME:-reviewer}" ] && exit 0
+
+# Two gating modes:
+#   default        — gate only the agent named by MOGGER_REVIEWER_NAME (default "reviewer")
+#   GATE_ALL_TASKS — gate EVERY Task dispatch on a passing full-suite run.
+# The second exists for composing with an external framework (Superpowers,
+# ECC, gstack) whose subagent names you don't control and may not be able
+# to predict. Name-based gating silently does nothing if the name never
+# matches, which is the worst failure mode a safety gate can have: it
+# looks installed and enforces nothing.
+if [ "${MOGGER_GATE_ALL_TASKS:-off}" != "on" ]; then
+  [ "$SUBAGENT" != "${MOGGER_REVIEWER_NAME:-reviewer}" ] && exit 0
+else
+  # Exempt the agents whose whole job is to run before/produce the tests —
+  # gating those would deadlock (can't test until tests pass).
+  case "$SUBAGENT" in
+    tester|builder|explorer|bulk-reader|code-writer|library-scout|planner) exit 0 ;;
+  esac
+  # Also exempt anything matching a user-supplied allowlist pattern.
+  if [ -n "${MOGGER_GATE_EXEMPT:-}" ] && [[ "$SUBAGENT" =~ ^(${MOGGER_GATE_EXEMPT})$ ]]; then
+    exit 0
+  fi
+fi
 
 MARKER=".claude/state/last_test_result.json"
 

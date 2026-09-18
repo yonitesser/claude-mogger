@@ -119,3 +119,33 @@ may be at their actual job.
   `bulk-reader`) genuinely duplicates headroom's compression. Model-routing
   (which agent runs on which model) is a different axis headroom doesn't
   touch — `bulk-reader`/`explorer`/`code-writer`/`tester` stay regardless.
+
+## Batch 4 — should Superpowers be a dependency instead of a suggestion? (2026-09-09)
+
+Asked directly, answered no, then built the middle option. Verified first
+rather than assumed:
+
+- **License:** MIT. Redistribution/vendoring would be legally fine.
+- **Hooks it registers:** only `SessionStart` (matcher `startup|clear|compact`).
+  No Stop hook, no PreToolUse hooks. So mogger's Stop and 5× PreToolUse
+  hooks don't double-fire against it — the composition is cleaner than
+  feared. One real caveat: on Windows, multiple plugins with SessionStart
+  hooks produce a cosmetic `SessionStart:startup hook error`
+  (obra/superpowers#369). Both hooks still execute.
+- **Verdict: COMPANION, with a tested preset** (`mogger-superpowers-preset`
+  skill), not a hard dependency. Reasoning: mogger's value is hooks that
+  fire regardless of what's layered on top, which is exactly what a hard
+  dependency would forfeit. Vendoring means maintaining a fork of a
+  fast-moving 287k-star project alone. And a verdict you can revise cheaply
+  (this whole file's premise) beats one you can't.
+- **Gap found and closed while building it:** `require-tests-pass.sh` gated
+  on a subagent literally named `reviewer`. Under any external framework
+  the dispatched agent names aren't predictable, so the gate would silently
+  match nothing — a safety gate that looks installed and enforces nothing,
+  the worst possible failure mode. Added `MOGGER_GATE_ALL_TASKS=on`, which
+  gates every Task dispatch with built-in exemptions for agents that must
+  run before tests can pass, plus a `MOGGER_GATE_EXEMPT` regex. 10 new
+  assertions cover it.
+- **Untested and said so:** the ergonomics of the combination over a long
+  project. Whether `GATE_ALL_TASKS` over-blocks in practice is unknown —
+  which is why it's opt-in, not default.
