@@ -172,6 +172,16 @@ If they don't, the "done when must be a check, not an adjective" rule
 (planner.md) and the "one task at a time, no git access" rule (builder.md)
 are the parts worth grafting in.
 
+### `incoming/.claude/agents/library-scout.md`
+**Intent:** decides library-vs-hand-rolled before code gets written.
+Checks STACK.md and existing imports first, sizes the need honestly, uses
+Context7 for current APIs, and is explicitly permitted (encouraged) to
+answer "write it yourself." Runs on Sonnet — it's a judgment call.
+**Merge action:** new capability in most setups; add as-is. If the project
+already has a dependency-review step, keep theirs and make sure it also
+has permission to say no to a dependency — a scout that only ever
+recommends packages is worse than none.
+
 ### `incoming/.claude/agents/retro.md`
 **Intent:** a meta-loop, run on demand (not automatic), that reads run
 history and proposes edits to CONSTRAINTS.md/CLAUDE.md — and explicitly
@@ -237,6 +247,19 @@ ARCHITECTURE.md, a tech-stack section in README), point the CLAUDE.md
 "Library selection" rule at that instead of adding a second file. Otherwise
 add it and let the team fill in the table over time — an empty STACK.md is
 still useful because the rule says "check here first."
+
+### `incoming/.claude/hooks/scope-guard.sh`
+**Intent:** PreToolUse on Edit/Write — reads the first unchecked task in
+TASKS.md, extracts its `files:` list, and blocks edits to anything outside
+it. This is scope creep prevented mechanically rather than requested
+politely. Fails OPEN in every ambiguous case (no TASKS.md, no unchecked
+task, no `files:` field, `MOGGER_SCOPE_GUARD=off`) so a half-written task
+board can never wedge a session.
+**Merge action:** add under the project's `Edit|Write` PreToolUse matcher,
+BEFORE `protect-pipeline-files.sh` (cheaper check first). Requires the
+project to use TASKS.md with planner's `files:` format — if the project
+has a different task-board convention, either adapt the parsing in the
+script or leave this hook out; it's a no-op without a parseable board.
 
 ### `incoming/.claude/hooks/log-savings.sh`
 **Intent:** not a lifecycle hook (no entry in settings.json) — a script the

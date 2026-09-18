@@ -22,6 +22,15 @@ if [ "$STATUS" != "pass" ]; then
   exit 2
 fi
 
+# An affected-tests-only pass is not enough to send something to review.
+# tester runs targeted subsets during the build loop for speed, then a
+# full suite once at the end — reviewer needs the full one.
+SCOPE=$(json_get "$(cat "$MARKER")" '.scope')
+if [ -n "$SCOPE" ] && [ "$SCOPE" != "full" ]; then
+  echo "BLOCKED: last test run was scope '$SCOPE', not 'full'. Affected-only runs are for the build loop; reviewer requires a full-suite pass. Re-run tester with the complete suite." >&2
+  exit 2
+fi
+
 # Stale check: any source file newer than the marker means the pass is for old code.
 NEWER=$(find . -type f -newer "$MARKER" \
   -not -path './.git/*' -not -path './.claude/state/*' -not -path './node_modules/*' \

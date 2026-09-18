@@ -80,3 +80,21 @@ First plugin release.
 
 **Note**
 - GitHub markdown can't force the page background black for every viewer (that follows each viewer's own light/dark theme setting) — the effect here comes from the banner and hero images themselves having black backgrounds, not from overriding GitHub's page chrome.
+
+## 1.3.0 — 2026-09-09
+
+**Added**
+- `hooks/scripts/scope-guard.sh` — PreToolUse on Edit/Write. Blocks edits to any file the current TASKS.md task didn't declare in its `files:` list. Scope creep prevented mechanically, not requested politely. Fails open in every ambiguous case; `MOGGER_SCOPE_GUARD=off` disables it. 12 new test assertions.
+- `agents/library-scout.md` (Sonnet) — decides library-vs-hand-rolled before code is written. Checks STACK.md and existing imports first, uses Context7 for current APIs, and is explicitly permitted to answer "write it yourself." Planner marks tasks `[library-scout first]` when they'd otherwise reinvent a solved problem.
+- Parallel dispatch: `planner` now marks non-overlapping tasks `[parallel-with: N]`; the loop dispatches those builders concurrently in a single message. The Lead independently verifies `files:` lists don't overlap before dispatching, because two builders on one file costs more to untangle than the parallelism saves.
+- Affected-tests-first: `tester` runs only tests plausibly affected by changed files during the build loop (fast), then the full suite once before review. `require-tests-pass.sh` now rejects a reviewer dispatch whose recorded scope isn't `full` — an affected-only pass is no longer sufficient to send work to review. 3 new assertions, including back-compat for markers written without a `scope` field.
+- Diff-only re-read discipline (builder + loop skill): after editing, read `git diff`, never re-read the whole file. Advisory, but one of the largest recurring context savings available.
+- Cache-aware prompt ordering (loop skill): stable content (CONSTRAINTS/STACK/skills/conventions) first, volatile content (task, diff, failure output) last, with the stable prefix kept byte-identical between calls so it actually caches at ~10% of input price.
+
+**Changed**
+- Test suite: 43 → 58 assertions.
+- `builder` now explicitly told it cannot edit outside its task's declared scope (the hook enforces it), to use diffs for verification, and to respect a library-scout "write it yourself" verdict as a real answer.
+
+**Not built (considered, declined)**
+- Additional specialist agents beyond library-scout (security agent, perf agent): each is context to load and a handoff to pay for, and `reviewer` already covers security review. They earn a place only when there's something concrete they'd catch that nothing else does.
+- Auto-compaction on context pressure: would require guessing which hook event fires for it. Not shipping an unverified API surface.

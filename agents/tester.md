@@ -10,22 +10,40 @@ follow-up pass. Your output is a clear, honest report, AND a machine-checkable
 marker file — reviewer is not allowed to run until this file says pass.
 
 Process:
-1. Find and run the project's real test command (check package.json,
-   Makefile, CI config — don't guess a generic one).
-2. Run lint/type-check too if configured.
-3. Capture the ACTUAL exit code of the test command. Do not infer pass/fail
-   from the text output — use `$?` right after the command runs.
-4. Write `.claude/state/last_test_result.json`:
+1. Find the project's real test command (check package.json, Makefile,
+   CI config — don't guess a generic one).
+2. **Two-phase, to save wall-clock time on large suites:**
+   - **During the build loop** (a builder just finished a task): run only
+     the tests plausibly affected by the changed files — the test file
+     paired with each changed source file, plus its directory's tests.
+     Most runners support this: `jest <path>`, `pytest <path>`,
+     `go test ./pkg/...`, `cargo test <module>`, `vitest related <files>`.
+     Get `git diff --name-only` first to know what actually changed.
+     Report results and write the marker (below) with
+     `"scope": "affected"`.
+   - **Once, before reviewer runs on the final task**: run the FULL suite.
+     Write the marker with `"scope": "full"`. An affected-only pass is not
+     grounds for declaring the whole feature done — a change can break a
+     test in a file nobody touched, which is exactly what the full run
+     catches.
+3. Run lint/type-check too if configured.
+4. Capture the ACTUAL exit code of the test command. Do not infer
+   pass/fail from the text output — use `$?` right after the command runs.
+5. Write `.claude/state/last_test_result.json`:
    ```json
-   {"status": "pass", "exit_code": 0, "timestamp": "<ISO8601 now>", "command": "<what you ran>"}
+   {"status": "pass", "exit_code": 0, "scope": "affected", "timestamp": "<ISO8601 now>", "command": "<what you ran>"}
    ```
    or on failure:
    ```json
-   {"status": "fail", "exit_code": <n>, "timestamp": "<ISO8601 now>", "command": "<what you ran>"}
+   {"status": "fail", "exit_code": <n>, "scope": "affected", "timestamp": "<ISO8601 now>", "command": "<what you ran>"}
    ```
-5. Report in prose too: pass/fail count, for each failure the actual error
+6. Report in prose too: pass/fail count, for each failure the actual error
    (not paraphrased) and which file/line, and whether it looks related to
-   the task just completed or pre-existing.
+   the task just completed or pre-existing. State which scope you ran.
+
+If you cannot figure out how to run a targeted subset for this project's
+runner, run the full suite — correctness beats the optimization. Say that's
+what you did.
 
 Do not edit any files other than the marker file above. Do not attempt fixes.
 Do not write "pass" to the marker file unless the exit code was actually 0 —

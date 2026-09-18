@@ -3,7 +3,10 @@
     "SessionStart": [
       {
         "hooks": [
-          { "type": "command", "command": "bash .claude/hooks/session-start.sh" }
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/session-start.sh"
+          }
         ]
       }
     ],
@@ -11,26 +14,45 @@
       {
         "matcher": "Bash",
         "hooks": [
-          { "type": "command", "command": "bash .claude/hooks/require-approval.sh" },
-          { "type": "command", "command": "bash .claude/hooks/check-bash-read.sh" }
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/require-approval.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/check-bash-read.sh"
+          }
         ]
       },
       {
         "matcher": "Read",
         "hooks": [
-          { "type": "command", "command": "bash .claude/hooks/check-file-size.sh" }
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/check-file-size.sh"
+          }
         ]
       },
       {
         "matcher": "Edit|Write",
         "hooks": [
-          { "type": "command", "command": "bash .claude/hooks/protect-pipeline-files.sh" }
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/scope-guard.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/protect-pipeline-files.sh"
+          }
         ]
       },
       {
         "matcher": "Task",
         "hooks": [
-          { "type": "command", "command": "bash .claude/hooks/require-tests-pass.sh" }
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/require-tests-pass.sh"
+          }
         ]
       }
     ],
@@ -38,14 +60,20 @@
       {
         "matcher": "Edit|Write",
         "hooks": [
-          { "type": "command", "command": "bash .claude/hooks/auto-format.sh" }
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/auto-format.sh"
+          }
         ]
       }
     ],
     "Stop": [
       {
         "hooks": [
-          { "type": "command", "command": "bash .claude/hooks/stop-done-means-done.sh" }
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/stop-done-means-done.sh"
+          }
         ]
       }
     ]

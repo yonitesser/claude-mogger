@@ -1,13 +1,14 @@
 <div align="center">
 
-<img src="assets/mogger-banner.png" alt="mogger-banner" width="100%"/>
+<img src="assets/mogger-banner.png" alt="claude-mogger" width="100%"/>
 
+<br/>
 <br/>
 
 **Most "Claude enhancer" repos are a prompt that says "be a senior engineer" and a hope.**
 **This one is a bash script that says no and means it.**
 
-[![tests](https://img.shields.io/badge/hooks-43%20passing-ff5a1f?style=for-the-badge)](tests/hooks.test.sh)
+[![tests](https://img.shields.io/badge/hooks-58%20passing-ff5a1f?style=for-the-badge)](tests/hooks.test.sh)
 [![license](https://img.shields.io/badge/license-MIT-black?style=for-the-badge)](LICENSE)
 [![curated](https://img.shields.io/badge/curated-not%20vibes-ff5a1f?style=for-the-badge)](CURATION.md)
 
@@ -30,22 +31,30 @@ No config file makes the model smarter. What a kit *can* do, and what this
 one does:
 
 1. **Enforce discipline the model won't apply on its own.** Tests must
-   actually pass (checked by exit code, not by the model saying so) before
-   review. One task at a time. Surgical changes, no scope creep. A "done
+   actually pass — full suite, checked by exit code, not by the model
+   saying so — before review. Scope creep is blocked at the tool call: a
+   builder cannot edit a file the current task didn't declare. A "done
    when" condition that's a real check, not an adjective.
 2. **Hard-gate anything irreversible.** `git push`, merges, deploys, and
    anything touching money are blocked at the tool-call level by hooks —
    no prompt, no agent, no clever reasoning gets around a bash script that
    returns exit code 2.
-3. **Feed it current facts, not stale memory.** Context7 for
-   version-specific library docs. A STACK.md so library choices are made
-   once, deliberately, and stay consistent.
+3. **Feed it current facts, not stale memory.** Context7 (bundled) for
+   version-specific library docs. A `library-scout` agent that checks
+   whether a good library already exists before anyone hand-rolls date
+   math — and is explicitly allowed to answer "write it yourself," because
+   a scout that always recommends a dependency is how you end up with
+   forty packages for forty one-liners. A STACK.md so those choices are
+   made once and stay consistent.
 4. **Cut waste.** Every agent has a `model:` assignment: Haiku reads
-   files, greps the codebase, and runs tests; Sonnet builds and reviews;
-   only the orchestrating Lead needs a frontier model. The Lead is told, in
-   writing, not to Read or Grep itself. Output-token discipline on top (no
-   preambles, no re-printing unchanged code). Optional compression proxy
-   (headroom) for heavy tool output.
+   files, greps the codebase, and runs tests; Sonnet builds, reviews, and
+   scouts libraries; only the orchestrating Lead needs a frontier model.
+   The Lead is told, in writing, not to Read or Grep itself. Then:
+   diff-only re-reads (never re-read a file you just edited — read
+   `git diff`), cache-aware prompt ordering (stable content first, so the
+   prefix bills at ~10%), and output-token discipline (no preambles, no
+   re-printing unchanged code). Optional compression proxy (headroom) for
+   heavy tool output.
 5. **Remember corrections.** CONSTRAINTS.md is a permanent, append-only
    home for every "don't do that again." A `retro` agent proposes new
    entries from run history; a human approves them.
@@ -53,20 +62,24 @@ one does:
    own formatter/linter (prettier, ruff, gofmt, rustfmt, etc.) on each
    file Claude touches. Clean code isn't a prompt instruction, it's a
    hook.
+7. **Run independent work at the same time.** `planner` marks which tasks
+   have non-overlapping file sets; the Lead dispatches those builders
+   concurrently instead of one-at-a-time. Tests follow the same logic —
+   affected tests during the loop, full suite once before review.
 
 ## What's in the box
 
 ```
 .claude-plugin/         plugin.json + marketplace.json — install with two slash commands
 .mcp.json               bundles Context7 as a hosted remote MCP server — auto-registers on install
-agents/                 planner, builder, reviewer, retro (Sonnet) · tester, explorer, bulk-reader, code-writer (Haiku)
-hooks/hooks.json        8 hooks: SessionStart, 4× PreToolUse, PostToolUse, Stop
+agents/                 planner, builder, reviewer, retro, library-scout (Sonnet) · tester, explorer, bulk-reader, code-writer (Haiku)
+hooks/hooks.json        9 hooks: SessionStart, 5× PreToolUse, PostToolUse, Stop
 hooks/scripts/          the actual bash — every one tested in tests/hooks.test.sh
 skills/mogger-loop     the orchestration loop + model routing (loads when you start a feature)
 skills/mogger-standards coding principles, library rules, token discipline, SkillSpector rule
 skills/mogger-init     first-run: scaffolds CONSTRAINTS/RUNS/STACK in your project
 templates/              the three project files above, plus pricing.json for the savings estimate
-tests/hooks.test.sh     43 assertions. If this fails, the gates don't work.
+tests/hooks.test.sh     58 assertions. If this fails, the gates don't work.
 scripts/savings-report.py  optional: estimated cost avoided by model routing (self-reported, see below)
 incoming/               manual-install mirror (generated by scripts/sync-incoming.sh)
 CURATION.md             the rubric — what earns a place
@@ -112,8 +125,9 @@ question entirely and is the more reliable path.
 | Hook | Event | Blocks |
 |---|---|---|
 | `require-approval` | Bash | `git push`, merge while on main/master/prod, `gh pr merge`, prod deploys, money CLIs |
+| `scope-guard` | Edit/Write | editing any file the current task's `files:` list didn't declare |
 | `protect-pipeline-files` | Edit/Write | CI configs, Dockerfiles, Terraform, payment code |
-| `require-tests-pass` | Task→reviewer | review without a *recorded* exit-0 test run, or with edits since |
+| `require-tests-pass` | Task→reviewer | review without a *recorded* exit-0 **full-suite** run, or with edits since |
 | `stop-done-means-done` | Stop | ending the turn with open tasks and no `BLOCKED:` reason |
 | `check-file-size` / `check-bash-read` | Read / Bash | reading >350-line files directly (→ bulk-reader on Haiku) |
 | `session-start` | SessionStart | — injects CONSTRAINTS.md, STACK.md, task status into context |
@@ -122,7 +136,9 @@ question entirely and is the more reliable path.
 Protected branches default to `main|master|prod|production|release/.*`;
 override with `MOGGER_PROTECTED_BRANCHES`. Reviewer agent name defaults to
 `reviewer`; override with `MOGGER_REVIEWER_NAME` if you use Superpowers or
-your own.
+your own. Scope enforcement can be turned off with
+`MOGGER_SCOPE_GUARD=off` — it fails open anyway when a task declares no
+`files:` list, so it never wedges a session on a half-written task board.
 
 ## Bundled — no separate install
 

@@ -105,6 +105,41 @@ expect 0 stop-done-means-done.sh '{}'                                           
 printf '# TASKS\n\n- [x] 1. done\n- [x] 2. done\n' > TASKS.md
 expect 0 stop-done-means-done.sh '{}'                                            "allows stop when all tasks done"
 
+echo "== scope-guard.sh"
+rm -f TASKS.md
+expect 0 scope-guard.sh "$(file_json Edit src/anything.ts)"                     "allows edit with no TASKS.md (fails open)"
+printf '# T\n\n- [x] 1. old — files: src/old.ts — done when: x\n- [ ] 2. current — files: src/http.ts, src/config.ts — done when: y\n' > TASKS.md
+expect 0 scope-guard.sh "$(file_json Edit src/http.ts)"                         "allows file in declared scope"
+expect 0 scope-guard.sh "$(file_json Write src/config.ts)"                      "allows second file in declared scope"
+expect 2 scope-guard.sh "$(file_json Edit src/unrelated.ts)"                    "BLOCKS file outside declared scope"
+expect 0 scope-guard.sh "$(file_json Edit TASKS.md)"                            "always allows TASKS.md"
+expect 0 scope-guard.sh "$(file_json Edit CONSTRAINTS.md)"                      "always allows CONSTRAINTS.md"
+expect 0 scope-guard.sh "$(file_json Edit .claude/state/last_test_result.json)" "always allows .claude/state"
+MOGGER_SCOPE_GUARD=off
+export MOGGER_SCOPE_GUARD
+expect 0 scope-guard.sh "$(file_json Edit src/unrelated.ts)"                    "respects MOGGER_SCOPE_GUARD=off"
+unset MOGGER_SCOPE_GUARD
+printf '# T\n\n- [ ] 2. current — files: src/api/ — done when: y\n' > TASKS.md
+expect 0 scope-guard.sh "$(file_json Edit src/api/users.ts)"                    "allows file under declared directory prefix"
+expect 2 scope-guard.sh "$(file_json Edit src/web/users.ts)"                    "blocks file outside declared directory prefix"
+printf '# T\n\n- [ ] 2. no scope declared — done when: y\n' > TASKS.md
+expect 0 scope-guard.sh "$(file_json Edit src/anything.ts)"                     "fails open when task declares no files:"
+printf '# T\n\n- [x] 1. all done — files: src/a.ts — done when: x\n' > TASKS.md
+expect 0 scope-guard.sh "$(file_json Edit src/anything.ts)"                     "fails open when no unchecked tasks remain"
+rm -f TASKS.md
+
+echo "== require-tests-pass.sh (scope gate)"
+mkdir -p .claude/state
+echo '{"status":"pass","exit_code":0,"scope":"affected"}' > .claude/state/last_test_result.json
+sleep 1; touch -d '2000-01-01' small.txt big.txt 2>/dev/null || true
+expect 2 require-tests-pass.sh "$(task_json reviewer)"                          "blocks reviewer on affected-only pass"
+echo '{"status":"pass","exit_code":0,"scope":"full"}' > .claude/state/last_test_result.json
+sleep 1; touch -d '2000-01-01' small.txt big.txt 2>/dev/null || true
+expect 0 require-tests-pass.sh "$(task_json reviewer)"                          "allows reviewer on full-suite pass"
+echo '{"status":"pass","exit_code":0}' > .claude/state/last_test_result.json
+sleep 1; touch -d '2000-01-01' small.txt big.txt 2>/dev/null || true
+expect 0 require-tests-pass.sh "$(task_json reviewer)"                          "allows reviewer when scope field absent (back-compat)"
+
 echo "== session-start.sh (count correctness)"
 printf '# T\n\n- [x] 1. done\n- [ ] 2. open\n- [ ] 3. open\n' > TASKS.md
 OUT=$(bash "$H/session-start.sh" 2>/dev/null)
