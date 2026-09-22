@@ -1,13 +1,13 @@
 {
   "name": "mogger",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Curated Claude Code discipline kit: hook-enforced approval gates (push/merge/deploy/money), test-gated review, done-means-done Stop hook, Haiku-for-I/O model routing, auto-format on edit, persistent corrections. Every inclusion justified in CURATION.md, every rejection in CONSIDERED.md.",
   "author": {
     "name": "Jay",
-    "url": "https://github.com/YOUR-GITHUB-USERNAME/claude-mogger"
+    "url": "https://github.com/yonitesser/claude-mogger"
   },
-  "homepage": "https://github.com/YOUR-GITHUB-USERNAME/claude-mogger",
-  "repository": "https://github.com/YOUR-GITHUB-USERNAME/claude-mogger",
+  "homepage": "https://github.com/yonitesser/claude-mogger",
+  "repository": "https://github.com/yonitesser/claude-mogger",
   "license": "MIT",
   "keywords": [
     "hooks",
