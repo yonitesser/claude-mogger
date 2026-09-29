@@ -10,7 +10,7 @@ cp agents/*.md incoming/.claude/agents/
 cp hooks/scripts/*.sh incoming/.claude/hooks/
 chmod +x incoming/.claude/hooks/*.sh
 cp templates/CONSTRAINTS.md templates/RUNS.md templates/STACK.md templates/DECISIONS.md templates/SPEC.md templates/DATA.md templates/HANDOFF.md templates/pricing.json incoming/
-cp scripts/savings-report.py scripts/savings-report.sh scripts/mogger-rewind.sh scripts/smoke-check.sh scripts/smoke-browser.mjs scripts/ship-check.sh scripts/cost-report.sh scripts/a11y-browser.mjs incoming/
+cp scripts/savings-report.py scripts/savings-report.sh scripts/mogger-rewind.sh scripts/smoke-check.sh scripts/smoke-browser.mjs scripts/ship-check.sh scripts/cost-report.sh scripts/context-cost.sh scripts/a11y-browser.mjs incoming/
 mkdir -p incoming/checks
 cp scripts/checks/*.sh incoming/checks/
 chmod +x incoming/checks/*.sh
