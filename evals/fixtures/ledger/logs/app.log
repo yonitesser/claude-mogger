@@ -1,0 +1,750 @@
+2026-03-14T08:00:06Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:00:07Z INFO component=api req=r-00001 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:00:14Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:00:20Z INFO component=api req=r-00002 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:00:24Z INFO component=api req=r-00003 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:00:30Z ERROR component=auth msg="token expired"
+2026-03-14T08:00:34Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:00:39Z INFO component=api req=r-00004 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:00:43Z INFO component=api req=r-00005 method=GET path=/api/items status=404 ms=12
+2026-03-14T08:00:46Z INFO component=api req=r-00006 method=GET path=/api/items status=304 ms=12
+2026-03-14T08:00:49Z ERROR component=ledger-sync msg="upstream timeout" attempt=2
+2026-03-14T08:00:50Z INFO component=api req=r-00007 method=GET path=/api/items status=204 ms=87
+2026-03-14T08:00:53Z INFO component=api req=r-00008 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:01:02Z INFO component=api req=r-00009 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:01:09Z INFO component=api req=r-00010 method=GET path=/api/items status=404 ms=51
+2026-03-14T08:01:18Z INFO component=api req=r-00011 method=GET path=/api/items status=304 ms=87
+2026-03-14T08:01:19Z INFO component=api req=r-00012 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:01:27Z ERROR component=api req=r-00013 method=POST path=/api/orders status=500 ms=257
+2026-03-14T08:01:29Z INFO component=api req=r-00014 method=GET path=/api/items status=204 ms=500
+2026-03-14T08:01:30Z INFO component=api req=r-00015 method=GET path=/api/items status=404 ms=34
+2026-03-14T08:01:34Z INFO component=api req=r-00016 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:01:40Z INFO component=api req=r-00017 method=GET path=/api/items status=304 ms=12
+2026-03-14T08:01:44Z INFO component=api req=r-00018 method=GET path=/api/items status=204 ms=500
+2026-03-14T08:01:51Z INFO component=api req=r-00019 method=GET path=/api/items status=304 ms=87
+2026-03-14T08:01:56Z INFO component=api req=r-00020 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:02:04Z WARN component=ledger-sync msg="slow batch" items=500 ms=909
+2026-03-14T08:02:12Z INFO component=api req=r-00021 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:02:19Z WARN component=ledger-sync msg="slow batch" items=500 ms=1749
+2026-03-14T08:02:28Z WARN component=ledger-sync msg="slow batch" items=500 ms=1823
+2026-03-14T08:02:32Z INFO component=api req=r-00022 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:02:33Z INFO component=api req=r-00023 method=GET path=/api/items status=304 ms=87
+2026-03-14T08:02:35Z ERROR component=api req=r-00024 method=POST path=/api/orders status=500 ms=376
+2026-03-14T08:02:36Z ERROR component=api req=r-00024 method=POST path=/api/orders status=500 ms=264
+2026-03-14T08:02:45Z INFO component=worker msg="job done" jobs=23
+2026-03-14T08:02:51Z INFO component=api req=r-00025 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:03:00Z INFO component=worker msg="job done" jobs=18
+2026-03-14T08:03:07Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:03:16Z ERROR component=auth msg="token expired"
+2026-03-14T08:03:19Z INFO component=api req=r-00026 method=GET path=/api/items status=204 ms=500
+2026-03-14T08:03:20Z INFO component=api req=r-00027 method=GET path=/api/items status=304 ms=500
+2026-03-14T08:03:21Z INFO component=api req=r-00028 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:03:26Z INFO component=api req=r-00029 method=GET path=/api/items status=404 ms=500
+2026-03-14T08:03:35Z INFO component=api req=r-00030 method=GET path=/api/items status=201 ms=12
+2026-03-14T08:03:40Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:03:42Z INFO component=api req=r-00031 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:03:48Z INFO component=api req=r-00032 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:03:57Z INFO component=api req=r-00033 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:04:00Z INFO component=api req=r-00034 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:04:06Z INFO component=api req=r-00035 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:04:08Z INFO component=api req=r-00036 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:04:11Z INFO component=api req=r-00037 method=GET path=/api/items status=204 ms=51
+2026-03-14T08:04:16Z INFO component=api req=r-00038 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:04:18Z INFO component=api req=r-00039 method=GET path=/api/items status=201 ms=12
+2026-03-14T08:04:22Z ERROR component=ledger-sync msg="upstream timeout" attempt=1
+2026-03-14T08:04:28Z WARN component=ledger-sync msg="slow batch" items=500 ms=3678
+2026-03-14T08:04:29Z INFO component=api req=r-00040 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:04:37Z INFO component=api req=r-00041 method=GET path=/api/items status=204 ms=87
+2026-03-14T08:04:39Z ERROR component=ledger-sync msg="upstream timeout" attempt=2
+2026-03-14T08:04:47Z INFO component=api req=r-00042 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:04:50Z INFO component=api req=r-00043 method=GET path=/api/items status=201 ms=87
+2026-03-14T08:04:56Z ERROR component=api req=r-00044 method=POST path=/api/orders status=500 ms=897
+2026-03-14T08:04:57Z ERROR component=api req=r-00044 method=POST path=/api/orders status=500 ms=638
+2026-03-14T08:05:02Z ERROR component=api req=r-00045 method=POST path=/api/orders status=500 ms=837
+2026-03-14T08:05:03Z ERROR component=api req=r-00045 method=POST path=/api/orders status=500 ms=838
+2026-03-14T08:05:04Z WARN component=ledger-sync msg="slow batch" items=500 ms=1832
+2026-03-14T08:05:12Z INFO component=api req=r-00046 method=GET path=/api/items status=201 ms=500
+2026-03-14T08:05:17Z INFO component=api req=r-00047 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:05:25Z INFO component=api req=r-00048 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:05:28Z INFO component=api req=r-00049 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:05:37Z INFO component=api req=r-00050 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:05:46Z INFO component=api req=r-00051 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:05:55Z INFO component=api req=r-00052 method=GET path=/api/items status=404 ms=51
+2026-03-14T08:06:03Z INFO component=api req=r-00053 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:06:10Z INFO component=api req=r-00054 method=GET path=/api/items status=201 ms=500
+2026-03-14T08:06:16Z INFO component=worker msg="job done" jobs=26
+2026-03-14T08:06:20Z ERROR component=api req=r-00055 method=POST path=/api/orders status=500 ms=565
+2026-03-14T08:06:21Z ERROR component=api req=r-00055 method=POST path=/api/orders status=500 ms=388
+2026-03-14T08:06:26Z WARN component=ledger-sync msg="slow batch" items=500 ms=1653
+2026-03-14T08:06:27Z INFO component=api req=r-00056 method=GET path=/api/items status=201 ms=500
+2026-03-14T08:06:32Z INFO component=api req=r-00057 method=GET path=/api/items status=304 ms=34
+2026-03-14T08:06:38Z INFO component=worker msg="job done" jobs=4
+2026-03-14T08:06:47Z INFO component=worker msg="job done" jobs=6
+2026-03-14T08:06:54Z INFO component=api req=r-00058 method=GET path=/api/items status=204 ms=12
+2026-03-14T08:06:59Z INFO component=api req=r-00059 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:07:02Z WARN component=ledger-sync msg="slow batch" items=500 ms=1285
+2026-03-14T08:07:04Z INFO component=api req=r-00060 method=GET path=/api/items status=204 ms=51
+2026-03-14T08:07:09Z INFO component=api req=r-00061 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:07:13Z INFO component=api req=r-00062 method=GET path=/api/items status=404 ms=34
+2026-03-14T08:07:22Z INFO component=api req=r-00063 method=GET path=/api/items status=204 ms=500
+2026-03-14T08:07:23Z INFO component=api req=r-00064 method=GET path=/api/items status=201 ms=34
+2026-03-14T08:07:31Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:07:40Z INFO component=api req=r-00065 method=GET path=/api/items status=204 ms=12
+2026-03-14T08:07:46Z INFO component=api req=r-00066 method=GET path=/api/items status=304 ms=12
+2026-03-14T08:07:55Z WARN component=ledger-sync msg="slow batch" items=500 ms=3911
+2026-03-14T08:07:57Z INFO component=api req=r-00067 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:08:02Z INFO component=api req=r-00068 method=GET path=/api/items status=204 ms=500
+2026-03-14T08:08:03Z INFO component=api req=r-00069 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:08:11Z INFO component=api req=r-00070 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:08:15Z ERROR component=ledger-sync msg="upstream timeout" attempt=2
+2026-03-14T08:08:20Z INFO component=api req=r-00071 method=GET path=/api/items status=404 ms=51
+2026-03-14T08:08:27Z INFO component=worker msg="job done" jobs=27
+2026-03-14T08:08:28Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:08:29Z INFO component=api req=r-00072 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:08:31Z INFO component=api req=r-00073 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:08:39Z INFO component=api req=r-00074 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:08:47Z INFO component=api req=r-00075 method=GET path=/api/items status=201 ms=51
+2026-03-14T08:08:54Z WARN component=ledger-sync msg="slow batch" items=500 ms=2359
+2026-03-14T08:08:59Z INFO component=api req=r-00076 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:09:07Z WARN component=ledger-sync msg="slow batch" items=500 ms=2822
+2026-03-14T08:09:15Z INFO component=api req=r-00077 method=GET path=/api/items status=204 ms=51
+2026-03-14T08:09:24Z INFO component=api req=r-00078 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:09:26Z INFO component=api req=r-00079 method=GET path=/api/items status=304 ms=500
+2026-03-14T08:09:31Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:09:40Z WARN component=ledger-sync msg="slow batch" items=500 ms=2701
+2026-03-14T08:09:49Z INFO component=api req=r-00080 method=GET path=/api/items status=201 ms=34
+2026-03-14T08:09:52Z ERROR component=api req=r-00081 method=POST path=/api/orders status=500 ms=722
+2026-03-14T08:09:53Z ERROR component=api req=r-00081 method=POST path=/api/orders status=500 ms=572
+2026-03-14T08:10:01Z INFO component=api req=r-00082 method=GET path=/api/items status=201 ms=12
+2026-03-14T08:10:07Z INFO component=worker msg="job done" jobs=9
+2026-03-14T08:10:16Z INFO component=api req=r-00083 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:10:18Z INFO component=api req=r-00084 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:10:19Z INFO component=api req=r-00085 method=GET path=/api/items status=204 ms=34
+2026-03-14T08:10:22Z INFO component=api req=r-00086 method=GET path=/api/items status=201 ms=500
+2026-03-14T08:10:23Z INFO component=api req=r-00087 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:10:25Z ERROR component=ledger-sync msg="upstream timeout" attempt=2
+2026-03-14T08:10:28Z INFO component=api req=r-00088 method=GET path=/api/items status=304 ms=51
+2026-03-14T08:10:36Z INFO component=api req=r-00089 method=GET path=/api/items status=204 ms=500
+2026-03-14T08:10:41Z INFO component=api req=r-00090 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:10:45Z INFO component=worker msg="job done" jobs=17
+2026-03-14T08:10:49Z INFO component=api req=r-00091 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:10:53Z INFO component=api req=r-00092 method=GET path=/api/items status=204 ms=500
+2026-03-14T08:10:55Z INFO component=api req=r-00093 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:11:03Z INFO component=api req=r-00094 method=GET path=/api/items status=201 ms=34
+2026-03-14T08:11:06Z INFO component=api req=r-00095 method=GET path=/api/items status=204 ms=34
+2026-03-14T08:11:07Z ERROR component=auth msg="token expired"
+2026-03-14T08:11:15Z INFO component=api req=r-00096 method=GET path=/api/items status=201 ms=51
+2026-03-14T08:11:21Z INFO component=api req=r-00097 method=GET path=/api/items status=304 ms=51
+2026-03-14T08:11:30Z INFO component=api req=r-00098 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:11:39Z INFO component=api req=r-00099 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:11:46Z INFO component=api req=r-00100 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:11:49Z INFO component=api req=r-00101 method=GET path=/api/items status=201 ms=87
+2026-03-14T08:11:58Z INFO component=api req=r-00102 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:12:06Z INFO component=api req=r-00103 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:12:10Z INFO component=api req=r-00104 method=GET path=/api/items status=201 ms=34
+2026-03-14T08:12:13Z INFO component=api req=r-00105 method=GET path=/api/items status=204 ms=500
+2026-03-14T08:12:18Z WARN component=ledger-sync msg="slow batch" items=500 ms=2281
+2026-03-14T08:12:22Z INFO component=api req=r-00106 method=GET path=/api/items status=201 ms=34
+2026-03-14T08:12:29Z ERROR component=api req=r-00107 method=POST path=/api/orders status=500 ms=447
+2026-03-14T08:12:30Z ERROR component=api req=r-00107 method=POST path=/api/orders status=500 ms=594
+2026-03-14T08:12:32Z INFO component=api req=r-00108 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:12:41Z INFO component=api req=r-00109 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:12:48Z INFO component=api req=r-00110 method=GET path=/api/items status=304 ms=12
+2026-03-14T08:12:52Z WARN component=ledger-sync msg="slow batch" items=500 ms=3383
+2026-03-14T08:12:58Z WARN component=ledger-sync msg="slow batch" items=500 ms=1825
+2026-03-14T08:13:01Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:13:05Z WARN component=ledger-sync msg="slow batch" items=500 ms=2270
+2026-03-14T08:13:09Z INFO component=api req=r-00111 method=GET path=/api/items status=304 ms=500
+2026-03-14T08:13:15Z INFO component=api req=r-00112 method=GET path=/api/items status=201 ms=12
+2026-03-14T08:13:24Z INFO component=api req=r-00113 method=GET path=/api/items status=304 ms=34
+2026-03-14T08:13:32Z INFO component=worker msg="job done" jobs=13
+2026-03-14T08:13:39Z INFO component=api req=r-00114 method=GET path=/api/items status=204 ms=12
+2026-03-14T08:13:44Z INFO component=api req=r-00115 method=GET path=/api/items status=304 ms=34
+2026-03-14T08:13:45Z INFO component=api req=r-00116 method=GET path=/api/items status=404 ms=500
+2026-03-14T08:13:52Z INFO component=api req=r-00117 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:13:56Z INFO component=api req=r-00118 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:14:02Z INFO component=api req=r-00119 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:14:11Z ERROR component=auth msg="token expired"
+2026-03-14T08:14:19Z INFO component=api req=r-00120 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:14:24Z INFO component=api req=r-00121 method=GET path=/api/items status=304 ms=51
+2026-03-14T08:14:29Z INFO component=api req=r-00122 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:14:38Z WARN component=ledger-sync msg="slow batch" items=500 ms=1174
+2026-03-14T08:14:46Z ERROR component=api req=r-00123 method=POST path=/api/orders status=500 ms=668
+2026-03-14T08:14:47Z ERROR component=api req=r-00123 method=POST path=/api/orders status=500 ms=705
+2026-03-14T08:14:55Z WARN component=ledger-sync msg="slow batch" items=500 ms=1977
+2026-03-14T08:14:57Z WARN component=ledger-sync msg="slow batch" items=500 ms=2089
+2026-03-14T08:15:03Z INFO component=api req=r-00124 method=GET path=/api/items status=204 ms=51
+2026-03-14T08:15:04Z ERROR component=api req=r-00125 method=POST path=/api/orders status=500 ms=258
+2026-03-14T08:15:08Z INFO component=api req=r-00126 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:15:17Z INFO component=api req=r-00127 method=GET path=/api/items status=204 ms=51
+2026-03-14T08:15:21Z INFO component=api req=r-00128 method=GET path=/api/items status=304 ms=500
+2026-03-14T08:15:22Z ERROR component=api req=r-00129 method=POST path=/api/orders status=500 ms=277
+2026-03-14T08:15:23Z ERROR component=api req=r-00129 method=POST path=/api/orders status=500 ms=800
+2026-03-14T08:15:25Z WARN component=ledger-sync msg="slow batch" items=500 ms=1015
+2026-03-14T08:15:26Z WARN component=ledger-sync msg="slow batch" items=500 ms=1629
+2026-03-14T08:15:31Z INFO component=api req=r-00130 method=GET path=/api/items status=204 ms=500
+2026-03-14T08:15:40Z ERROR component=ledger-sync msg="upstream timeout" attempt=2
+2026-03-14T08:15:46Z INFO component=api req=r-00131 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:15:47Z WARN component=ledger-sync msg="slow batch" items=500 ms=2481
+2026-03-14T08:15:51Z WARN component=ledger-sync msg="slow batch" items=500 ms=1541
+2026-03-14T08:16:00Z INFO component=worker msg="job done" jobs=4
+2026-03-14T08:16:04Z INFO component=api req=r-00132 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:16:07Z INFO component=worker msg="job done" jobs=24
+2026-03-14T08:16:08Z ERROR component=auth msg="token expired"
+2026-03-14T08:16:14Z INFO component=api req=r-00133 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:16:19Z INFO component=api req=r-00134 method=GET path=/api/items status=204 ms=500
+2026-03-14T08:16:27Z INFO component=api req=r-00135 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:16:32Z INFO component=api req=r-00136 method=GET path=/api/items status=304 ms=500
+2026-03-14T08:16:34Z INFO component=api req=r-00137 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:16:37Z INFO component=api req=r-00138 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:16:42Z INFO component=api req=r-00139 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:16:48Z WARN component=ledger-sync msg="slow batch" items=500 ms=974
+2026-03-14T08:16:57Z INFO component=api req=r-00140 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:17:05Z INFO component=api req=r-00141 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:17:07Z INFO component=api req=r-00142 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:17:14Z INFO component=api req=r-00143 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:17:21Z INFO component=api req=r-00144 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:17:25Z INFO component=api req=r-00145 method=GET path=/api/items status=404 ms=34
+2026-03-14T08:17:28Z ERROR component=api req=r-00146 method=POST path=/api/orders status=500 ms=636
+2026-03-14T08:17:29Z ERROR component=api req=r-00146 method=POST path=/api/orders status=500 ms=214
+2026-03-14T08:17:36Z INFO component=api req=r-00147 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:17:38Z INFO component=api req=r-00148 method=GET path=/api/items status=304 ms=51
+2026-03-14T08:17:42Z INFO component=api req=r-00149 method=GET path=/api/items status=201 ms=87
+2026-03-14T08:17:51Z WARN component=ledger-sync msg="slow batch" items=500 ms=1006
+2026-03-14T08:17:55Z INFO component=api req=r-00150 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:18:00Z INFO component=api req=r-00151 method=GET path=/api/items status=404 ms=51
+2026-03-14T08:18:08Z INFO component=api req=r-00152 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:18:14Z INFO component=api req=r-00153 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:18:18Z INFO component=api req=r-00154 method=GET path=/api/items status=304 ms=12
+2026-03-14T08:18:20Z INFO component=api req=r-00155 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:18:25Z INFO component=api req=r-00156 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:18:32Z ERROR component=auth msg="token expired"
+2026-03-14T08:18:33Z INFO component=api req=r-00157 method=GET path=/api/items status=204 ms=34
+2026-03-14T08:18:42Z INFO component=api req=r-00158 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:18:45Z INFO component=api req=r-00159 method=GET path=/api/items status=304 ms=87
+2026-03-14T08:18:46Z WARN component=ledger-sync msg="slow batch" items=500 ms=2735
+2026-03-14T08:18:49Z WARN component=ledger-sync msg="slow batch" items=500 ms=1298
+2026-03-14T08:18:54Z INFO component=api req=r-00160 method=GET path=/api/items status=204 ms=87
+2026-03-14T08:19:03Z INFO component=api req=r-00161 method=GET path=/api/items status=204 ms=500
+2026-03-14T08:19:04Z INFO component=worker msg="job done" jobs=22
+2026-03-14T08:19:06Z INFO component=api req=r-00162 method=GET path=/api/items status=201 ms=51
+2026-03-14T08:19:09Z INFO component=api req=r-00163 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:19:16Z INFO component=api req=r-00164 method=GET path=/api/items status=304 ms=500
+2026-03-14T08:19:23Z INFO component=api req=r-00165 method=GET path=/api/items status=204 ms=87
+2026-03-14T08:19:29Z ERROR component=ledger-sync msg="upstream timeout" attempt=2
+2026-03-14T08:19:34Z WARN component=ledger-sync msg="slow batch" items=500 ms=3058
+2026-03-14T08:19:40Z INFO component=api req=r-00166 method=GET path=/api/items status=201 ms=34
+2026-03-14T08:19:47Z INFO component=api req=r-00167 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:19:48Z WARN component=ledger-sync msg="slow batch" items=500 ms=2167
+2026-03-14T08:19:50Z WARN component=ledger-sync msg="slow batch" items=500 ms=3519
+2026-03-14T08:19:52Z INFO component=worker msg="job done" jobs=8
+2026-03-14T08:19:59Z ERROR component=auth msg="token expired"
+2026-03-14T08:20:05Z INFO component=api req=r-00168 method=GET path=/api/items status=201 ms=12
+2026-03-14T08:20:12Z INFO component=api req=r-00169 method=GET path=/api/items status=201 ms=12
+2026-03-14T08:20:14Z INFO component=api req=r-00170 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:20:15Z INFO component=api req=r-00171 method=GET path=/api/items status=201 ms=87
+2026-03-14T08:20:24Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:20:27Z WARN component=ledger-sync msg="slow batch" items=500 ms=1982
+2026-03-14T08:20:29Z INFO component=api req=r-00172 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:20:35Z INFO component=api req=r-00173 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:20:42Z ERROR component=auth msg="token expired"
+2026-03-14T08:20:50Z INFO component=api req=r-00174 method=GET path=/api/items status=304 ms=34
+2026-03-14T08:20:53Z INFO component=api req=r-00175 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:20:54Z WARN component=ledger-sync msg="slow batch" items=500 ms=2547
+2026-03-14T08:20:56Z INFO component=api req=r-00176 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:21:05Z WARN component=ledger-sync msg="slow batch" items=500 ms=1768
+2026-03-14T08:21:13Z INFO component=api req=r-00177 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:21:19Z INFO component=api req=r-00178 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:21:24Z INFO component=api req=r-00179 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:21:25Z INFO component=api req=r-00180 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:21:27Z INFO component=api req=r-00181 method=GET path=/api/items status=201 ms=34
+2026-03-14T08:21:35Z INFO component=api req=r-00182 method=GET path=/api/items status=201 ms=12
+2026-03-14T08:21:39Z INFO component=api req=r-00183 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:21:42Z INFO component=api req=r-00184 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:21:44Z INFO component=api req=r-00185 method=GET path=/api/items status=304 ms=34
+2026-03-14T08:21:51Z INFO component=api req=r-00186 method=GET path=/api/items status=204 ms=12
+2026-03-14T08:21:54Z INFO component=api req=r-00187 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:21:55Z INFO component=api req=r-00188 method=GET path=/api/items status=201 ms=12
+2026-03-14T08:22:02Z INFO component=api req=r-00189 method=GET path=/api/items status=304 ms=12
+2026-03-14T08:22:09Z INFO component=worker msg="job done" jobs=5
+2026-03-14T08:22:15Z INFO component=api req=r-00190 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:22:17Z INFO component=api req=r-00191 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:22:19Z INFO component=api req=r-00192 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:22:25Z INFO component=api req=r-00193 method=GET path=/api/items status=304 ms=12
+2026-03-14T08:22:29Z INFO component=api req=r-00194 method=GET path=/api/items status=404 ms=500
+2026-03-14T08:22:33Z INFO component=api req=r-00195 method=GET path=/api/items status=304 ms=12
+2026-03-14T08:22:39Z INFO component=api req=r-00196 method=GET path=/api/items status=304 ms=51
+2026-03-14T08:22:45Z ERROR component=api req=r-00197 method=POST path=/api/orders status=500 ms=763
+2026-03-14T08:22:49Z INFO component=api req=r-00198 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:22:52Z INFO component=api req=r-00199 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:23:00Z INFO component=api req=r-00200 method=GET path=/api/items status=404 ms=12
+2026-03-14T08:23:05Z ERROR component=api req=r-00201 method=POST path=/api/orders status=500 ms=718
+2026-03-14T08:23:09Z INFO component=api req=r-00202 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:23:11Z INFO component=api req=r-00203 method=GET path=/api/items status=404 ms=12
+2026-03-14T08:23:14Z INFO component=api req=r-00204 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:23:17Z INFO component=api req=r-00205 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:23:21Z ERROR component=api req=r-00206 method=POST path=/api/orders status=500 ms=416
+2026-03-14T08:23:27Z INFO component=api req=r-00207 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:23:36Z INFO component=api req=r-00208 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:23:40Z ERROR component=api req=r-00209 method=POST path=/api/orders status=500 ms=341
+2026-03-14T08:23:41Z ERROR component=api req=r-00209 method=POST path=/api/orders status=500 ms=866
+2026-03-14T08:23:43Z INFO component=api req=r-00210 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:23:48Z ERROR component=api req=r-00211 method=POST path=/api/orders status=500 ms=484
+2026-03-14T08:23:49Z INFO component=api req=r-00212 method=GET path=/api/items status=304 ms=87
+2026-03-14T08:23:53Z ERROR component=auth msg="token expired"
+2026-03-14T08:24:00Z INFO component=api req=r-00213 method=GET path=/api/items status=201 ms=51
+2026-03-14T08:24:06Z INFO component=api req=r-00214 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:24:15Z INFO component=api req=r-00215 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:24:22Z INFO component=api req=r-00216 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:24:31Z INFO component=api req=r-00217 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:24:36Z INFO component=api req=r-00218 method=GET path=/api/items status=304 ms=500
+2026-03-14T08:24:38Z INFO component=api req=r-00219 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:24:44Z INFO component=api req=r-00220 method=GET path=/api/items status=404 ms=500
+2026-03-14T08:24:51Z INFO component=api req=r-00221 method=GET path=/api/items status=204 ms=34
+2026-03-14T08:24:52Z INFO component=api req=r-00222 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:25:01Z INFO component=api req=r-00223 method=GET path=/api/items status=204 ms=87
+2026-03-14T08:25:09Z ERROR component=api req=r-00224 method=POST path=/api/orders status=500 ms=628
+2026-03-14T08:25:14Z INFO component=api req=r-00225 method=GET path=/api/items status=304 ms=51
+2026-03-14T08:25:15Z INFO component=api req=r-00226 method=GET path=/api/items status=204 ms=12
+2026-03-14T08:25:19Z INFO component=api req=r-00227 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:25:24Z INFO component=api req=r-00228 method=GET path=/api/items status=304 ms=500
+2026-03-14T08:25:28Z INFO component=api req=r-00229 method=GET path=/api/items status=404 ms=500
+2026-03-14T08:25:37Z INFO component=api req=r-00230 method=GET path=/api/items status=201 ms=87
+2026-03-14T08:25:39Z INFO component=worker msg="job done" jobs=1
+2026-03-14T08:25:48Z ERROR component=api req=r-00231 method=POST path=/api/orders status=500 ms=602
+2026-03-14T08:25:57Z INFO component=api req=r-00232 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:26:03Z INFO component=api req=r-00233 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:26:04Z INFO component=api req=r-00234 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:26:11Z INFO component=api req=r-00235 method=GET path=/api/items status=404 ms=34
+2026-03-14T08:26:16Z INFO component=api req=r-00236 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:26:22Z INFO component=api req=r-00237 method=GET path=/api/items status=304 ms=34
+2026-03-14T08:26:26Z INFO component=worker msg="job done" jobs=6
+2026-03-14T08:26:31Z ERROR component=api req=r-00238 method=POST path=/api/orders status=500 ms=265
+2026-03-14T08:26:32Z ERROR component=api req=r-00238 method=POST path=/api/orders status=500 ms=367
+2026-03-14T08:26:33Z ERROR component=api req=r-00239 method=POST path=/api/orders status=500 ms=391
+2026-03-14T08:26:34Z ERROR component=api req=r-00239 method=POST path=/api/orders status=500 ms=872
+2026-03-14T08:26:37Z INFO component=api req=r-00240 method=GET path=/api/items status=204 ms=51
+2026-03-14T08:26:39Z ERROR component=api req=r-00241 method=POST path=/api/orders status=500 ms=522
+2026-03-14T08:26:40Z ERROR component=api req=r-00241 method=POST path=/api/orders status=500 ms=858
+2026-03-14T08:26:42Z INFO component=api req=r-00242 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:26:51Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:26:55Z INFO component=api req=r-00243 method=GET path=/api/items status=201 ms=34
+2026-03-14T08:26:56Z INFO component=api req=r-00244 method=GET path=/api/items status=204 ms=87
+2026-03-14T08:27:00Z INFO component=api req=r-00245 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:27:06Z WARN component=ledger-sync msg="slow batch" items=500 ms=1038
+2026-03-14T08:27:07Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:27:10Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:27:11Z ERROR component=ledger-sync msg="upstream timeout" attempt=1
+2026-03-14T08:27:17Z INFO component=api req=r-00246 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:27:19Z ERROR component=auth msg="token expired"
+2026-03-14T08:27:26Z INFO component=api req=r-00247 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:27:31Z INFO component=api req=r-00248 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:27:35Z INFO component=api req=r-00249 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:27:36Z INFO component=worker msg="job done" jobs=19
+2026-03-14T08:27:44Z INFO component=api req=r-00250 method=GET path=/api/items status=204 ms=51
+2026-03-14T08:27:49Z ERROR component=auth msg="token expired"
+2026-03-14T08:27:57Z INFO component=api req=r-00251 method=GET path=/api/items status=201 ms=87
+2026-03-14T08:28:06Z INFO component=api req=r-00252 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:28:10Z INFO component=api req=r-00253 method=GET path=/api/items status=204 ms=34
+2026-03-14T08:28:13Z INFO component=api req=r-00254 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:28:22Z INFO component=api req=r-00255 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:28:23Z ERROR component=api req=r-00256 method=POST path=/api/orders status=500 ms=580
+2026-03-14T08:28:24Z ERROR component=api req=r-00257 method=POST path=/api/orders status=500 ms=851
+2026-03-14T08:28:30Z INFO component=api req=r-00258 method=GET path=/api/items status=404 ms=500
+2026-03-14T08:28:36Z WARN component=ledger-sync msg="slow batch" items=500 ms=3866
+2026-03-14T08:28:43Z INFO component=api req=r-00259 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:28:45Z ERROR component=api req=r-00260 method=POST path=/api/orders status=500 ms=813
+2026-03-14T08:28:54Z ERROR component=ledger-sync msg="upstream timeout" attempt=2
+2026-03-14T08:28:58Z INFO component=api req=r-00261 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:28:59Z INFO component=api req=r-00262 method=GET path=/api/items status=404 ms=500
+2026-03-14T08:29:06Z INFO component=api req=r-00263 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:29:11Z INFO component=api req=r-00264 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:29:19Z INFO component=api req=r-00265 method=GET path=/api/items status=204 ms=87
+2026-03-14T08:29:23Z INFO component=api req=r-00266 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:29:29Z INFO component=api req=r-00267 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:29:32Z INFO component=api req=r-00268 method=GET path=/api/items status=204 ms=51
+2026-03-14T08:29:37Z ERROR component=api req=r-00269 method=POST path=/api/orders status=500 ms=426
+2026-03-14T08:29:38Z ERROR component=api req=r-00269 method=POST path=/api/orders status=500 ms=875
+2026-03-14T08:29:47Z ERROR component=ledger-sync msg="upstream timeout" attempt=2
+2026-03-14T08:29:55Z WARN component=ledger-sync msg="slow batch" items=500 ms=3194
+2026-03-14T08:30:02Z WARN component=ledger-sync msg="slow batch" items=500 ms=2974
+2026-03-14T08:30:11Z ERROR component=api req=r-00270 method=POST path=/api/orders status=500 ms=804
+2026-03-14T08:30:12Z ERROR component=api req=r-00270 method=POST path=/api/orders status=500 ms=893
+2026-03-14T08:30:17Z INFO component=api req=r-00271 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:30:22Z ERROR component=api req=r-00272 method=POST path=/api/orders status=500 ms=226
+2026-03-14T08:30:30Z INFO component=api req=r-00273 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:30:37Z INFO component=api req=r-00274 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:30:46Z INFO component=api req=r-00275 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:30:53Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:30:57Z INFO component=api req=r-00276 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:30:58Z INFO component=worker msg="job done" jobs=3
+2026-03-14T08:31:03Z INFO component=api req=r-00277 method=GET path=/api/items status=304 ms=51
+2026-03-14T08:31:06Z ERROR component=api req=r-00278 method=POST path=/api/orders status=500 ms=493
+2026-03-14T08:31:07Z ERROR component=api req=r-00278 method=POST path=/api/orders status=500 ms=297
+2026-03-14T08:31:13Z INFO component=api req=r-00279 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:31:17Z INFO component=api req=r-00280 method=GET path=/api/items status=201 ms=87
+2026-03-14T08:31:25Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:31:32Z INFO component=api req=r-00281 method=GET path=/api/items status=201 ms=500
+2026-03-14T08:31:36Z INFO component=api req=r-00282 method=GET path=/api/items status=304 ms=87
+2026-03-14T08:31:44Z INFO component=api req=r-00283 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:31:53Z INFO component=api req=r-00284 method=GET path=/api/items status=304 ms=500
+2026-03-14T08:32:01Z INFO component=api req=r-00285 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:32:10Z WARN component=ledger-sync msg="slow batch" items=500 ms=2671
+2026-03-14T08:32:19Z ERROR component=ledger-sync msg="upstream timeout" attempt=2
+2026-03-14T08:32:24Z INFO component=api req=r-00286 method=GET path=/api/items status=404 ms=34
+2026-03-14T08:32:31Z INFO component=api req=r-00287 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:32:36Z INFO component=api req=r-00288 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:32:39Z ERROR component=api req=r-00289 method=POST path=/api/orders status=500 ms=495
+2026-03-14T08:32:40Z ERROR component=api req=r-00289 method=POST path=/api/orders status=500 ms=459
+2026-03-14T08:32:47Z WARN component=ledger-sync msg="slow batch" items=500 ms=1829
+2026-03-14T08:32:56Z INFO component=api req=r-00290 method=GET path=/api/items status=204 ms=12
+2026-03-14T08:32:58Z INFO component=api req=r-00291 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:33:01Z INFO component=worker msg="job done" jobs=16
+2026-03-14T08:33:03Z INFO component=api req=r-00292 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:33:05Z INFO component=api req=r-00293 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:33:11Z INFO component=api req=r-00294 method=GET path=/api/items status=404 ms=12
+2026-03-14T08:33:16Z INFO component=api req=r-00295 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:33:18Z WARN component=ledger-sync msg="slow batch" items=500 ms=3255
+2026-03-14T08:33:24Z ERROR component=ledger-sync msg="upstream timeout" attempt=2
+2026-03-14T08:33:25Z ERROR component=api req=r-00296 method=POST path=/api/orders status=500 ms=265
+2026-03-14T08:33:26Z INFO component=api req=r-00297 method=GET path=/api/items status=204 ms=500
+2026-03-14T08:33:31Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:33:38Z INFO component=api req=r-00298 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:33:46Z INFO component=api req=r-00299 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:33:48Z INFO component=api req=r-00300 method=GET path=/api/items status=304 ms=12
+2026-03-14T08:33:51Z INFO component=api req=r-00301 method=GET path=/api/items status=204 ms=34
+2026-03-14T08:33:53Z INFO component=api req=r-00302 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:33:55Z ERROR component=api req=r-00303 method=POST path=/api/orders status=500 ms=569
+2026-03-14T08:34:01Z INFO component=api req=r-00304 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:34:09Z INFO component=worker msg="job done" jobs=11
+2026-03-14T08:34:16Z INFO component=api req=r-00305 method=GET path=/api/items status=304 ms=500
+2026-03-14T08:34:17Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:34:23Z INFO component=api req=r-00306 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:34:27Z INFO component=api req=r-00307 method=GET path=/api/items status=204 ms=87
+2026-03-14T08:34:35Z INFO component=api req=r-00308 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:34:44Z INFO component=api req=r-00309 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:34:45Z INFO component=api req=r-00310 method=GET path=/api/items status=204 ms=51
+2026-03-14T08:34:47Z INFO component=api req=r-00311 method=GET path=/api/items status=204 ms=34
+2026-03-14T08:34:53Z INFO component=api req=r-00312 method=GET path=/api/items status=204 ms=12
+2026-03-14T08:35:01Z INFO component=api req=r-00313 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:35:07Z INFO component=api req=r-00314 method=GET path=/api/items status=404 ms=500
+2026-03-14T08:35:11Z INFO component=api req=r-00315 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:35:12Z INFO component=api req=r-00316 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:35:14Z INFO component=api req=r-00317 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:35:22Z INFO component=api req=r-00318 method=GET path=/api/items status=404 ms=12
+2026-03-14T08:35:29Z INFO component=worker msg="job done" jobs=14
+2026-03-14T08:35:35Z INFO component=api req=r-00319 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:35:38Z INFO component=api req=r-00320 method=GET path=/api/items status=204 ms=500
+2026-03-14T08:35:39Z INFO component=api req=r-00321 method=GET path=/api/items status=201 ms=500
+2026-03-14T08:35:43Z INFO component=api req=r-00322 method=GET path=/api/items status=204 ms=51
+2026-03-14T08:35:48Z INFO component=api req=r-00323 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:35:52Z WARN component=ledger-sync msg="slow batch" items=500 ms=3706
+2026-03-14T08:35:57Z INFO component=api req=r-00324 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:36:02Z INFO component=api req=r-00325 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:36:07Z INFO component=api req=r-00326 method=GET path=/api/items status=201 ms=12
+2026-03-14T08:36:08Z INFO component=api req=r-00327 method=GET path=/api/items status=404 ms=34
+2026-03-14T08:36:11Z INFO component=api req=r-00328 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:36:15Z INFO component=api req=r-00329 method=GET path=/api/items status=201 ms=51
+2026-03-14T08:36:17Z INFO component=api req=r-00330 method=GET path=/api/items status=201 ms=500
+2026-03-14T08:36:18Z INFO component=api req=r-00331 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:36:26Z INFO component=api req=r-00332 method=GET path=/api/items status=201 ms=87
+2026-03-14T08:36:34Z INFO component=api req=r-00333 method=GET path=/api/items status=204 ms=34
+2026-03-14T08:36:41Z INFO component=api req=r-00334 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:36:50Z INFO component=api req=r-00335 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:36:59Z INFO component=api req=r-00336 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:37:06Z INFO component=api req=r-00337 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:37:11Z INFO component=api req=r-00338 method=GET path=/api/items status=201 ms=87
+2026-03-14T08:37:12Z INFO component=api req=r-00339 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:37:13Z INFO component=api req=r-00340 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:37:21Z INFO component=api req=r-00341 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:37:25Z ERROR component=api req=r-00342 method=POST path=/api/orders status=500 ms=567
+2026-03-14T08:37:33Z INFO component=api req=r-00343 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:37:41Z INFO component=api req=r-00344 method=GET path=/api/items status=201 ms=500
+2026-03-14T08:37:44Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:37:52Z WARN component=ledger-sync msg="slow batch" items=500 ms=2223
+2026-03-14T08:37:54Z INFO component=api req=r-00345 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:37:56Z INFO component=api req=r-00346 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:38:04Z INFO component=api req=r-00347 method=GET path=/api/items status=201 ms=51
+2026-03-14T08:38:08Z INFO component=api req=r-00348 method=GET path=/api/items status=304 ms=87
+2026-03-14T08:38:12Z INFO component=api req=r-00349 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:38:21Z INFO component=api req=r-00350 method=GET path=/api/items status=404 ms=51
+2026-03-14T08:38:29Z INFO component=api req=r-00351 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:38:36Z INFO component=api req=r-00352 method=GET path=/api/items status=204 ms=87
+2026-03-14T08:38:39Z INFO component=api req=r-00353 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:38:44Z ERROR component=auth msg="token expired"
+2026-03-14T08:38:51Z INFO component=api req=r-00354 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:38:55Z INFO component=api req=r-00355 method=GET path=/api/items status=204 ms=12
+2026-03-14T08:38:59Z INFO component=api req=r-00356 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:39:07Z INFO component=api req=r-00357 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:39:16Z INFO component=api req=r-00358 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:39:18Z INFO component=api req=r-00359 method=GET path=/api/items status=201 ms=34
+2026-03-14T08:39:24Z INFO component=api req=r-00360 method=GET path=/api/items status=201 ms=51
+2026-03-14T08:39:25Z ERROR component=ledger-sync msg="upstream timeout" attempt=1
+2026-03-14T08:39:26Z INFO component=api req=r-00361 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:39:35Z INFO component=api req=r-00362 method=GET path=/api/items status=201 ms=34
+2026-03-14T08:39:38Z INFO component=api req=r-00363 method=GET path=/api/items status=204 ms=12
+2026-03-14T08:39:39Z INFO component=api req=r-00364 method=GET path=/api/items status=304 ms=12
+2026-03-14T08:39:41Z ERROR component=api req=r-00365 method=POST path=/api/orders status=500 ms=583
+2026-03-14T08:39:49Z WARN component=ledger-sync msg="slow batch" items=500 ms=3439
+2026-03-14T08:39:55Z INFO component=api req=r-00366 method=GET path=/api/items status=204 ms=87
+2026-03-14T08:39:56Z ERROR component=api req=r-00367 method=POST path=/api/orders status=500 ms=236
+2026-03-14T08:39:57Z ERROR component=api req=r-00367 method=POST path=/api/orders status=500 ms=751
+2026-03-14T08:40:02Z INFO component=api req=r-00368 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:40:09Z INFO component=api req=r-00369 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:40:10Z INFO component=api req=r-00370 method=GET path=/api/items status=201 ms=51
+2026-03-14T08:40:15Z ERROR component=auth msg="token expired"
+2026-03-14T08:40:21Z ERROR component=ledger-sync msg="upstream timeout" attempt=1
+2026-03-14T08:40:29Z INFO component=api req=r-00371 method=GET path=/api/items status=404 ms=500
+2026-03-14T08:40:32Z ERROR component=api req=r-00372 method=POST path=/api/orders status=500 ms=869
+2026-03-14T08:40:33Z ERROR component=api req=r-00372 method=POST path=/api/orders status=500 ms=506
+2026-03-14T08:40:40Z INFO component=api req=r-00373 method=GET path=/api/items status=404 ms=51
+2026-03-14T08:40:42Z WARN component=ledger-sync msg="slow batch" items=500 ms=1045
+2026-03-14T08:40:50Z WARN component=ledger-sync msg="slow batch" items=500 ms=2583
+2026-03-14T08:40:58Z INFO component=api req=r-00374 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:41:02Z ERROR component=api req=r-00375 method=POST path=/api/orders status=500 ms=666
+2026-03-14T08:41:04Z INFO component=api req=r-00376 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:41:11Z WARN component=ledger-sync msg="slow batch" items=500 ms=2466
+2026-03-14T08:41:16Z INFO component=api req=r-00377 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:41:23Z ERROR component=auth msg="token expired"
+2026-03-14T08:41:26Z INFO component=api req=r-00378 method=GET path=/api/items status=204 ms=87
+2026-03-14T08:41:27Z ERROR component=ledger-sync msg="upstream timeout" attempt=2
+2026-03-14T08:41:32Z ERROR component=ledger-sync msg="upstream timeout" attempt=1
+2026-03-14T08:41:36Z INFO component=api req=r-00379 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:41:41Z INFO component=api req=r-00380 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:41:43Z ERROR component=api req=r-00381 method=POST path=/api/orders status=500 ms=355
+2026-03-14T08:41:50Z INFO component=api req=r-00382 method=GET path=/api/items status=204 ms=51
+2026-03-14T08:41:59Z INFO component=worker msg="job done" jobs=6
+2026-03-14T08:42:03Z INFO component=worker msg="job done" jobs=18
+2026-03-14T08:42:11Z ERROR component=api req=r-00383 method=POST path=/api/orders status=500 ms=411
+2026-03-14T08:42:12Z ERROR component=api req=r-00383 method=POST path=/api/orders status=500 ms=633
+2026-03-14T08:42:19Z INFO component=api req=r-00384 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:42:24Z INFO component=api req=r-00385 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:42:30Z INFO component=api req=r-00386 method=GET path=/api/items status=304 ms=12
+2026-03-14T08:42:36Z INFO component=api req=r-00387 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:42:44Z INFO component=api req=r-00388 method=GET path=/api/items status=404 ms=12
+2026-03-14T08:42:50Z INFO component=api req=r-00389 method=GET path=/api/items status=304 ms=51
+2026-03-14T08:42:53Z INFO component=api req=r-00390 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:42:58Z INFO component=api req=r-00391 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:43:00Z INFO component=api req=r-00392 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:43:05Z INFO component=api req=r-00393 method=GET path=/api/items status=201 ms=34
+2026-03-14T08:43:10Z INFO component=api req=r-00394 method=GET path=/api/items status=201 ms=12
+2026-03-14T08:43:16Z ERROR component=ledger-sync msg="upstream timeout" attempt=1
+2026-03-14T08:43:25Z INFO component=api req=r-00395 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:43:31Z INFO component=api req=r-00396 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:43:33Z INFO component=api req=r-00397 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:43:37Z ERROR component=ledger-sync msg="upstream timeout" attempt=1
+2026-03-14T08:43:40Z WARN component=ledger-sync msg="slow batch" items=500 ms=2438
+2026-03-14T08:43:43Z ERROR component=api req=r-00398 method=POST path=/api/orders status=500 ms=250
+2026-03-14T08:43:44Z ERROR component=api req=r-00398 method=POST path=/api/orders status=500 ms=657
+2026-03-14T08:43:48Z ERROR component=api req=r-00399 method=POST path=/api/orders status=500 ms=699
+2026-03-14T08:43:49Z ERROR component=api req=r-00399 method=POST path=/api/orders status=500 ms=580
+2026-03-14T08:43:50Z INFO component=api req=r-00400 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:43:57Z INFO component=api req=r-00401 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:44:03Z INFO component=api req=r-00402 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:44:07Z INFO component=api req=r-00403 method=GET path=/api/items status=201 ms=51
+2026-03-14T08:44:10Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:44:17Z INFO component=api req=r-00404 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:44:24Z INFO component=api req=r-00405 method=GET path=/api/items status=304 ms=51
+2026-03-14T08:44:25Z INFO component=api req=r-00406 method=GET path=/api/items status=201 ms=51
+2026-03-14T08:44:29Z INFO component=api req=r-00407 method=GET path=/api/items status=204 ms=34
+2026-03-14T08:44:32Z INFO component=api req=r-00408 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:44:39Z INFO component=api req=r-00409 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:44:41Z INFO component=api req=r-00410 method=GET path=/api/items status=204 ms=12
+2026-03-14T08:44:42Z ERROR component=auth msg="token expired"
+2026-03-14T08:44:47Z INFO component=api req=r-00411 method=GET path=/api/items status=404 ms=500
+2026-03-14T08:44:51Z INFO component=api req=r-00412 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:44:57Z INFO component=api req=r-00413 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:45:04Z INFO component=api req=r-00414 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:45:12Z INFO component=api req=r-00415 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:45:18Z INFO component=api req=r-00416 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:45:24Z INFO component=api req=r-00417 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:45:26Z INFO component=api req=r-00418 method=GET path=/api/items status=204 ms=12
+2026-03-14T08:45:29Z INFO component=api req=r-00419 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:45:36Z INFO component=api req=r-00420 method=GET path=/api/items status=204 ms=12
+2026-03-14T08:45:39Z INFO component=worker msg="job done" jobs=8
+2026-03-14T08:45:47Z INFO component=api req=r-00421 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:45:56Z INFO component=api req=r-00422 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:46:04Z ERROR component=auth msg="token expired"
+2026-03-14T08:46:10Z INFO component=api req=r-00423 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:46:16Z INFO component=api req=r-00424 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:46:19Z INFO component=api req=r-00425 method=GET path=/api/items status=204 ms=87
+2026-03-14T08:46:27Z INFO component=api req=r-00426 method=GET path=/api/items status=404 ms=51
+2026-03-14T08:46:36Z INFO component=api req=r-00427 method=GET path=/api/items status=204 ms=34
+2026-03-14T08:46:38Z INFO component=api req=r-00428 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:46:44Z INFO component=api req=r-00429 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:46:53Z INFO component=api req=r-00430 method=GET path=/api/items status=201 ms=87
+2026-03-14T08:46:55Z ERROR component=auth msg="token expired"
+2026-03-14T08:47:02Z INFO component=api req=r-00431 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:47:06Z INFO component=api req=r-00432 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:47:10Z INFO component=api req=r-00433 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:47:11Z INFO component=api req=r-00434 method=GET path=/api/items status=404 ms=12
+2026-03-14T08:47:15Z INFO component=api req=r-00435 method=GET path=/api/items status=304 ms=34
+2026-03-14T08:47:23Z INFO component=api req=r-00436 method=GET path=/api/items status=204 ms=87
+2026-03-14T08:47:31Z ERROR component=api req=r-00437 method=POST path=/api/orders status=500 ms=413
+2026-03-14T08:47:32Z ERROR component=api req=r-00437 method=POST path=/api/orders status=500 ms=278
+2026-03-14T08:47:36Z INFO component=api req=r-00438 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:47:39Z INFO component=api req=r-00439 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:47:47Z INFO component=api req=r-00440 method=GET path=/api/items status=204 ms=51
+2026-03-14T08:47:56Z INFO component=api req=r-00441 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:48:03Z WARN component=ledger-sync msg="slow batch" items=500 ms=1201
+2026-03-14T08:48:10Z INFO component=api req=r-00442 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:48:12Z INFO component=api req=r-00443 method=GET path=/api/items status=404 ms=500
+2026-03-14T08:48:21Z INFO component=api req=r-00444 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:48:28Z INFO component=api req=r-00445 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:48:36Z INFO component=api req=r-00446 method=GET path=/api/items status=204 ms=87
+2026-03-14T08:48:43Z INFO component=api req=r-00447 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:48:45Z INFO component=worker msg="job done" jobs=27
+2026-03-14T08:48:47Z INFO component=api req=r-00448 method=GET path=/api/items status=201 ms=87
+2026-03-14T08:48:48Z INFO component=api req=r-00449 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:48:50Z INFO component=api req=r-00450 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:48:52Z INFO component=api req=r-00451 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:48:55Z INFO component=api req=r-00452 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:48:57Z ERROR component=ledger-sync msg="upstream timeout" attempt=1
+2026-03-14T08:49:00Z WARN component=ledger-sync msg="slow batch" items=500 ms=2634
+2026-03-14T08:49:04Z INFO component=api req=r-00453 method=GET path=/api/items status=201 ms=51
+2026-03-14T08:49:10Z INFO component=api req=r-00454 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:49:16Z ERROR component=api req=r-00455 method=POST path=/api/orders status=500 ms=647
+2026-03-14T08:49:24Z INFO component=api req=r-00456 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:49:29Z INFO component=api req=r-00457 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:49:35Z INFO component=api req=r-00458 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:49:44Z INFO component=api req=r-00459 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:49:50Z ERROR component=api req=r-00460 method=POST path=/api/orders status=500 ms=829
+2026-03-14T08:49:51Z ERROR component=api req=r-00460 method=POST path=/api/orders status=500 ms=746
+2026-03-14T08:49:52Z INFO component=api req=r-00461 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:49:55Z INFO component=api req=r-00462 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:49:58Z INFO component=api req=r-00463 method=GET path=/api/items status=204 ms=34
+2026-03-14T08:50:04Z INFO component=api req=r-00464 method=GET path=/api/items status=204 ms=87
+2026-03-14T08:50:13Z INFO component=worker msg="job done" jobs=3
+2026-03-14T08:50:14Z INFO component=api req=r-00465 method=GET path=/api/items status=304 ms=12
+2026-03-14T08:50:19Z INFO component=api req=r-00466 method=GET path=/api/items status=304 ms=12
+2026-03-14T08:50:25Z INFO component=api req=r-00467 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:50:33Z INFO component=api req=r-00468 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:50:39Z INFO component=worker msg="job done" jobs=1
+2026-03-14T08:50:42Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:50:48Z INFO component=api req=r-00469 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:50:50Z INFO component=api req=r-00470 method=GET path=/api/items status=404 ms=51
+2026-03-14T08:50:57Z ERROR component=api req=r-00471 method=POST path=/api/orders status=500 ms=551
+2026-03-14T08:51:04Z ERROR component=auth msg="token expired"
+2026-03-14T08:51:06Z INFO component=worker msg="job done" jobs=20
+2026-03-14T08:51:08Z INFO component=api req=r-00472 method=GET path=/api/items status=304 ms=500
+2026-03-14T08:51:10Z ERROR component=api req=r-00473 method=POST path=/api/orders status=500 ms=338
+2026-03-14T08:51:11Z ERROR component=api req=r-00473 method=POST path=/api/orders status=500 ms=336
+2026-03-14T08:51:13Z INFO component=api req=r-00474 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:51:21Z INFO component=api req=r-00475 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:51:30Z INFO component=api req=r-00476 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:51:31Z INFO component=worker msg="job done" jobs=5
+2026-03-14T08:51:40Z INFO component=api req=r-00477 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:51:46Z INFO component=worker msg="job done" jobs=4
+2026-03-14T08:51:55Z ERROR component=api req=r-00478 method=POST path=/api/orders status=500 ms=678
+2026-03-14T08:51:56Z ERROR component=api req=r-00478 method=POST path=/api/orders status=500 ms=613
+2026-03-14T08:51:57Z INFO component=api req=r-00479 method=GET path=/api/items status=201 ms=51
+2026-03-14T08:52:00Z INFO component=api req=r-00480 method=GET path=/api/items status=204 ms=12
+2026-03-14T08:52:02Z INFO component=api req=r-00481 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:52:08Z INFO component=api req=r-00482 method=GET path=/api/items status=201 ms=51
+2026-03-14T08:52:16Z ERROR component=auth msg="token expired"
+2026-03-14T08:52:24Z INFO component=api req=r-00483 method=GET path=/api/items status=204 ms=12
+2026-03-14T08:52:31Z INFO component=api req=r-00484 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:52:40Z INFO component=api req=r-00485 method=GET path=/api/items status=201 ms=500
+2026-03-14T08:52:49Z INFO component=api req=r-00486 method=GET path=/api/items status=201 ms=51
+2026-03-14T08:52:57Z INFO component=api req=r-00487 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:53:02Z INFO component=api req=r-00488 method=GET path=/api/items status=204 ms=12
+2026-03-14T08:53:08Z INFO component=api req=r-00489 method=GET path=/api/items status=404 ms=12
+2026-03-14T08:53:16Z INFO component=api req=r-00490 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:53:21Z ERROR component=auth msg="token expired"
+2026-03-14T08:53:22Z WARN component=ledger-sync msg="slow batch" items=500 ms=2054
+2026-03-14T08:53:30Z INFO component=api req=r-00491 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:53:38Z INFO component=api req=r-00492 method=GET path=/api/items status=204 ms=34
+2026-03-14T08:53:44Z INFO component=api req=r-00493 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:53:49Z INFO component=api req=r-00494 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:53:55Z WARN component=ledger-sync msg="slow batch" items=500 ms=2032
+2026-03-14T08:54:04Z INFO component=api req=r-00495 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:54:06Z INFO component=api req=r-00496 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:54:08Z INFO component=api req=r-00497 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:54:14Z INFO component=api req=r-00498 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:54:22Z INFO component=api req=r-00499 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:54:26Z INFO component=worker msg="job done" jobs=25
+2026-03-14T08:54:34Z INFO component=api req=r-00500 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:54:43Z INFO component=api req=r-00501 method=GET path=/api/items status=404 ms=500
+2026-03-14T08:54:44Z WARN component=ledger-sync msg="slow batch" items=500 ms=2600
+2026-03-14T08:54:52Z INFO component=api req=r-00502 method=GET path=/api/items status=201 ms=500
+2026-03-14T08:54:53Z INFO component=api req=r-00503 method=GET path=/api/items status=204 ms=500
+2026-03-14T08:54:54Z INFO component=api req=r-00504 method=GET path=/api/items status=201 ms=87
+2026-03-14T08:54:59Z INFO component=api req=r-00505 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:55:04Z INFO component=api req=r-00506 method=GET path=/api/items status=404 ms=34
+2026-03-14T08:55:11Z INFO component=api req=r-00507 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:55:19Z INFO component=api req=r-00508 method=GET path=/api/items status=304 ms=12
+2026-03-14T08:55:21Z INFO component=api req=r-00509 method=GET path=/api/items status=201 ms=12
+2026-03-14T08:55:26Z ERROR component=auth msg="token expired"
+2026-03-14T08:55:27Z INFO component=api req=r-00510 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:55:32Z WARN component=ledger-sync msg="slow batch" items=500 ms=958
+2026-03-14T08:55:36Z WARN component=ledger-sync msg="slow batch" items=500 ms=1875
+2026-03-14T08:55:44Z INFO component=worker msg="job done" jobs=3
+2026-03-14T08:55:53Z WARN component=ledger-sync msg="slow batch" items=500 ms=3081
+2026-03-14T08:55:56Z INFO component=api req=r-00511 method=GET path=/api/items status=200 ms=500
+2026-03-14T08:56:05Z WARN component=ledger-sync msg="slow batch" items=500 ms=1924
+2026-03-14T08:56:07Z WARN component=ledger-sync msg="slow batch" items=500 ms=2171
+2026-03-14T08:56:15Z ERROR component=api req=r-00512 method=POST path=/api/orders status=500 ms=273
+2026-03-14T08:56:23Z ERROR component=auth msg="token expired"
+2026-03-14T08:56:30Z INFO component=api req=r-00513 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:56:33Z INFO component=api req=r-00514 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:56:36Z INFO component=api req=r-00515 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:56:40Z INFO component=api req=r-00516 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:56:46Z ERROR component=api req=r-00517 method=POST path=/api/orders status=500 ms=899
+2026-03-14T08:56:47Z ERROR component=api req=r-00517 method=POST path=/api/orders status=500 ms=815
+2026-03-14T08:56:52Z INFO component=api req=r-00518 method=GET path=/api/items status=201 ms=51
+2026-03-14T08:56:53Z ERROR component=auth msg="token expired"
+2026-03-14T08:57:01Z INFO component=api req=r-00519 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:57:07Z INFO component=api req=r-00520 method=GET path=/api/items status=404 ms=34
+2026-03-14T08:57:13Z ERROR component=ledger-sync msg="upstream timeout" attempt=2
+2026-03-14T08:57:20Z INFO component=api req=r-00521 method=GET path=/api/items status=201 ms=87
+2026-03-14T08:57:25Z INFO component=api req=r-00522 method=GET path=/api/items status=201 ms=500
+2026-03-14T08:57:33Z INFO component=api req=r-00523 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:57:36Z INFO component=api req=r-00524 method=GET path=/api/items status=404 ms=87
+2026-03-14T08:57:39Z ERROR component=auth msg="token expired"
+2026-03-14T08:57:40Z INFO component=api req=r-00525 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:57:41Z INFO component=api req=r-00526 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:57:43Z INFO component=api req=r-00527 method=GET path=/api/items status=204 ms=51
+2026-03-14T08:57:47Z INFO component=api req=r-00528 method=GET path=/api/items status=404 ms=34
+2026-03-14T08:57:56Z ERROR component=auth msg="token expired"
+2026-03-14T08:57:59Z INFO component=api req=r-00529 method=GET path=/api/items status=200 ms=12
+2026-03-14T08:58:08Z INFO component=api req=r-00530 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:58:16Z INFO component=api req=r-00531 method=GET path=/api/items status=304 ms=500
+2026-03-14T08:58:24Z INFO component=api req=r-00532 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:58:30Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T08:58:33Z ERROR component=auth msg="token expired"
+2026-03-14T08:58:38Z INFO component=worker msg="job done" jobs=7
+2026-03-14T08:58:40Z INFO component=api req=r-00533 method=GET path=/api/items status=204 ms=51
+2026-03-14T08:58:45Z INFO component=api req=r-00534 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:58:50Z INFO component=api req=r-00535 method=GET path=/api/items status=200 ms=51
+2026-03-14T08:58:58Z INFO component=worker msg="job done" jobs=7
+2026-03-14T08:59:02Z WARN component=ledger-sync msg="slow batch" items=500 ms=2933
+2026-03-14T08:59:06Z INFO component=api req=r-00536 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:59:15Z ERROR component=api req=r-00537 method=POST path=/api/orders status=500 ms=732
+2026-03-14T08:59:16Z ERROR component=auth msg="token expired"
+2026-03-14T08:59:21Z WARN component=ledger-sync msg="slow batch" items=500 ms=2649
+2026-03-14T08:59:26Z WARN component=ledger-sync msg="slow batch" items=500 ms=2284
+2026-03-14T08:59:31Z INFO component=worker msg="job done" jobs=17
+2026-03-14T08:59:39Z INFO component=api req=r-00538 method=GET path=/api/items status=304 ms=12
+2026-03-14T08:59:45Z INFO component=api req=r-00539 method=GET path=/api/items status=204 ms=500
+2026-03-14T08:59:49Z INFO component=api req=r-00540 method=GET path=/api/items status=304 ms=51
+2026-03-14T08:59:50Z INFO component=api req=r-00541 method=GET path=/api/items status=200 ms=87
+2026-03-14T08:59:52Z ERROR component=auth msg="token expired"
+2026-03-14T08:59:54Z INFO component=api req=r-00542 method=GET path=/api/items status=200 ms=34
+2026-03-14T08:59:56Z INFO component=api req=r-00543 method=GET path=/api/items status=200 ms=34
+2026-03-14T09:00:01Z ERROR component=ledger-sync msg="upstream timeout" attempt=2
+2026-03-14T09:00:08Z INFO component=api req=r-00544 method=GET path=/api/items status=304 ms=500
+2026-03-14T09:00:11Z INFO component=api req=r-00545 method=GET path=/api/items status=201 ms=87
+2026-03-14T09:00:20Z ERROR component=auth msg="token expired"
+2026-03-14T09:00:24Z INFO component=api req=r-00546 method=GET path=/api/items status=304 ms=500
+2026-03-14T09:00:29Z ERROR component=api req=r-00547 method=POST path=/api/orders status=500 ms=377
+2026-03-14T09:00:30Z ERROR component=api req=r-00547 method=POST path=/api/orders status=500 ms=428
+2026-03-14T09:00:39Z ERROR component=ledger-sync msg="upstream timeout" attempt=3
+2026-03-14T09:00:45Z INFO component=api req=r-00548 method=GET path=/api/items status=304 ms=51
+2026-03-14T09:00:52Z INFO component=api req=r-00549 method=GET path=/api/items status=200 ms=51
+2026-03-14T09:00:56Z INFO component=api req=r-00550 method=GET path=/api/items status=304 ms=87
+2026-03-14T09:00:58Z INFO component=api req=r-00551 method=GET path=/api/items status=200 ms=51
+2026-03-14T09:01:02Z INFO component=api req=r-00552 method=GET path=/api/items status=404 ms=12
+2026-03-14T09:01:05Z WARN component=ledger-sync msg="slow batch" items=500 ms=3843
+2026-03-14T09:01:09Z INFO component=api req=r-00553 method=GET path=/api/items status=200 ms=500
+2026-03-14T09:01:14Z ERROR component=auth msg="token expired"
+2026-03-14T09:01:17Z WARN component=ledger-sync msg="slow batch" items=500 ms=1200

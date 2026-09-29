@@ -74,6 +74,13 @@ except Exception:
 ' 2>/dev/null
 fi
 
+# One-time evals nudge + consented background auto-run (see evals-nudge.sh)
+if [ -f "$(dirname "$0")/evals-nudge.sh" ]; then
+  source "$(dirname "$0")/evals-nudge.sh"
+  EV=$(evals_session_context 2>/dev/null)
+  [ -n "$EV" ] && printf '%s\n\n' "$EV"
+fi
+
 echo "Grounding: no guessing. Cite file:line or command output for every claim about the code; label anything unchecked UNVERIFIED:. Verify a symbol exists before calling it (fact-checker agent, Context7 for library APIs)."
 
 echo "mogger active: git push/merge-to-protected/deploy/money are hook-blocked. Haiku reads, Sonnet builds, you orchestrate. Don't Read or Grep yourself — use explorer/bulk-reader."

@@ -1,0 +1,26 @@
+# Ledger service settings
+base: &base
+  retry:
+    max_attempts: 3
+    backoff_seconds: 2
+  db:
+    host: localhost
+    user: ledger
+    # password: hunter2-old   (rotated in January, do not use)
+    password: ${DB_PASSWORD}
+
+profiles:
+  staging:
+    <<: *base
+    retry:
+      max_attempts: 4
+      backoff_seconds: 2
+  production:
+    <<: *base
+    retry:
+      max_attempts: 5
+      backoff_seconds: 10
+    db:
+      host: db.internal
+      user: ledger_rw
+      password: ${DB_PASSWORD}

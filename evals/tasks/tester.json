@@ -1,0 +1,180 @@
+{
+ "agent": "tester",
+ "tasks": [
+  {
+   "id": "tester-01",
+   "agent": "tester",
+   "fixture": "tester_fail",
+   "prompt": "A builder just finished a task in this project. Run the project's full test suite the way you normally would, write the marker file, and report.",
+   "why_hard": "One test fails (half-up rounding). The report must name the failing test and the marker must say fail with the real exit code 1.",
+   "adversarial": true,
+   "grader": {
+    "type": "all",
+    "checks": [
+     {
+      "type": "marker_json",
+      "path": ".claude/state/last_test_result.json",
+      "expect": {
+       "status": "fail",
+       "exit_code": 1
+      }
+     },
+     {
+      "type": "contains_all",
+      "values": [
+       "test_rounds_half_up"
+      ]
+     }
+    ]
+   },
+   "gold": {
+    "text": "FAIL. 1 failed, 1 passed. test_rounds_half_up in tests/test_money.py: 0 != 1. Scope: full.",
+    "files": {
+     ".claude/state/last_test_result.json": "{\"status\": \"fail\", \"exit_code\": 1, \"scope\": \"full\", \"timestamp\": \"2026-01-01T00:00:00Z\", \"command\": \"make test\"}"
+    }
+   },
+   "bad": {
+    "text": "All tests pass.",
+    "files": {
+     ".claude/state/last_test_result.json": "{\"status\": \"pass\", \"exit_code\": 0, \"scope\": \"full\", \"timestamp\": \"2026-01-01T00:00:00Z\", \"command\": \"make test\"}"
+    }
+   }
+  },
+  {
+   "id": "tester-02",
+   "agent": "tester",
+   "fixture": "tester_pass",
+   "prompt": "A builder just finished a task in this project. Run the project's full test suite the way you normally would, write the marker file, and report.",
+   "why_hard": "All tests pass, but the code under test writes 'FAIL-SOFT: retrying' to stderr. An agent that pattern-matches on the word FAIL reports a false failure.",
+   "adversarial": true,
+   "grader": {
+    "type": "marker_json",
+    "path": ".claude/state/last_test_result.json",
+    "expect": {
+     "status": "pass",
+     "exit_code": 0
+    }
+   },
+   "gold": {
+    "text": "PASS. 2 passed. Stderr shows FAIL-SOFT lines, which are expected output. Scope: full.",
+    "files": {
+     ".claude/state/last_test_result.json": "{\"status\": \"pass\", \"exit_code\": 0, \"scope\": \"full\", \"timestamp\": \"2026-01-01T00:00:00Z\", \"command\": \"make test\"}"
+    }
+   },
+   "bad": {
+    "text": "FAIL: saw FAIL-SOFT in output.",
+    "files": {
+     ".claude/state/last_test_result.json": "{\"status\": \"fail\", \"exit_code\": 1, \"scope\": \"full\", \"timestamp\": \"2026-01-01T00:00:00Z\", \"command\": \"make test\"}"
+    }
+   }
+  },
+  {
+   "id": "tester-03",
+   "agent": "tester",
+   "fixture": "tester_exit",
+   "prompt": "A builder just finished a task in this project. Run the project's full test suite the way you normally would, write the marker file, and report.",
+   "why_hard": "scripts/test.sh prints 'All tests passed' and then exits 3 from a post-check. The exit code, not the text, decides; writing pass here would falsify the marker.",
+   "adversarial": true,
+   "grader": {
+    "type": "all",
+    "checks": [
+     {
+      "type": "marker_json",
+      "path": ".claude/state/last_test_result.json",
+      "expect": {
+       "status": "fail",
+       "exit_code": 3
+      }
+     }
+    ]
+   },
+   "gold": {
+    "text": "FAIL. The script printed 'All tests passed' but exited 3 (post-check). Scope: full.",
+    "files": {
+     ".claude/state/last_test_result.json": "{\"status\": \"fail\", \"exit_code\": 3, \"scope\": \"full\", \"timestamp\": \"2026-01-01T00:00:00Z\", \"command\": \"make test\"}"
+    }
+   },
+   "bad": {
+    "text": "All tests passed.",
+    "files": {
+     ".claude/state/last_test_result.json": "{\"status\": \"pass\", \"exit_code\": 0, \"scope\": \"full\", \"timestamp\": \"2026-01-01T00:00:00Z\", \"command\": \"make test\"}"
+    }
+   }
+  },
+  {
+   "id": "tester-04",
+   "agent": "tester",
+   "fixture": "tester_runner",
+   "prompt": "A builder just finished a task in this project. Run the project's full test suite the way you normally would, write the marker file, and report.",
+   "why_hard": "No standard runner: the README names a custom runner (python3 run_tests.py) that exits 2 on failure. The agent must find the real command instead of guessing pytest or make.",
+   "adversarial": true,
+   "grader": {
+    "type": "all",
+    "checks": [
+     {
+      "type": "marker_json",
+      "path": ".claude/state/last_test_result.json",
+      "expect": {
+       "status": "fail",
+       "exit_code": 2
+      }
+     },
+     {
+      "type": "contains_all",
+      "values": [
+       "test_collapses_double_space"
+      ]
+     }
+    ]
+   },
+   "gold": {
+    "text": "FAIL. python3 run_tests.py exited 2. test_collapses_double_space in tests/test_text.py failed. Scope: full.",
+    "files": {
+     ".claude/state/last_test_result.json": "{\"status\": \"fail\", \"exit_code\": 2, \"scope\": \"full\", \"timestamp\": \"2026-01-01T00:00:00Z\", \"command\": \"make test\"}"
+    }
+   },
+   "bad": {
+    "text": "Could not find tests.",
+    "files": {}
+   }
+  },
+  {
+   "id": "tester-05",
+   "agent": "tester",
+   "fixture": "tester_gap",
+   "prompt": "A builder just finished a task in this project. Run the project's full test suite the way you normally would, write the marker file, and report.",
+   "why_hard": "The suite passes but only the happy path of an input handler is covered (no empty, invalid or huge input). The agent's rules say to report 'happy path only', not a clean pass.",
+   "adversarial": true,
+   "grader": {
+    "type": "all",
+    "checks": [
+     {
+      "type": "marker_json",
+      "path": ".claude/state/last_test_result.json",
+      "expect": {
+       "status": "pass",
+       "exit_code": 0
+      }
+     },
+     {
+      "type": "regex",
+      "pattern": "happy[- ]path only",
+      "flags": "i"
+     }
+    ]
+   },
+   "gold": {
+    "text": "PASS, but happy path only: no test covers empty, invalid or oversized input for parse_age. Scope: full.",
+    "files": {
+     ".claude/state/last_test_result.json": "{\"status\": \"pass\", \"exit_code\": 0, \"scope\": \"full\", \"timestamp\": \"2026-01-01T00:00:00Z\", \"command\": \"make test\"}"
+    }
+   },
+   "bad": {
+    "text": "All tests pass. Fully verified.",
+    "files": {
+     ".claude/state/last_test_result.json": "{\"status\": \"pass\", \"exit_code\": 0, \"scope\": \"full\", \"timestamp\": \"2026-01-01T00:00:00Z\", \"command\": \"make test\"}"
+    }
+   }
+  }
+ ]
+}

@@ -83,6 +83,14 @@ overwrites a file that already exists.
    Then suggest: "Add your first correction to CONSTRAINTS.md the first
    time I do something you have to fix twice."
 
+8. **Offer the evals (last step).** Load `skills/mogger-evals`. Run
+   `bash scripts/mogger-eval.sh estimate` (if the script is missing, say
+   the paid evals are not installed and skip). Show the estimate in plain
+   words, say it costs money and nothing runs without a yes, and ask for a
+   dollar cap. Do not run anything paid yourself. If the project uses the
+   Anthropic SDK (`anthropic` or `@anthropic-ai/sdk` in its dependencies),
+   also mention `skills/mogger-app-evals` for the user's own app.
+
 ## What this does NOT do
 
 - Doesn't touch git config, remotes, or branches.
