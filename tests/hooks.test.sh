@@ -140,6 +140,21 @@ echo '{"status":"pass","exit_code":0}' > .claude/state/last_test_result.json
 sleep 1; touch -d '2000-01-01' small.txt big.txt 2>/dev/null || true
 expect 0 require-tests-pass.sh "$(task_json reviewer)"                          "allows reviewer when scope field absent (back-compat)"
 
+echo "== agent frontmatter sanity (effort field)"
+VALID_EFFORTS="low medium high xhigh max"
+FAIL_LOCAL=0
+for f in "$ROOT/agents/tester.md" "$ROOT/agents/bulk-reader.md" "$ROOT/agents/explorer.md" "$ROOT/agents/code-writer.md"; do
+  E=$(grep -m1 '^effort:' "$f" | sed 's/effort:[[:space:]]*//')
+  if [ -z "$E" ]; then
+    echo "  FAIL $f                  missing effort: field"; FAIL_LOCAL=1
+  elif ! echo "$VALID_EFFORTS" | grep -qw "$E"; then
+    echo "  FAIL $f                  effort: '$E' is not a documented value ($VALID_EFFORTS)"; FAIL_LOCAL=1
+  else
+    echo "  ok   $(basename "$f")                 effort: $E"
+  fi
+done
+if [ "$FAIL_LOCAL" -eq 0 ]; then PASS=$((PASS+4)); else FAIL=$((FAIL+1)); fi
+
 echo "== composition: gates fire regardless of which framework's agent calls the tool"
 # The premise of the Superpowers preset: mogger's hooks key off the TOOL CALL,
 # not off which skill/agent triggered it. These assert that directly.

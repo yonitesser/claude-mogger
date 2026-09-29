@@ -132,16 +132,61 @@ assignment is deliberate and it's the biggest single lever on cost:
 
 | Job | Model | Agent | Why |
 |---|---|---|---|
-| Read a big file, answer one question from it | **haiku** | `bulk-reader` | Reading is I/O, not reasoning |
-| Find where code lives, trace a call path | **haiku** | `explorer` | Grep + paths, no judgment needed |
-| Run the test suite, record the exit code | **haiku** | `tester` | It runs a command and writes a JSON file |
-| Write boilerplate from an existing pattern | **haiku** | `code-writer` | Copying a shape, not designing one |
+| Read a big file, answer one question from it | **haiku** (`effort: low`) | `bulk-reader` | Reading is I/O, not reasoning |
+| Find where code lives, trace a call path | **haiku** (`effort: low`) | `explorer` | Grep + paths, no judgment needed |
+| Run the test suite, record the exit code | **haiku** (`effort: low`) | `tester` | It runs a command and writes a JSON file |
+| Write boilerplate from an existing pattern | **haiku** (`effort: low`) | `code-writer` | Copying a shape, not designing one |
 | Implement a scoped task | **sonnet** | `builder` | Needs to understand code, not just move it |
 | Break a feature into tasks | **sonnet** | `planner` | Judgment about scope and order |
 | Decide library vs hand-rolled | **sonnet** | `library-scout` | Weighing tradeoffs, reading docs, saying no |
 | Review a diff for bugs and security | **sonnet** | `reviewer` | Judgment, but bounded — the diff is the input |
 | Mine history for repeated mistakes | **sonnet** | `retro` | Pattern-finding across text |
 | Orchestrate, make architecture calls | **opus** (or sonnet) | the Lead — you | The only place frontier reasoning earns its price |
+
+### `effort:` — a second dial, independent of `model:`
+
+Claude Code subagent frontmatter supports an `effort` field
+(`low|medium|high|xhigh|max`) that controls reasoning depth, separately
+from which model runs. The four Haiku agents above now set `effort: low`
+— none of them do anything that benefits from more thinking; they read a
+file, grep, run a command, or copy a pattern.
+
+**Verify it's actually taking effect.** One real-world report claims
+`effort:` in frontmatter can be a no-op specifically on Task-tool spawns
+— which is exactly how this kit dispatches every subagent. Anthropic's
+own docs list it as a working, honored field, so this may be
+environment- or version-specific, but check rather than assume: after a
+`bulk-reader` or `tester` call, glance at that call's token count in your
+session's cost breakdown. If it looks the same as before this field
+existed, `effort` isn't landing on your setup and you're not losing
+anything by leaving it in — it just isn't helping yet either.
+
+Don't add `effort:` to the Sonnet-tier agents without a specific reason.
+`builder`, `reviewer`, and `library-scout` are doing judgment work;
+capping their reasoning to save a fraction of a cent is the wrong trade.
+
+### Model aliases move underneath you
+
+`model: sonnet` and `model: haiku` are aliases, not pinned versions —
+Claude Code resolves them to whatever the current model is. When Sonnet
+5.5 shipped, every Sonnet-tier agent in this kit (`builder`, `planner`,
+`reviewer`, `retro`, `library-scout`) started running on it automatically,
+at Sonnet 5's unchanged per-token price, with no file edit required. This
+cuts both ways — a future alias change could shift behavior you didn't
+ask for. If an agent's output quality changes noticeably after a model
+release, that's the likely cause; check which model it actually ran on
+before assuming the prompt broke.
+
+### Does the Lead still need Opus?
+
+Worth revisiting per project, not assuming. Sonnet 5.5 lands within a few
+points of Opus 5.5 on many coding and knowledge-work benchmarks at roughly
+half the price, and Anthropic's own guidance is direct about where the
+line still is: Opus for "the hardest long-horizon work," Sonnet for
+well-scoped everyday tasks. If your projects are mostly well-scoped
+feature work, running the Lead itself on Sonnet may now be enough — try
+it on one project before assuming you need Opus everywhere. Reserve Opus
+for genuinely ambiguous, open-ended, high-judgment orchestration.
 
 **The rule for you, the Lead:** if you're running on Opus, you do not
 Read files, Grep the codebase, or run tests yourself. Not for a quick

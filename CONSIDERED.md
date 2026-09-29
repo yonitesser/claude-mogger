@@ -149,3 +149,43 @@ rather than assumed:
 - **Untested and said so:** the ergonomics of the combination over a long
   project. Whether `GATE_ALL_TASKS` over-blocks in practice is unknown —
   which is why it's opt-in, not default.
+
+## Batch 5 — Claude Sonnet 5.5 launch, and a stale pricing snapshot (2026-09-28)
+
+Prompted by a user-shared link to claude.dev's Sonnet 5.5 build guide.
+Verified against Anthropic's own launch page plus six independent outlets
+(TechCrunch, The Decoder, Thurrott, AndroidHeadlines, AndroidAuthority,
+Kingy AI) — all consistent on the numbers that matter here.
+
+- **Pricing was wrong and is now fixed.** `pricing.json` had Sonnet at
+  $3/$15 and Opus at $5/$25. Every launch-day source agrees current
+  published rates are Sonnet $2/$10 (Sonnet 5.5 kept Sonnet 5's price) and
+  Opus $4/$20. This directly affects `savings-report.py`'s accuracy —
+  fixed rather than left stale.
+- **Added `effort: low` to the four Haiku agents.** Verified against
+  Anthropic's own subagent docs (code.claude.com/docs/en/sub-agents),
+  which list `effort` as a supported frontmatter field
+  (`low|medium|high|xhigh|max`, overrides session effort). Verdict: IN,
+  with a stated caveat — one independent report claims frontmatter
+  `effort` can be a no-op specifically on Task-tool spawns, which is
+  exactly this kit's dispatch path. Official docs say it works; one real
+  report says it sometimes doesn't. Shipped with a verification note in
+  `mogger-loop` telling the user to check their own cost breakdown rather
+  than trust the field blindly — consistent with this project's own bar
+  for what gets shipped without hedging.
+- **Documented, not built: model alias auto-resolution.** `model: sonnet`
+  now resolves to Sonnet 5.5 automatically — no kit change, immediate
+  benefit. Worth writing down so nobody mistakes a model release for a
+  broken prompt.
+- **Raised, not decided: does the Lead still need Opus?** Sonnet 5.5
+  lands within a few points of Opus 5.5 on Anthropic's own benchmarks at
+  roughly half price. Added guidance to try Sonnet as the Lead on one
+  project rather than defaulting to Opus everywhere — framed as a thing
+  to test per project, not a kit-wide default change, since nobody has
+  measured it on a real mogger project yet.
+- **Test suite bug caught while adding the frontmatter check:** the new
+  assertion referenced agent files by a path relative to the test's own
+  throwaway sandbox directory, not the repo root — it would have silently
+  reported "missing" on every file regardless of what was actually in
+  them. Caught immediately because the harness prints `FAIL` per case
+  instead of trusting a summary count. Fixed with `$ROOT`-anchored paths.

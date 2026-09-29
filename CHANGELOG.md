@@ -110,3 +110,20 @@ First plugin release.
 
 **Fixed**
 - Closed a real gap found while building the preset: name-based review gating silently matched nothing under an external framework, meaning the test gate looked installed and enforced nothing. That's the worst failure mode a safety gate can have.
+
+## 1.4.1 — 2026-09-09
+
+**Fixed**
+- `plugin.json`: replaced `YOUR-GITHUB-USERNAME` placeholders in `author.url`, `homepage`, and `repository` with the real repo. These would have failed review (or shipped a broken link) on submission.
+- README: corrected the marketplace-submission section. The **official** marketplace (`claude-plugins-official`) is curated by Anthropic at their discretion and has **no application process** — the submission form does not add plugins to it. Third-party submissions go to the **community** marketplace (`anthropics/claude-plugins-community`) via the claude.ai or Console forms. The previous text conflated the two and pointed at a URL that isn't the documented form.
+
+## 1.5.0 — 2026-09-28
+
+**Added**
+- `effort: low` to `tester`, `bulk-reader`, `explorer`, `code-writer` — a documented, independent-of-model subagent frontmatter field controlling reasoning depth. Shipped with an explicit verification caveat (check your own session's cost breakdown) since one independent report claims it can be a no-op on Task-tool spawns specifically.
+- `mogger-loop`: new sections on the `effort:` field, model-alias auto-resolution (Sonnet 5.5 now runs under every `model: sonnet` agent automatically), and whether the Lead itself still needs Opus given Sonnet 5.5's benchmark parity at roughly half price.
+- 4 new test assertions validating `effort:` values against the documented enum, catching exactly the kind of silent-typo failure mode described in independent reporting on this field.
+
+**Fixed**
+- `templates/pricing.json`: Sonnet corrected from $3/$15 to $2/$10, Opus from $5/$25 to $4/$20 — both stale relative to Sonnet 5.5's Sept 28 2026 launch pricing, confirmed against Anthropic's own page plus six independent outlets. Directly affects `savings-report.py` accuracy.
+- Test suite: the new frontmatter check initially referenced agent files by a path relative to the test harness's own sandbox directory rather than the repo root — would have reported every file as missing regardless of content. Fixed with `$ROOT`-anchored paths before it shipped.
