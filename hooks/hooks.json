@@ -12,6 +12,15 @@
     ],
     "PreToolUse": [
       {
+        "matcher": "Bash|Edit|Write|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/cost-cap.sh"
+          }
+        ]
+      },
+      {
         "matcher": "Bash",
         "hooks": [
           {
@@ -21,6 +30,14 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/check-bash-read.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/secret-guard-bash.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/verify-packages.sh"
           }
         ]
       },
@@ -38,11 +55,23 @@
         "hooks": [
           {
             "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/checkpoint.sh"
+          },
+          {
+            "type": "command",
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/scope-guard.sh"
           },
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/protect-pipeline-files.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/secret-guard.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/protect-decisions.sh"
           }
         ]
       },
@@ -52,6 +81,10 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/require-tests-pass.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/require-smoke-pass.sh"
           }
         ]
       }
@@ -63,6 +96,14 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/auto-format.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/check-references.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/update-status.sh"
           }
         ]
       }
@@ -73,6 +114,10 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/stop-done-means-done.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/update-status.sh"
           }
         ]
       }

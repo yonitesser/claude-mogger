@@ -12,6 +12,15 @@
     ],
     "PreToolUse": [
       {
+        "matcher": "Bash|Edit|Write|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/cost-cap.sh"
+          }
+        ]
+      },
+      {
         "matcher": "Bash",
         "hooks": [
           {
@@ -21,6 +30,14 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/check-bash-read.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/secret-guard-bash.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/verify-packages.sh"
           }
         ]
       },
@@ -38,11 +55,23 @@
         "hooks": [
           {
             "type": "command",
+            "command": "bash .claude/hooks/checkpoint.sh"
+          },
+          {
+            "type": "command",
             "command": "bash .claude/hooks/scope-guard.sh"
           },
           {
             "type": "command",
             "command": "bash .claude/hooks/protect-pipeline-files.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/secret-guard.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/protect-decisions.sh"
           }
         ]
       },
@@ -52,6 +81,10 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/require-tests-pass.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/require-smoke-pass.sh"
           }
         ]
       }
@@ -63,6 +96,14 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/auto-format.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/check-references.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/update-status.sh"
           }
         ]
       }
@@ -73,6 +114,10 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/stop-done-means-done.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/update-status.sh"
           }
         ]
       }

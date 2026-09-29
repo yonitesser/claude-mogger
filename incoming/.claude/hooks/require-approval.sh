@@ -6,16 +6,55 @@
 #
 # Tightened after review: reading a file NAMED payment_service.py is not
 # spending money. Only actual billing/payment CLIs are blocked.
+#
+# Opt-out for repos whose own workflow owns releases:
+#   MOGGER_ALLOW_PUSH=on  — allows plain pushes of feature branches.
+#   Force pushes and pushes to a protected branch stay blocked regardless.
+#   Set it per-repo in .claude/settings.local.json: {"env": {"MOGGER_ALLOW_PUSH": "on"}}
 source "$(dirname "$0")/lib.sh"
 
 INPUT=$(cat)
 CMD=$(json_get "$INPUT" '.tool_input.command')
 [ -z "$CMD" ] && exit 0
 
-# --- git push: always needs a human ---
+# --- git push ---
 if echo "$CMD" | grep -qE '(^|[;&|]\s*|\s)git\s+push(\s|$)'; then
-  echo "BLOCKED: git push requires human approval. Say the branch is ready and stop. Do not retry with --force or another remote." >&2
-  exit 2
+  if [ "${MOGGER_ALLOW_PUSH:-off}" != "on" ]; then
+    echo "BLOCKED: git push requires human approval. Say the branch is ready and stop. Do not retry with --force or another remote." >&2
+    exit 2
+  fi
+
+  # Opted in: still never force, never push a protected branch.
+  PUSH_ARGS=$(echo "$CMD" | sed -E 's/.*git[[:space:]]+push//; s/[;&|].*//')
+  REMOTE_SEEN=0
+  REFSPECS=0
+  for tok in $PUSH_ARGS; do
+    case "$tok" in
+      --force|--force-with-lease|--force-with-lease=*|--force-if-includes|-f|--mirror|--delete|-d|--all)
+        echo "BLOCKED: '$tok' is never allowed, even with MOGGER_ALLOW_PUSH=on. Push a normal feature branch instead." >&2
+        exit 2 ;;
+      -*) continue ;;
+    esac
+    if [ "$REMOTE_SEEN" -eq 0 ]; then REMOTE_SEEN=1; continue; fi
+    REFSPECS=$((REFSPECS + 1))
+    case "$tok" in
+      +*) echo "BLOCKED: '+' refspec is a force push. Not allowed, even with MOGGER_ALLOW_PUSH=on." >&2; exit 2 ;;
+    esac
+    DEST="${tok##*:}"
+    DEST="${DEST#refs/heads/}"
+    if [ "$DEST" = "HEAD" ]; then DEST=$(git_branch); fi
+    if is_protected_branch "$DEST"; then
+      echo "BLOCKED: pushing to protected branch '$DEST' requires human approval. Open a PR instead." >&2
+      exit 2
+    fi
+  done
+  if [ "$REFSPECS" -eq 0 ]; then
+    BR=$(git_branch)
+    if [ -z "$BR" ] || is_protected_branch "$BR"; then
+      echo "BLOCKED: bare 'git push' while on '${BR:-unknown}' requires human approval. Switch to a feature branch." >&2
+      exit 2
+    fi
+  fi
 fi
 
 # --- git merge: only when on a protected branch (merging main INTO a feature branch is fine) ---

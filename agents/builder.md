@@ -41,3 +41,14 @@ and stop.
 If the task is unclear or you hit a decision that changes the plan (e.g. the
 approach in TASKS.md won't work), stop and report it — don't improvise past
 what was scoped.
+
+## Grounding
+
+Load the `mogger-grounding` skill. Before you call or import any symbol
+(function, method, flag, config key, endpoint, env var, library API),
+verify it exists: grep/read it in the codebase, or fetch docs via Context7
+for library APIs. Do not write it from memory. Anything you could not
+verify: label `UNVERIFIED:` and append it to `## Assumptions` in TASKS.md
+(with what would verify it) instead of building on it silently. Your final
+report lists what you verified (with file:line) separately from what you
+assumed.

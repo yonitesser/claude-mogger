@@ -9,9 +9,9 @@ mkdir -p incoming/.claude/agents incoming/.claude/hooks
 cp agents/*.md incoming/.claude/agents/
 cp hooks/scripts/*.sh incoming/.claude/hooks/
 chmod +x incoming/.claude/hooks/*.sh
-cp templates/CONSTRAINTS.md templates/RUNS.md templates/STACK.md templates/pricing.json incoming/
-cp scripts/savings-report.py scripts/savings-report.sh incoming/
-chmod +x incoming/savings-report.sh incoming/savings-report.py
+cp templates/CONSTRAINTS.md templates/RUNS.md templates/STACK.md templates/DECISIONS.md templates/SPEC.md templates/pricing.json incoming/
+cp scripts/savings-report.py scripts/savings-report.sh scripts/mogger-rewind.sh scripts/smoke-check.sh scripts/smoke-browser.mjs scripts/ship-check.sh scripts/cost-report.sh incoming/
+chmod +x incoming/*.sh incoming/savings-report.py
 # settings.json = hooks.json with plugin paths rewritten to project-relative paths
 sed 's|bash \\"${CLAUDE_PLUGIN_ROOT}\\"/hooks/scripts/|bash .claude/hooks/|g' hooks/hooks.json > incoming/.claude/settings.json
 # CLAUDE.md.snippet = the two skills' bodies (minus frontmatter), for people who'd rather have it in CLAUDE.md
@@ -24,7 +24,7 @@ sed 's|bash \\"${CLAUDE_PLUGIN_ROOT}\\"/hooks/scripts/|bash .claude/hooks/|g' ho
   echo "injects it automatically when installed as a plugin; in manual installs,"
   echo "read it yourself). Every line is a hard rule."
   echo
-  for s in skills/mogger-loop/SKILL.md skills/mogger-standards/SKILL.md; do
+  for s in skills/mogger-loop/SKILL.md skills/mogger-standards/SKILL.md skills/mogger-grounding/SKILL.md; do
     awk 'BEGIN{fm=0} /^---$/{fm++; next} fm>=2' "$s"
     echo
   done

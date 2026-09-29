@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.6.0 — 2026-09-29
+
+**Added — companion suite** (6 new test suites, 394 new assertions)
+- Checkpoint + undo: `checkpoint.sh`, `scripts/mogger-rewind.sh`, skill `mogger-rewind`.
+- `secret-guard.sh`, `secret-guard-bash.sh` — block secrets, `.env` writes/staging.
+- `verify-packages.sh` — blocks installs of packages that do not exist on the real registry.
+- Grounding: `check-references.sh`, agent `fact-checker`, skill `mogger-grounding`; reviewer/builder require evidence.
+- `scripts/smoke-check.sh`, `verifier` agent, `require-smoke-pass.sh` (opt-in), `scripts/ship-check.sh`.
+- `explainer` agent, `update-status.sh` (STATUS.md), `cost-cap.sh` + `scripts/cost-report.sh` (opt-in budget).
+- Skills `mogger-idea` (SPEC.md), `mogger-decisions` (DECISIONS.md, `protect-decisions.sh`).
+- `session-start.sh` now injects active decisions, budget warning, and the grounding rule.
+- CI runs every `tests/*.test.sh`.
+
 ## 1.0.1 — 2026-09-09
 
 **Fixed**

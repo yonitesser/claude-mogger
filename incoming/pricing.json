@@ -1,9 +1,10 @@
 {
   "_disclaimer": "Approximate. Anthropic's published per-token rates change over time and sources sometimes disagree on the current number for a given model. Verify at https://claude.com/pricing before trusting this for real budgeting decisions. This file exists so the number is one edit away from correct, not buried in a script.",
-  "as_of": "2026-09-09",
+  "as_of": "2026-09-28",
+  "_note": "Updated for the Claude Sonnet 5.5 launch (2026-09-28). Sonnet 5.5 kept Sonnet 5's per-token price, so this row covers both. Opus figure updated to Opus 5.5's published rate. Haiku unchanged (Haiku 5.5 not yet released as of this date).",
   "models": {
     "haiku":  { "input_per_mtok": 1.00, "output_per_mtok": 5.00  },
-    "sonnet": { "input_per_mtok": 3.00, "output_per_mtok": 15.00 },
-    "opus":   { "input_per_mtok": 5.00, "output_per_mtok": 25.00 }
+    "sonnet": { "input_per_mtok": 2.00, "output_per_mtok": 10.00 },
+    "opus":   { "input_per_mtok": 4.00, "output_per_mtok": 20.00 }
   }
 }

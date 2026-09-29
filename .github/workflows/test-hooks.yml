@@ -8,7 +8,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - run: bash tests/hooks.test.sh
+      - run: |
+          for t in tests/*.test.sh; do echo "== $t"; bash "$t" || exit 1; done
       - name: manifests are valid JSON
         run: |
           python3 -c "import json;[json.load(open(f)) for f in ['.claude-plugin/plugin.json','.claude-plugin/marketplace.json','hooks/hooks.json','.mcp.json','incoming/.claude/settings.json']]"
