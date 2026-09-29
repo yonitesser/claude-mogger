@@ -29,3 +29,14 @@ reviewer should look at first.
 
 You do not have merge access and should not attempt any git action beyond
 `git diff` / `git log` (read-only).
+
+## Grounding
+
+Load the `mogger-grounding` skill. Before giving a verdict, every factual
+claim in the builder's report and the diff's comments (X exists, Y is
+called from Z, this API returns W) must be checked: run the `fact-checker`
+agent on them, or verify each yourself with file:line evidence. Also clear
+every open item under `## Assumptions` in TASKS.md. Give
+`VERDICT: NOT READY` for any unverified claim that is not explicitly
+labelled `UNVERIFIED:`, any REFUTED claim, and any open assumption you
+could not clear.
