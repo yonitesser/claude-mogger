@@ -126,10 +126,11 @@ FILENAME==OLDF { s=norm($0); if (!noise(s)) { on++; ol[on]=s } next }
 END {
   for (i=1;i<=cn-N+1;i++) { k=key(cl,i); cnt[k]++; if (cnt[k]==1) p1[k]=cln[i]; else if (cnt[k]==2) p2[k]=cln[i] }
   for (i=1;i<=on-N+1;i++) { k=key(ol,i); oc[k]++ }
+  for (i=1;i<=nn-N+1;i++) { k=key(nl,i); nc[k]++ }
   run=0
   for (i=1;i<=nn-N+1;i++) {
     k=key(nl,i)
-    if ((k in cnt) && cnt[k]>=2 && cnt[k]>oc[k] && subst(nl,i)) {
+    if ((k in cnt) && cnt[k]>=2 && nc[k]>oc[k] && subst(nl,i)) {
       if (run==0) { a=p1[k]; b=p2[k] }
       run++
     } else if (run>0) break

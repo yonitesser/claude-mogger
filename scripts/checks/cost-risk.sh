@@ -60,8 +60,8 @@ cat > "$TMP/cost.awk" <<'EOF'
 function isc(s) { return (s ~ /^[[:space:]]*(\/\/|#|\*|\/\*)/) }
 function ind(s,  i, c, w) { w=0; for (i=1;i<=length(s);i++) { c=substr(s,i,1); if (c==" ") w++; else if (c=="\t") w+=4; else break } return w }
 function ispaidcall(s) {
-  if (s ~ /chat[.]completions[.]create|responses[.]create|embeddings[.]create|images[.]generate|ChatCompletion[.]create|generateContent|generate_content|embedContent|paymentIntents[.](create|update)|checkout[.]sessions[.]create|customers[.]create|subscriptions[.]create|invoices[.]create|refunds[.]create|payouts[.]create|SendEmailCommand|SendRawEmailCommand|PublishCommand|sns[.]publish|ses[.]send_email|ses[.]sendEmail|sgMail[.]send|mg[.]messages[.]create|resend[.]emails[.]send|calls[.]create/) return 1
-  if (provider && s ~ /messages[.](create|stream)[(]|emails[.]send[(]|mail[.]send[(]|[.]send_message[(]|sns_client[.]publish|publish[(]/) return 1
+  if (s ~ /chat[.]completions[.]create|responses[.]create|embeddings[.]create|images[.]generate|ChatCompletion[.]create|generateContent|generate_content|embedContent|paymentIntents[.](create|update)|checkout[.]sessions[.]create|stripe[.](customers|subscriptions|invoices|refunds|payouts|charges)[.]create|SendEmailCommand|SendRawEmailCommand|PublishCommand|sns[.]publish|ses[.]send_email|ses[.]sendEmail|sgMail[.]send|mg[.]messages[.]create|resend[.]emails[.]send|client[.]calls[.]create/) return 1
+  if (provider && s ~ /messages[.](create|stream)[(]|emails[.]send[(]|mail[.]send[(]|sns_client[.]publish/) return 1
   return 0
 }
 function isllm(s) {
@@ -94,7 +94,7 @@ function flushfile(  k, fn) {
   if (!tokset) for (k=1;k<=nllm;k++) printf "WARN|cost-max-tokens|%s:%d: LLM call in a file that never sets max_tokens / max_output_tokens: output length (and cost) is unbounded (heuristic)\n", cf, llmln[k]
   delete fnpaid; delete fnself; nllm=0; delete llmln
 }
-FNR==1 { if (NR>1) flushfile(); cf=FILENAME; ext=cf; sub(/.*[.]/,"",ext); d=0; provider=0; twilio=0; tokset=0; curfn=""; nllm=0; lastretry=-100 }
+FNR==1 { if (NR>1) flushfile(); cf=FILENAME; ext=cf; sub(/.*[.]/,"",ext); d=0; provider=0; twilio=0; tokset=0; curfn=""; nllm=0 }
 {
   line=$0
   if (line ~ /^[[:space:]]*$/) next
@@ -126,9 +126,6 @@ FNR==1 { if (NR>1) flushfile(); cf=FILENAME; ext=cf; sub(/.*[.]/,"",ext); d=0; p
     linf[d]=isinfloop(line); lwhile[d]=(line ~ /(^|[^[:alnum:]_$.])while/)
     if (ext!="py" && ext!="go" && line ~ /[.](forEach|map|flatMap)[(]/ && paid) { lrep[d]=1; lcall[d]=FNR; printf "WARN|cost-loop|%s:%d: paid API call inside a map/forEach callback: one billed request per item (heuristic)\n", cf, FNR }
   }
-  # retry decorators / libs without a stop
-  if (line ~ /@retry|tenacity|[^[:alnum:]]retry[(]|axios-retry|pRetry|async-retry|backoff[.]on_exception|@backoff|retryWithBackoff/ && !(line ~ /^[[:space:]]*(import|from|const .*require)/) ) lastretry=FNR
-  if (lastretry>0 && FNR-lastretry<=6) { }
 }
 END { flushfile() }
 EOF
