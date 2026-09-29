@@ -36,7 +36,7 @@ t "smoke.json status 200" has .claude/state/smoke.json '"status":"200"'
 t "smoke.json has ts and cmd" has .claude/state/smoke.json '"ts":"20'
 t "smoke.json has errors[] empty" has .claude/state/smoke.json '"errors":\[\]'
 t "listener killed after exit" port_closed "$P"
-t "no orphan http.server process" bash -c "! pgrep -f 'http.server $P' >/dev/null"
+t "no orphan http.server process" bash -c "! pgrep -f '[h]ttp.server $P' >/dev/null"
 
 echo "== smoke-check.sh: port parsed from output"
 newproj; P=$(free_port)
@@ -51,7 +51,7 @@ MOGGER_RUN_CMD="sleep 7000$$" MOGGER_SMOKE_URL="http://127.0.0.1:$P" MOGGER_SMOK
 t "exit 1 on timeout" eq "$RC" 1
 t "smoke.json ok:false" has .claude/state/smoke.json '"ok":false'
 t "timeout error recorded" has .claude/state/smoke.json 'within 2s'
-t "hung process killed" bash -c "! pgrep -f 'sleep 7000$$' >/dev/null"
+t "hung process killed" bash -c "! pgrep -f '[s]leep 7000$$' >/dev/null"
 
 echo "== smoke-check.sh: crash with Traceback"
 newproj; P=$(free_port)
