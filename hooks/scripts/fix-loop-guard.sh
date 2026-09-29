@@ -193,7 +193,8 @@ if [ "$COUNT" -ge "$MAX" ]; then
     echo "  2. Run: bash scripts/mogger-rewind.sh list   and consider restoring the last good checkpoint."
     echo "  3. Re-read the failing test itself - is it testing what you think it is?"
     echo "  4. If new failures appeared after your last edit, say so and revert that edit."
-    echo "  5. Then ask the user before trying again."
+    echo "  5. If the advisor tool is on (/advisor), ask it for a second opinion now."
+    echo "  6. Then ask the user before trying again."
     [ -n "$WARNMSG" ] && echo "$WARNMSG"
     echo "(Set MOGGER_MAX_FIX_ATTEMPTS to change the threshold; MOGGER_FIX_LOOP_GUARD=off disables this guard.)"
   } >&2

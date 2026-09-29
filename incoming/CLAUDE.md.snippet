@@ -221,6 +221,31 @@ subagent where it can be worth it. Never bump `tester`, `explorer`, or
 `bulk-reader` — there is no task they do that gets better with a smarter
 model.
 
+### Optional cost dial: the advisor tool
+
+Claude Code has an experimental **advisor**: a cheaper main model (say
+Sonnet) can consult a stronger model (say Opus) at decision points, such as
+before it picks an approach, when an error keeps coming back, and before it
+says "done". The user turns it on with `/advisor opus` (or the
+`advisorModel` setting, or `claude --advisor opus`). A plugin cannot turn it
+on for them. Facts from Anthropic's docs (code.claude.com/docs, "Escalate
+hard decisions with the advisor tool"):
+
+- The advisor must be at least as capable as the main model. Sonnet 5.5 as
+  main accepts Fable, Opus 4.7 or later, or Sonnet 5 or later as advisor.
+- Claude decides when to call it. It cannot be forced or counted by a hook.
+  So it supports mogger's gates. It never replaces them: tests, review and
+  the approval gates still run by exit code.
+- It bills advisor tokens (API rates, or plan usage limits), and it needs
+  the Anthropic API. It is not available on Bedrock, Vertex or Foundry, and
+  it stays off when `DISABLE_TELEMETRY` is set.
+- Subagents inherit the advisor. Mogger's `savings-report` does not count it.
+
+If the user wants a cheaper Lead: Sonnet as Lead plus an Opus advisor can
+cost less than Opus as Lead all session. Try it on one project. If you are
+stuck on a recurring failure and the advisor is on, ask it before trying a
+fourth fix.
+
 ## Recording runs
 
 After each task clears reviewer, append one entry to RUNS.md. Include the

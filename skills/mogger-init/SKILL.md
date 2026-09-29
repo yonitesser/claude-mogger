@@ -91,6 +91,12 @@ overwrites a file that already exists.
    Anthropic SDK (`anthropic` or `@anthropic-ai/sdk` in its dependencies),
    also mention `skills/mogger-app-evals` for the user's own app.
 
+9. **Tip (say it, do not change anything).** If the session's main model is
+   Sonnet or Haiku and the user is on the Anthropic API, mention once that
+   `/advisor opus` lets it consult a stronger model at hard moments (see
+   the advisor section in `skills/mogger-loop`). It is experimental and
+   bills advisor tokens. The user turns it on, not you.
+
 ## What this does NOT do
 
 - Doesn't touch git config, remotes, or branches.
