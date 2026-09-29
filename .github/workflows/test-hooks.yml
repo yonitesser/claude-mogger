@@ -12,11 +12,14 @@ jobs:
       - name: run every test suite (report all failures, not just the first)
         run: |
           fail=0
+          : > /tmp/all-tests.log
           for t in tests/*.test.sh; do
-            echo "== $t"
-            bash "$t" || { echo "::error::$t failed"; fail=1; }
+            echo "== $t" | tee -a /tmp/all-tests.log
+            bash "$t" 2>&1 | tee -a /tmp/all-tests.log
+            [ "${PIPESTATUS[0]}" -eq 0 ] || { echo "::error::$t failed"; fail=1; }
           done
-          echo "== FAILED-LINES-SUMMARY"
+          echo "=========== FAILED-LINES-SUMMARY ==========="
+          grep -E '^[[:space:]]*FAIL|^== tests/|passed[:,]? .*failed' /tmp/all-tests.log | grep -B1 -E 'FAIL|[1-9][0-9]* failed|failed: [1-9]' || true
           exit $fail
       - name: manifests are valid JSON
         run: |
