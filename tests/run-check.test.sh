@@ -30,7 +30,12 @@ echo "== smoke-check.sh: passing server"
 newproj; P=$(free_port)
 MOGGER_RUN_CMD="python3 -m http.server $P --bind 127.0.0.1" MOGGER_SMOKE_URL="http://127.0.0.1:$P" MOGGER_SMOKE_TIMEOUT=15 bash "$SC" >out.txt 2>&1; RC=$?
 t "exit 0 on healthy server" eq "$RC" 0
-if [ "$RC" -ne 0 ]; then echo "--- DIAG out.txt"; cat out.txt; echo "--- DIAG smoke.log"; cat .claude/state/smoke.log 2>&1 | head -20; echo "--- DIAG smoke.json"; cat .claude/state/smoke.json; echo "--- DIAG python3: $(command -v python3) $(python3 -V 2>&1)"; env | grep -i proxy; fi
+if [ "$RC" -ne 0 ]; then echo "--- DIAG out.txt"; cat out.txt; echo "--- DIAG smoke.log"; cat .claude/state/smoke.log 2>&1 | head -20; echo "--- DIAG smoke.json"; cat .claude/state/smoke.json; echo "--- DIAG python3: $(command -v python3) $(python3 -V 2>&1)"; env | grep -i proxy
+  DP=$(free_port); PYTHONUNBUFFERED=1 python3 -m http.server $DP --bind 127.0.0.1 >dlog.txt 2>&1 & DPID=$!
+  sleep 3; echo "--- DIAG manual server pid=$DPID alive=$(kill -0 $DPID 2>&1 && echo yes)"; echo "--- DIAG curl -sv"; curl -sv --max-time 3 "http://127.0.0.1:$DP/" 2>&1 | head -15
+  echo "--- DIAG dlog"; cat dlog.txt; echo "--- DIAG lsof"; lsof -nP -iTCP:$DP 2>&1 | head; kill $DPID 2>/dev/null
+  echo "--- DIAG bash -c variant"; bash -c "python3 -m http.server $DP --bind 127.0.0.1" >dlog2.txt 2>&1 & B2=$!; sleep 3; curl -s -o /dev/null -w 'code=%{http_code}\n' --max-time 3 "http://127.0.0.1:$DP/"; kill $B2 2>/dev/null; pkill -f "http.server $DP" 2>/dev/null
+fi
 t "smoke.json ok:true" has .claude/state/smoke.json '"ok":true'
 t "smoke.json has url" has .claude/state/smoke.json "127.0.0.1:$P"
 t "smoke.json status 200" has .claude/state/smoke.json '"status":"200"'
