@@ -24,36 +24,28 @@ if ! command -v python3 >/dev/null 2>&1 || ! command -v curl >/dev/null 2>&1; th
   echo "SKIP: python3 and curl required"; exit 0
 fi
 
+# Test server. NOT `python3 -m http.server`: its HTTPServer.server_bind() calls
+# socket.getfqdn(), which stalls ~20s on macOS CI runners (slow DNS) before the
+# port starts listening. Plain socketserver.TCPServer skips that call.
+SERVE='python3 -c "import socketserver as s,http.server as h,sys;s.TCPServer.allow_reuse_address=True;s.TCPServer((\"127.0.0.1\",int(sys.argv[1])),h.SimpleHTTPRequestHandler).serve_forever()"'
+
 newproj() { rm -rf "$BASE/p"; mkdir -p "$BASE/p"; cd "$BASE/p"; }
 
 echo "== smoke-check.sh: passing server"
 newproj; P=$(free_port)
-MOGGER_RUN_CMD="python3 -m http.server $P --bind 127.0.0.1" MOGGER_SMOKE_URL="http://127.0.0.1:$P" MOGGER_SMOKE_TIMEOUT=15 bash "$SC" >out.txt 2>&1; RC=$?
+MOGGER_RUN_CMD="$SERVE $P" MOGGER_SMOKE_URL="http://127.0.0.1:$P" MOGGER_SMOKE_TIMEOUT=15 bash "$SC" >out.txt 2>&1; RC=$?
 t "exit 0 on healthy server" eq "$RC" 0
-if [ "$RC" -ne 0 ]; then echo "--- DIAG out.txt"; cat out.txt; echo "--- DIAG smoke.log"; cat .claude/state/smoke.log 2>&1 | head -20; echo "--- DIAG smoke.json"; cat .claude/state/smoke.json; echo "--- DIAG python3: $(command -v python3) $(python3 -V 2>&1)"; env | grep -i proxy
-  echo "--- DIAG clients"; DP=$(free_port); python3 -m http.server $DP --bind 127.0.0.1 >dl.txt 2>&1 & TP=$!; sleep 3
-  echo "which curl: $(command -v curl) | $(curl --version | head -1)"; scutil --proxy 2>&1 | head -8
-  echo "diag[curl] $(curl -s -o /dev/null -w '%{http_code}' --max-time 3 http://127.0.0.1:$DP/ 2>&1)"
-  echo "diag[usr-bin-curl] $(/usr/bin/curl -s -o /dev/null -w '%{http_code}' --max-time 3 http://127.0.0.1:$DP/ 2>&1)"
-  echo "diag[curl-noproxy] $(curl --noproxy '*' -s -o /dev/null -w '%{http_code}' --max-time 3 http://127.0.0.1:$DP/ 2>&1)"
-  echo "diag[curl-localhost] $(curl -s -o /dev/null -w '%{http_code}' --max-time 3 http://localhost:$DP/ 2>&1)"
-  echo "diag[py-client] $(python3 -c "import urllib.request as u;print(u.urlopen('http://127.0.0.1:$DP/',timeout=3).status)" 2>&1 | tail -1)"
-  echo "diag[bash-devtcp] $( (exec 3<>/dev/tcp/127.0.0.1/$DP && printf 'GET / HTTP/1.0\r\n\r\n' >&3 && head -1 <&3) 2>&1 )"
-  echo "diag[nc-z] $(nc -z -w 2 127.0.0.1 $DP 2>&1; echo rc=$?)"
-  echo "diag[server-log] $(head -c 300 dl.txt)"; echo "diag[netstat]"; netstat -an -p tcp 2>&1 | grep "$DP" | head -5; kill $TP 2>/dev/null
-
-fi
 t "smoke.json ok:true" has .claude/state/smoke.json '"ok":true'
 t "smoke.json has url" has .claude/state/smoke.json "127.0.0.1:$P"
 t "smoke.json status 200" has .claude/state/smoke.json '"status":"200"'
 t "smoke.json has ts and cmd" has .claude/state/smoke.json '"ts":"20'
 t "smoke.json has errors[] empty" has .claude/state/smoke.json '"errors":\[\]'
 t "listener killed after exit" port_closed "$P"
-t "no orphan http.server process" bash -c "! pgrep -f '[h]ttp.server $P' >/dev/null"
+t "no orphan test-server process" bash -c "! pgrep -f '[T]CPServer.*$P' >/dev/null"
 
 echo "== smoke-check.sh: port parsed from output"
 newproj; P=$(free_port)
-MOGGER_RUN_CMD="echo 'ready on http://localhost:$P'; exec python3 -m http.server $P --bind 127.0.0.1" MOGGER_SMOKE_TIMEOUT=15 bash "$SC" >out.txt 2>&1; RC=$?
+MOGGER_RUN_CMD="echo 'ready on http://localhost:$P'; exec $SERVE $P" MOGGER_SMOKE_TIMEOUT=15 bash "$SC" >out.txt 2>&1; RC=$?
 t "exit 0 with url discovered from log" eq "$RC" 0
 t "discovered url recorded" has .claude/state/smoke.json "localhost:$P"
 t "discovered-port listener cleaned up" port_closed "$P"
@@ -76,7 +68,7 @@ t "early exit reported" has .claude/state/smoke.json 'exited early'
 
 echo "== smoke-check.sh: healthy but logs errors"
 newproj; P=$(free_port)
-MOGGER_RUN_CMD="echo 'Error: db unreachable' >&2; exec python3 -m http.server $P --bind 127.0.0.1" MOGGER_SMOKE_URL="http://127.0.0.1:$P" MOGGER_SMOKE_TIMEOUT=15 bash "$SC" >out.txt 2>&1; RC=$?
+MOGGER_RUN_CMD="echo 'Error: db unreachable' >&2; exec $SERVE $P" MOGGER_SMOKE_URL="http://127.0.0.1:$P" MOGGER_SMOKE_TIMEOUT=15 bash "$SC" >out.txt 2>&1; RC=$?
 t "exit 1 when 200 but Error: in output" eq "$RC" 1
 t "error line recorded" has .claude/state/smoke.json 'db unreachable'
 t "listener cleaned up after error case" port_closed "$P"
