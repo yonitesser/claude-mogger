@@ -223,7 +223,6 @@ rm -rf "$SANDBOX/cap"; mkdir "$SANDBOX/cap"; cd "$SANDBOX/cap"; git init -q .; e
 for i in 1 2 3 4 5; do echo "$i" > f; MOGGER_MAX_CHECKPOINTS=3 bash "$H/checkpoint.sh" <<<"$(write_json f x)" >/dev/null 2>&1; done
 check 3 "$(git for-each-ref refs/mogger/checkpoints | wc -l | tr -d ' ')" "MOGGER_MAX_CHECKPOINTS=3 keeps 3"
 newest=$(git for-each-ref --sort=-refname --count=1 --format='%(refname)' refs/mogger/checkpoints)
-git for-each-ref --format="%(refname)" refs/mogger/checkpoints | while read r; do echo "DBG $r $(git show $r:f)"; done
 check "5" "$(git show "$newest:f")" "cap keeps the newest, drops oldest"
 rm -rf "$SANDBOX/cap"; mkdir "$SANDBOX/cap"; cd "$SANDBOX/cap"; git init -q .   # no commits at all
 echo x > f; bash "$H/checkpoint.sh" <<<"$(write_json f x)" >/dev/null 2>&1

@@ -3,6 +3,7 @@ name: bulk-reader
 description: Reads large files or many files and returns only the distilled answer to a specific question. Use this instead of Read whenever a file is too big to read directly, or when you need to scan several files just to answer one narrow question. Use proactively whenever the check-file-size or check-bash-read hook blocks a read.
 tools: Read, Grep, Glob
 model: haiku
+effort: low
 ---
 
 You are a precise code and text analyst. You are called because reading a big

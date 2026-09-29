@@ -40,5 +40,30 @@ if [ -f TASKS.md ]; then
   echo
 fi
 
+# Active decisions (DECISIONS.md) — so settled choices are not re-argued
+if [ -f DECISIONS.md ]; then
+  source "$(dirname "$0")/decisions-context.sh"
+  DEC=$(decisions_context DECISIONS.md)
+  if [ -n "$DEC" ]; then
+    echo "## Active decisions (DECISIONS.md — cite before proposing anything that contradicts one)"
+    echo "$DEC"
+    echo
+  fi
+fi
+
+# Budget warning written by cost-cap.sh (estimate from transcript token counts)
+if [ -f .claude/state/cost.json ] && command -v python3 >/dev/null 2>&1 && python3 -c '1' >/dev/null 2>&1; then
+  python3 -c '
+import json
+try:
+    w = json.load(open(".claude/state/cost.json")).get("warning")
+    if w: print("⚠ mogger budget: " + str(w)); print()
+except Exception:
+    pass
+' 2>/dev/null
+fi
+
+echo "Grounding: no guessing. Cite file:line or command output for every claim about the code; label anything unchecked UNVERIFIED:. Verify a symbol exists before calling it (fact-checker agent, Context7 for library APIs)."
+
 echo "mogger active: git push/merge-to-protected/deploy/money are hook-blocked. Haiku reads, Sonnet builds, you orchestrate. Don't Read or Grep yourself — use explorer/bulk-reader."
 exit 0

@@ -74,6 +74,14 @@ out of the weeds and able to run for a long stretch without checking in.
    CONSTRAINTS.md/CLAUDE.md edits — it never applies them. I review and
    apply by hand.
 
+### Companion steps (optional but recommended)
+
+- Vague request? Run `mogger-idea` first → SPEC.md → planner.
+- After tests pass on anything with a UI/server: dispatch `verifier` (smoke check) before reviewer.
+- End of each task: dispatch `explainer` for the user. Record lasting choices with `mogger-decisions`.
+- Before calling the whole thing finished: `scripts/ship-check.sh` (report only).
+- Never assert a fact about the code you have not checked: see `mogger-grounding`.
+
 ### Reading discipline — diffs, not re-reads
 
 After anything has been edited, read `git diff` rather than re-reading the
