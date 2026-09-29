@@ -200,7 +200,7 @@ inds && /^[}]/ { inds=0 }
 inm {
   line=$0
   if (line ~ /^[}]/) { endmodel(); next }
-  if (line ~ /^[[:space:]]*[/][/]/) next
+  if (line ~ /^[[:space:]]*\/\//) next
   if (line ~ /@id|@@id/) haspk=1
   if (line ~ /@@id[(]/) { f=firstlist(line); if (f!="") idxf[f]=1 }
   if (line ~ /@relation[(]/ && match(line,/fields:[[:space:]]*[[][^]]*[]]/)) { s=substr(line,RSTART,RLENGTH); nfk++; fk[nfk]=firstlist(s); fkln[nfk]=FNR }
