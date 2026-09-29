@@ -50,7 +50,7 @@ check() {  # check <ecosystem> <name>
     crates) reg="crates.io";         url="$CRATES/$name" ;;
     go)
       reg="proxy.golang.org"
-      case "$name" in *[A-Z]*) return 0 ;; esac   # needs !-escaping; fail open
+      case "$name" in *[[:upper:]]*) return 0 ;; esac   # needs !-escaping; fail open
       case "${name%%/*}" in *.*) ;; *) return 0 ;; esac
       # a package path may live inside a module: walk up until one resolves
       p="$name"

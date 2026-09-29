@@ -13,7 +13,11 @@
 #   returns 0 and prints "<label> (<first 6 chars>...)" for the first real
 #   finding; returns 1 when clean. The secret itself is never echoed in full.
 
-MOGGER_SECRET_PATTERNS=$(cat <<'PATTERNS'
+# NOTE: a heredoc inside $( ) breaks bash 3.2 (macOS /bin/bash) when the body
+# has quotes/parens — the assignment silently came out empty there and no
+# secret was ever detected. So the list lives in a function; $( ) only calls it.
+mogger_secret_pattern_list() {
+cat <<'PATTERNS'
 aws-access-key|AKIA[0-9A-Z]{16}
 github-token|gh[pousr]_[A-Za-z0-9]{36,}
 github-fine-grained-token|github_pat_[A-Za-z0-9_]{22,}
@@ -24,7 +28,8 @@ private-key-block|-----BEGIN ([A-Z]+ )*PRIVATE KEY-----
 slack-token|xox[abprs]-[A-Za-z0-9-]{10,}
 generic-credential|(password|passwd|pwd|secret|api[_-]?key|access[_-]?key|auth[_-]?token|token)[A-Za-z0-9_-]*["']?[[:space:]]*[:=]+[[:space:]]*["'][^"'[:space:]]{16,}["']
 PATTERNS
-)
+}
+MOGGER_SECRET_PATTERNS=$(mogger_secret_pattern_list)
 
 # Placeholder check done with bash `case` globs, not a second grep -E: BSD
 # (macOS) grep rejects some of these escapes and, when it errors, prints
@@ -40,13 +45,14 @@ mogger_is_placeholder() {  # returns 0 if the match looks like a placeholder
 }
 
 mogger_find_secret() {
-  local text line label re m hit found
+  local text line label re hits hit found
   text=$(cat)
   while IFS= read -r line; do
     [ -z "$line" ] && continue
     label="${line%%|*}"
     re="${line#*|}"
     found=""
+    hits=$(printf '%s\n' "$text" | grep -oiE -- "$re" 2>/dev/null)
     while IFS= read -r hit; do
       [ -z "$hit" ] && continue
       mogger_is_placeholder "$hit" && continue
@@ -56,7 +62,7 @@ mogger_find_secret() {
       fi
       found="$hit"; break
     done <<EOF3
-$(printf '%s\n' "$text" | grep -oiE -- "$re" 2>/dev/null)
+$hits
 EOF3
     if [ -n "$found" ]; then
       printf '%s (%s...)\n' "$label" "$(printf '%s' "$found" | cut -c1-6)"
