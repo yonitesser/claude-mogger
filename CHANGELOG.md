@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.7.0 — 2026-09-29
+
+**Added — round 2 (the "last 20%")**
+- Security scan, dependency audit, DIY-payment and risky-code hooks, `security-reviewer` agent.
+- Test-quality hook, fix-loop guard, unhappy-path skill.
+- Structure, resilience, database and cost-risk checks + hooks.
+- Privacy, docs, accessibility and lock-in checks; `docs-writer` agent; `DATA.md` template.
+- Handoff before compaction (`PreCompact`), deploy hygiene check; `ship-check.sh` now runs every module in `scripts/checks/`.
+- Evals: `scripts/mogger-eval.sh` (estimate / consent / run / report / hillclimb / apply), free `evals-static.sh`, one-time consent nudge, skills `mogger-evals` and `mogger-app-evals`.
+- `.gitignore` for Python bytecode and `.claude/state/`.
+
 ## 1.6.0 — 2026-09-29
 
 **Added — companion suite** (6 new test suites, 394 new assertions)

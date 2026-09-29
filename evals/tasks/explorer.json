@@ -15,7 +15,7 @@
     "tol": 0
    },
    "gold": {
-    "text": "FOUND:\n- shop/billing/parser.py:15 \u2014 def parse_invoice(text), parses SKU QTY PRICE lines\n\nNOT FOUND / UNCERTAIN:\nnone"
+    "text": "FOUND:\n- shop/billing/parser.py:12 \u2014 def parse_invoice(text), parses SKU QTY PRICE lines\n\nNOT FOUND / UNCERTAIN:\nnone"
    },
    "bad": {
     "text": "FOUND:\n- docs/CHANGELOG.md:4 \u2014 def parse_invoice(text) mentioned\n\nNOT FOUND / UNCERTAIN:\nnone"
@@ -53,7 +53,7 @@
     ]
    },
    "gold": {
-    "text": "FOUND:\n- shop/orders.py:11 \u2014 place_order calls send_receipt(email, order)\n- shop/jobs/retry.py:14 \u2014 retry_failed calls send_receipt\n\nNOT FOUND / UNCERTAIN:\nnone"
+    "text": "FOUND:\n- shop/orders.py:11 \u2014 place_order calls send_receipt(email, order)\n- shop/jobs/retry.py:13 \u2014 retry_failed calls send_receipt\n\nNOT FOUND / UNCERTAIN:\nnone"
    },
    "bad": {
     "text": "FOUND:\n- shop/orders.py:11 \u2014 place_order calls send_receipt\n- shop/cart.py:6 \u2014 mentions send_receipt\n\nNOT FOUND / UNCERTAIN:\nnone"
