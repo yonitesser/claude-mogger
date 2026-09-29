@@ -5,23 +5,124 @@
 # repo. It only reads and prints PASS / WARN / FAIL / SKIP with evidence.
 # The push/deploy gate stays human — this is the list the human reads first.
 #
-# Usage (from project root):  bash scripts/ship-check.sh [--strict]
+# Usage (from project root):  bash scripts/ship-check.sh [--strict] [--only <module>] [--list]
 # Exit 0 always, except --strict: exit 1 if any check is FAIL.
+#
+# Besides the built-in checks below, every executable module in
+# scripts/checks/*.sh is run (looked up next to this script: ./checks,
+# ./scripts/checks, ../scripts/checks; override with MOGGER_CHECKS_DIR).
+# A module prints one line per finding:  LEVEL|check-id|message
+# (LEVEL = PASS|WARN|FAIL|SKIP). A module that is missing, crashes, times
+# out (MOGGER_CHECK_TIMEOUT seconds, default 45, needs timeout/gtimeout) or
+# prints garbage never breaks ship-check; it shows up as SKIP or WARN.
+#   --list          print module names and exit
+#   --only <name>   run just that module (no built-in checks)
 set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"
 [ -f "$HERE/../hooks/scripts/lib.sh" ] && source "$HERE/../hooks/scripts/lib.sh"
 type json_get >/dev/null 2>&1 || json_get() { printf ''; }
 
-STRICT=0; [ "${1:-}" = "--strict" ] && STRICT=1
+STRICT=0; ONLY=""; LIST=0
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --strict) STRICT=1 ;;
+    --list) LIST=1 ;;
+    --only) if [ $# -gt 1 ]; then ONLY="$2"; shift; fi ;;
+  esac
+  shift
+done
 NFAIL=0; NWARN=0; NPASS=0; NSKIP=0
 say() {  # say <LEVEL> <name> <evidence>
   case "$1" in FAIL) NFAIL=$((NFAIL+1));; WARN) NWARN=$((NWARN+1));; PASS) NPASS=$((NPASS+1));; SKIP) NSKIP=$((NSKIP+1));; esac
   printf '%-5s %-22s %s\n' "$1" "$2" "$3"
 }
 
+# ---- check modules -------------------------------------------------------
+MODULES=""   # newline-separated "name|path" (first directory wins per name)
+discover_modules() {
+  local d f n dirs
+  if [ -n "${MOGGER_CHECKS_DIR:-}" ]; then dirs="$MOGGER_CHECKS_DIR"
+  else dirs="$HERE/checks
+$HERE/scripts/checks
+$HERE/../scripts/checks"; fi
+  while IFS= read -r d; do
+    [ -d "$d" ] || continue
+    for f in "$d"/*.sh; do
+      [ -f "$f" ] || continue
+      n=$(basename "$f" .sh)
+      case "
+$MODULES" in *"
+$n|"*) continue ;; esac
+      MODULES="$MODULES$n|$f
+"
+    done
+  done <<EOF_DIRS
+$dirs
+EOF_DIRS
+}
+discover_modules
+
+if [ "$LIST" -eq 1 ]; then
+  printf '%s' "$MODULES" | sed '/^$/d' | cut -d'|' -f1
+  exit 0
+fi
+
+TMO=""
+if command -v timeout >/dev/null 2>&1; then TMO=timeout
+elif command -v gtimeout >/dev/null 2>&1; then TMO=gtimeout; fi
+TMO_SECS="${MOGGER_CHECK_TIMEOUT:-45}"
+case "$TMO_SECS" in ''|*[!0-9]*) TMO_SECS=45 ;; esac
+
+run_module() {  # run_module <name> <path>
+  local name="$1" path="$2" out rc line lvl rest id msg n=0 short
+  echo "-- module: $name"
+  if [ ! -f "$path" ]; then say SKIP "$name" "module file missing: $path"; return 0; fi
+  if [ ! -x "$path" ]; then say SKIP "$name" "module not executable (chmod +x $path)"; return 0; fi
+  if [ -n "$TMO" ]; then out=$("$TMO" "$TMO_SECS" bash "$path" 2>/dev/null </dev/null); rc=$?
+  else out=$(bash "$path" 2>/dev/null </dev/null); rc=$?; fi
+  while IFS= read -r line; do
+    line=${line%$'\r'}
+    [ -n "$line" ] || continue
+    lvl=${line%%|*}; rest=${line#*|}
+    id=${rest%%|*}; msg=${rest#*|}
+    case "$lvl" in
+      PASS|WARN|FAIL|SKIP)
+        if [ "$rest" = "$line" ] || [ "$msg" = "$rest" ] || [ -z "$id" ]; then
+          short=$(printf '%s' "$line" | cut -c1-70)
+          say WARN "$name" "malformed line from $name: $short"
+        else say "$lvl" "$id" "$msg"; n=$((n+1)); fi ;;
+      *) short=$(printf '%s' "$line" | cut -c1-70)
+         say WARN "$name" "malformed line from $name: $short" ;;
+    esac
+  done <<EOF_OUT
+$out
+EOF_OUT
+  if [ "$rc" -eq 124 ] && [ -n "$TMO" ]; then say SKIP "$name" "timed out after ${TMO_SECS}s; module skipped"
+  elif [ "$rc" -ne 0 ]; then say SKIP "$name" "module exited with status $rc (crashed or errored); its findings above may be partial"
+  elif [ "$n" -eq 0 ]; then say SKIP "$name" "module produced no findings"; fi
+  return 0
+}
+
+run_modules() {
+  local ent name path found=0
+  while IFS= read -r ent; do
+    [ -n "$ent" ] || continue
+    name=${ent%%|*}; path=${ent#*|}
+    [ -n "$ONLY" ] && [ "$name" != "$ONLY" ] && continue
+    found=1
+    run_module "$name" "$path"
+  done <<EOF_MODS
+$MODULES
+EOF_MODS
+  if [ "$found" -eq 0 ] && [ -n "$ONLY" ]; then echo "-- module: $ONLY"; say SKIP "$ONLY" "no such module (see --list)"; fi
+  if [ "$found" -eq 0 ] && [ -z "$ONLY" ]; then echo "-- modules"; say SKIP modules "no check modules found (looked for checks/*.sh next to ship-check.sh)"; fi
+  return 0
+}
+
 INREPO=0; git rev-parse --is-inside-work-tree >/dev/null 2>&1 && INREPO=1
 echo "== ship-check (report-only; never pushes or deploys)"
 
+run_builtin() {
 # 1. tests recorded green (same marker require-tests-pass.sh uses)
 M=".claude/state/last_test_result.json"
 if [ ! -f "$M" ]; then say FAIL tests "no $M — full suite never recorded"
@@ -138,6 +239,10 @@ else
   OPEN=$(grep -c -E '^[[:space:]]*[-*][[:space:]]+\[ \]' TASKS.md 2>/dev/null)
   if [ "${OPEN:-0}" -gt 0 ]; then say FAIL tasks "$OPEN open task(s) in TASKS.md"; else say PASS tasks "no open tasks"; fi
 fi
+}
+
+[ -z "$ONLY" ] && run_builtin
+run_modules
 
 echo "-- $NPASS pass, $NWARN warn, $NFAIL fail, $NSKIP skip. Report only: nothing was pushed or deployed. Push/deploy is a human decision."
 [ "$STRICT" -eq 1 ] && [ "$NFAIL" -gt 0 ] && exit 1
