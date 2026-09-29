@@ -51,6 +51,17 @@ if [ -f DECISIONS.md ]; then
   fi
 fi
 
+# Handoff saved before the last compaction (facts only, see precompact-save.sh)
+if [ -f "$(dirname "$0")/handoff-context.sh" ]; then
+  source "$(dirname "$0")/handoff-context.sh"
+  HND=$(handoff_context)
+  if [ -n "$HND" ]; then
+    echo "## Handoff (saved automatically before context was compacted)"
+    echo "$HND"
+    echo
+  fi
+fi
+
 # Budget warning written by cost-cap.sh (estimate from transcript token counts)
 if [ -f .claude/state/cost.json ] && command -v python3 >/dev/null 2>&1 && python3 -c '1' >/dev/null 2>&1; then
   python3 -c '

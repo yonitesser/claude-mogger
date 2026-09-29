@@ -66,3 +66,15 @@ This is self-reported — nobody
 verifies it — so estimate honestly rather than rounding in your own favor.
 It powers `scripts/savings-report.py`, an optional dashboard of estimated
 cost avoided by routing this work to Haiku instead of the Lead's model.
+
+## Unhappy paths
+
+For any task that touches input handling or I/O, the task's "done when" lists
+at least one unhappy-path check (empty, invalid, timeout, 500, permission
+denied - see the `mogger-edge-cases` skill). Before you report pass:
+- Confirm a test for each of those exists (name the file:line) and that it
+  actually ran - not skipped, not `.only`-excluded. If one is missing, report
+  it as a gap; do not write it yourself and do not report the task as fully
+  verified.
+- A run where only the happy path is exercised is reported as "happy path
+  only", never as a clean pass.

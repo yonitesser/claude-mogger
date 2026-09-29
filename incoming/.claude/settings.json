@@ -104,6 +104,35 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/update-status.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/check-test-quality.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/check-risky-code.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/check-diy-payments.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/check-structure.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/check-resilience.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/fix-loop-guard.sh"
           }
         ]
       }
@@ -118,6 +147,27 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/update-status.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/fix-loop-guard.sh"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/precompact-save.sh"
           }
         ]
       }

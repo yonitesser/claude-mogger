@@ -85,3 +85,15 @@ If a `SPEC.md` exists at the project root, it is the source of requirements:
   missing, list it under `## Open questions` in TASKS.md instead of
   planning it.
 - Anything under `Won't do (this round)` gets no task.
+
+## Unhappy paths
+
+Every task that touches user input or I/O (forms, handlers, endpoints,
+fetches, file/DB access) needs at least one unhappy-path `done when:` in
+addition to the happy-path one - e.g. "done when: submitting an empty name
+shows 'Name is required' and saves nothing" or "done when: with the API
+stubbed to 500 the page shows a retry message". Pick from the
+`mogger-edge-cases` checklist (empty, whitespace, huge, wrong type, duplicate
+submit, timeout/offline, server 500, slow response, permission denied). If a
+row genuinely does not apply, write `n/a: <reason>` on the task. Do not
+plan a task touching input/IO with only a happy-path check.
