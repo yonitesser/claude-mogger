@@ -286,7 +286,8 @@ has "report is plain words" "mogger eval results"
 has "report says estimates" "ESTIMATES"
 
 echo "== headless flags the engine passes"
-AL=$(grep '^t1|' "$STUB/args.log" | head -1)
+# parallel jobs (--jobs 4) make the FIRST t1 line arbitrary (any tier, any effort); pick the haiku@low call
+AL=$(grep '^t1|' "$STUB/args.log" | grep -e '--model haiku' | grep -e '--effort low' | head -1)
 for f in "--output-format stream-json" "--verbose" "--model haiku" "--agent explorer" "--permission-mode dontAsk" "--max-turns" "--max-budget-usd" "--no-session-persistence" "--effort low" "--tools=Read,Grep" "--allowedTools=Read,Grep" "--setting-sources project" "--agents {"; do
   case "$AL" in *"$f"*) ok "routing call passes: $f";; *) bad "routing call passes: $f"; printf '       %s\n' "$AL";; esac
 done
