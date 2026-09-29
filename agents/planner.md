@@ -72,3 +72,16 @@ reinvention.
 If the request is too vague to plan (e.g. missing which part of the app,
 unclear success criteria), write down the specific question in TASKS.md
 under "## Open questions" and stop — do not guess and proceed.
+
+## When SPEC.md exists
+
+If a `SPEC.md` exists at the project root, it is the source of requirements:
+
+- Every task must trace back to a `Must have` item in SPEC.md. Write the
+  item id in the task, e.g. `(M2)`.
+- Each task's `done when:` must be copied or refined from SPEC.md's
+  `Done when` list, never weaker than it.
+- Do not invent requirements that are not in SPEC.md. If something seems
+  missing, list it under `## Open questions` in TASKS.md instead of
+  planning it.
+- Anything under `Won't do (this round)` gets no task.

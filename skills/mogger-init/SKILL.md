@@ -37,7 +37,7 @@ overwrites a file that already exists.
 
 4. **Scaffold files, only if missing.** Templates live in the plugin at
    `${CLAUDE_PLUGIN_ROOT}/templates/`. For each of `CONSTRAINTS.md`,
-   `RUNS.md`, `STACK.md`: if the project root doesn't have it, copy the
+   `RUNS.md`, `STACK.md`, `DECISIONS.md`: if the project root doesn't have it, copy the
    template. If it does, leave it alone and say so. Also
    `mkdir -p .claude/state` (tester writes its result marker there, and
    the Haiku agents append to `.claude/state/savings.jsonl` there too —
