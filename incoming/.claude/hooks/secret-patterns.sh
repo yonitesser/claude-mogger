@@ -26,23 +26,40 @@ generic-credential|(password|passwd|pwd|secret|api[_-]?key|access[_-]?key|auth[_
 PATTERNS
 )
 
-MOGGER_PLACEHOLDER_RE='xxx|your[-_ ]|<[^>]*>|\$\{|\{\{|example|changeme|placeholder|dummy|redacted|fake|\*\*\*'
+# Placeholder check done with bash `case` globs, not a second grep -E: BSD
+# (macOS) grep rejects some of these escapes and, when it errors, prints
+# nothing — which made every real secret look like "no match".
+mogger_is_placeholder() {  # returns 0 if the match looks like a placeholder
+  local v
+  v=$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')
+  case "$v" in
+    *xxx*|*your-*|*your_*|*"your "*|*'${'*|*'{{'*|*example*|*changeme*|*placeholder*|*dummy*|*redacted*|*fake*|*'***'*) return 0 ;;
+    *'<'*'>'*) return 0 ;;
+  esac
+  return 1
+}
 
 mogger_find_secret() {
-  local text line label re m
+  local text line label re m hit found
   text=$(cat)
   while IFS= read -r line; do
     [ -z "$line" ] && continue
     label="${line%%|*}"
     re="${line#*|}"
-    m=$(printf '%s\n' "$text" | grep -oiE -- "$re" 2>/dev/null | grep -viE -- "$MOGGER_PLACEHOLDER_RE")
-    if [ "$label" = "generic-credential" ] && [ -n "$m" ]; then
-      # a real credential literal contains a digit; "some_input_field_name" doesn't
-      m=$(printf '%s\n' "$m" | grep -E "[\"'][^\"']*[0-9][^\"']*[\"']\$")
-    fi
-    if [ -n "$m" ]; then
-      m=$(printf '%s\n' "$m" | head -n1)
-      printf '%s (%s...)\n' "$label" "$(printf '%s' "$m" | cut -c1-6)"
+    found=""
+    while IFS= read -r hit; do
+      [ -z "$hit" ] && continue
+      mogger_is_placeholder "$hit" && continue
+      if [ "$label" = "generic-credential" ]; then
+        # a real credential literal contains a digit; "some_input_field_name" doesn't
+        printf '%s\n' "$hit" | grep -qE "[\"'][^\"']*[0-9][^\"']*[\"']\$" || continue
+      fi
+      found="$hit"; break
+    done <<EOF3
+$(printf '%s\n' "$text" | grep -oiE -- "$re" 2>/dev/null)
+EOF3
+    if [ -n "$found" ]; then
+      printf '%s (%s...)\n' "$label" "$(printf '%s' "$found" | cut -c1-6)"
       return 0
     fi
   done <<EOF2

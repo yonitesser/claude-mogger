@@ -144,7 +144,8 @@ if command -v python3 >/dev/null 2>&1 && command -v curl >/dev/null 2>&1; then
   echo '{}' > "$REG/pypi/requests/json"; echo '{}' > "$REG/crates/serde"
   echo 'v1.0.0' > "$REG/go/github.com/foo/bar/@v/list"
   PORT=$(python3 -c 'import socket;s=socket.socket();s.bind(("127.0.0.1",0));print(s.getsockname()[1])')
-  ( cd "$REG" && exec python3 -m http.server "$PORT" --bind 127.0.0.1 >/dev/null 2>&1 ) &
+  # not `http.server`: its bind-time getfqdn() stalls ~20s on macOS CI runners
+  ( cd "$REG" && exec python3 -c "import socketserver as s,http.server as h,sys;s.TCPServer.allow_reuse_address=True;s.TCPServer(('127.0.0.1',int(sys.argv[1])),h.SimpleHTTPRequestHandler).serve_forever()" "$PORT" >/dev/null 2>&1 ) &
   SRV_PID=$!
   for _ in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do
     curl -s -o /dev/null --max-time 1 "http://127.0.0.1:$PORT/" && break; sleep 0.25
@@ -175,7 +176,6 @@ MOGGER_NPM_REGISTRY="http://127.0.0.1:1/npm" MOGGER_PYPI_URL="http://127.0.0.1:1
 check 0 $? "verify-packages.sh: fails open when registry unreachable"
 
 echo "== checkpoint.sh"
-cd "$REPO"; git status --short | head -n0
 export MOGGER_CHECKPOINT_INTERVAL=0
 ncp() { git for-each-ref refs/mogger/checkpoints | wc -l | tr -d ' '; }
 HEAD0=$(git rev-parse HEAD); BR0=$(git rev-parse --abbrev-ref HEAD)
