@@ -3,13 +3,21 @@ on: [push, pull_request]
 jobs:
   test:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          for t in tests/*.test.sh; do echo "== $t"; bash "$t" || exit 1; done
+      - name: run every test suite (report all failures, not just the first)
+        run: |
+          fail=0
+          for t in tests/*.test.sh; do
+            echo "== $t"
+            bash "$t" || { echo "::error::$t failed"; fail=1; }
+          done
+          echo "== FAILED-LINES-SUMMARY"
+          exit $fail
       - name: manifests are valid JSON
         run: |
           python3 -c "import json;[json.load(open(f)) for f in ['.claude-plugin/plugin.json','.claude-plugin/marketplace.json','hooks/hooks.json','.mcp.json','incoming/.claude/settings.json']]"
