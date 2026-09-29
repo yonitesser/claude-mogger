@@ -228,6 +228,22 @@ After each task clears reviewer, append one entry to RUNS.md. Include the
 way anyone (including you) can tell whether this kit is actually saving
 anything on this project. Claims without this number are just claims.
 
+### Savings log — the Lead writes it, not the Haiku agents
+
+`bulk-reader`, `explorer` and `code-writer` have no Bash tool on purpose (they
+stay read-only or write-only), so they cannot log anything themselves. After
+one of them returns, the Lead runs one line:
+
+```
+bash "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/log-savings.sh" <agent> haiku INPUT_CHARS OUTPUT_CHARS
+```
+
+`OUTPUT_CHARS` is the length of the reply the Lead received. `INPUT_CHARS` is
+the size of what the agent had to read: use `wc -c` on the files named in the
+request (skip the log if you cannot tell). Agents that do have Bash
+(`tester`, `fact-checker`, `explainer`, `docs-writer`, `verifier`) still log
+their own runs. Both kinds stay self-reported estimates.
+
 ## Optional: the savings estimate is a different thing than RUNS.md tokens
 
 RUNS.md's `tokens:` field is the real, actual session total from `/cost` —
