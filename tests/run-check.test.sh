@@ -30,6 +30,7 @@ echo "== smoke-check.sh: passing server"
 newproj; P=$(free_port)
 MOGGER_RUN_CMD="python3 -m http.server $P --bind 127.0.0.1" MOGGER_SMOKE_URL="http://127.0.0.1:$P" MOGGER_SMOKE_TIMEOUT=15 bash "$SC" >out.txt 2>&1; RC=$?
 t "exit 0 on healthy server" eq "$RC" 0
+if [ "$RC" -ne 0 ]; then echo "--- DIAG out.txt"; cat out.txt; echo "--- DIAG smoke.log"; cat .claude/state/smoke.log 2>&1 | head -20; echo "--- DIAG smoke.json"; cat .claude/state/smoke.json; echo "--- DIAG python3: $(command -v python3) $(python3 -V 2>&1)"; env | grep -i proxy; fi
 t "smoke.json ok:true" has .claude/state/smoke.json '"ok":true'
 t "smoke.json has url" has .claude/state/smoke.json "127.0.0.1:$P"
 t "smoke.json status 200" has .claude/state/smoke.json '"status":"200"'
