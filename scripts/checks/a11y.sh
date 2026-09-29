@@ -181,7 +181,7 @@ END {
         hasrepl = (tb ~ /box-shadow|border|background|text-decoration|ring|outline[[:space:]]*:[[:space:]]*[^;]*(solid|dashed|auto|[1-9][0-9]*px)/)
         if (tb ~ /outline(-style)?[[:space:]]*:[[:space:]]*(none|0)([^.[:alnum:]]|$)/ || tb ~ /outline-width[[:space:]]*:[[:space:]]*0/) {
           print "S|focus"
-          gsub(/[[:space:]]+/, " ", selt); sub(/^ /, "", selt)
+          gsub(/[[:space:]]+/, " ", selt); sub(/^ /, "", selt); sub(/ $/, "", selt)
           if (!(ts ~ /:focus/ && hasrepl)) print "B|focus|" F ":" bline "|'" substr(selt, 1, 60) "' removes the focus outline and adds no replacement focus style"
         } else if (ts ~ /:focus/ && tb ~ /box-shadow|border|outline[[:space:]]*:[[:space:]]*[^;]*(solid|dashed|auto|[1-9][0-9]*px)|ring/) {
           print "R|" F ":" bline

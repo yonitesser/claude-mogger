@@ -84,7 +84,7 @@ emit_hits() {
   tr '\n' '\0' < "$list" | xargs -0 grep $flags -e "$re" -- 2>/dev/null | head -300 > "$T/h"
   while IFS= read -r h; do
     f="${h%%:*}"; rest="${h#*:}"; ln="${rest%%:*}"; content="${rest#*:}"
-    is_comment "$content" && continue
+    case "$flags" in *o*) is_comment "$(sed -n "${ln}p" "$f" 2>/dev/null)" && continue;; *) is_comment "$content" && continue;; esac
     LVL="$lvl"; XTRA=""
     if [ -n "$filter" ]; then "$filter" "$f" "$ln" "$content" || continue; fi
     n=$((n+1)); : > "$T/f.$id"
