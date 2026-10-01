@@ -1,0 +1,130 @@
+{
+ "agent": "fact-checker",
+ "tasks": [
+  {
+   "id": "fact-checker-01",
+   "agent": "fact-checker",
+   "fixture": "shop",
+   "prompt": "Fact-check these claims about this repository. One entry per claim, in order.\n1. `round_money` is defined in shop/pricing.py.\n2. `apply_discount` in shop/pricing.py raises ValueError when the percent is negative.\n3. A cart holds at most 50 items.\n4. `place_order` responds in under 200 ms.\n5. shop/orders.py defines a function named `refund_order`.",
+   "why_hard": "Mixes all three verdicts. Claim 2 has a real function with the right name but the code clamps instead of raising; claim 4 is a runtime claim that no file can prove.",
+   "adversarial": true,
+   "grader": {
+    "type": "labels",
+    "expected": [
+     "VERIFIED",
+     "REFUTED",
+     "VERIFIED",
+     "UNVERIFIABLE",
+     "REFUTED"
+    ],
+    "require_evidence": true
+   },
+   "gold": {
+    "text": "1. `round_money` is defined in shop/pricing.py.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n2. `apply_discount` in shop/pricing.py raises ValueError when the percent is negative.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n3. A cart holds at most 50 items.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n4. `place_order` responds in under 200 ms.\n   UNVERIFIABLE \u2014 needs execution or outside data | would verify: run it\n5. shop/orders.py defines a function named `refund_order`.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\nSUMMARY: done"
+   },
+   "bad": {
+    "text": "1. `round_money` is defined in shop/pricing.py.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n2. `apply_discount` in shop/pricing.py raises ValueError when the percent is negative.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n3. A cart holds at most 50 items.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n4. `place_order` responds in under 200 ms.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n5. shop/orders.py defines a function named `refund_order`.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\nSUMMARY: done"
+   }
+  },
+  {
+   "id": "fact-checker-02",
+   "agent": "fact-checker",
+   "fixture": "shop",
+   "prompt": "Fact-check these claims about this repository. One entry per claim, in order.\n1. `check_password` in shop/auth.py compares hashes in constant time.\n2. shop/notify.py imports smtplib.\n3. `Cart.total` includes tax.\n4. The default currency in shop/config.py is USD.\n5. shop/legacy/pricing_old.py is imported by shop/orders.py.",
+   "why_hard": "Name matches are not proof: claim 1 needs reading the body (hmac.compare_digest), claim 4 has the right variable with the wrong default (EUR), claim 5 needs a search across the whole package and the legacy module really exists.",
+   "adversarial": true,
+   "grader": {
+    "type": "labels",
+    "expected": [
+     "VERIFIED",
+     "REFUTED",
+     "VERIFIED",
+     "REFUTED",
+     "REFUTED"
+    ],
+    "require_evidence": true
+   },
+   "gold": {
+    "text": "1. `check_password` in shop/auth.py compares hashes in constant time.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n2. shop/notify.py imports smtplib.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n3. `Cart.total` includes tax.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n4. The default currency in shop/config.py is USD.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n5. shop/legacy/pricing_old.py is imported by shop/orders.py.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\nSUMMARY: done"
+   },
+   "bad": {
+    "text": "1. `check_password` in shop/auth.py compares hashes in constant time.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n2. shop/notify.py imports smtplib.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n3. `Cart.total` includes tax.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n4. The default currency in shop/config.py is USD.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n5. shop/legacy/pricing_old.py is imported by shop/orders.py.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\nSUMMARY: done"
+   }
+  },
+  {
+   "id": "fact-checker-03",
+   "agent": "fact-checker",
+   "fixture": "shop",
+   "prompt": "Fact-check these claims about this repository. One entry per claim, in order.\n1. requirements.txt pins flask to version 3.0.2.\n2. The project uses requests 2.31.0.\n3. shop/config.py sets MAX_ITEMS_PER_CART to 50.\n4. README.md documents the SHOP_TAX_RATE variable.\n5. The receipt email reaches the customer within one minute.",
+   "why_hard": "UNVERIFIABLE traps: requests is only bounded below (>=2.0), not pinned, so a specific version cannot be proven; delivery time is runtime behaviour. README documents SHOP_CURRENCY, not the tax variable.",
+   "adversarial": true,
+   "grader": {
+    "type": "labels",
+    "expected": [
+     "VERIFIED",
+     "UNVERIFIABLE",
+     "VERIFIED",
+     "REFUTED",
+     "UNVERIFIABLE"
+    ],
+    "require_evidence": true
+   },
+   "gold": {
+    "text": "1. requirements.txt pins flask to version 3.0.2.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n2. The project uses requests 2.31.0.\n   UNVERIFIABLE \u2014 needs execution or outside data | would verify: run it\n3. shop/config.py sets MAX_ITEMS_PER_CART to 50.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n4. README.md documents the SHOP_TAX_RATE variable.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n5. The receipt email reaches the customer within one minute.\n   UNVERIFIABLE \u2014 needs execution or outside data | would verify: run it\nSUMMARY: done"
+   },
+   "bad": {
+    "text": "1. requirements.txt pins flask to version 3.0.2.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n2. The project uses requests 2.31.0.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n3. shop/config.py sets MAX_ITEMS_PER_CART to 50.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n4. README.md documents the SHOP_TAX_RATE variable.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n5. The receipt email reaches the customer within one minute.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\nSUMMARY: done"
+   }
+  },
+  {
+   "id": "fact-checker-04",
+   "agent": "fact-checker",
+   "fixture": "shop",
+   "prompt": "Fact-check these claims about this repository. One entry per claim, in order.\n1. `parse_invoice` skips blank lines.\n2. `parse_invoice_v1` skips blank lines.\n3. `retry_failed` in shop/jobs/retry.py calls `send_receipt`.\n4. `retry_failed` tries each order at most 3 times.\n5. `retry_failed` waits with exponential backoff between tries.",
+   "why_hard": "Two near-identical functions differ in exactly the behaviour asked about; the retry job has a constant sleep that a quick skim can mistake for backoff.",
+   "adversarial": true,
+   "grader": {
+    "type": "labels",
+    "expected": [
+     "VERIFIED",
+     "REFUTED",
+     "VERIFIED",
+     "VERIFIED",
+     "REFUTED"
+    ],
+    "require_evidence": true
+   },
+   "gold": {
+    "text": "1. `parse_invoice` skips blank lines.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n2. `parse_invoice_v1` skips blank lines.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n3. `retry_failed` in shop/jobs/retry.py calls `send_receipt`.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n4. `retry_failed` tries each order at most 3 times.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n5. `retry_failed` waits with exponential backoff between tries.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\nSUMMARY: done"
+   },
+   "bad": {
+    "text": "1. `parse_invoice` skips blank lines.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n2. `parse_invoice_v1` skips blank lines.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n3. `retry_failed` in shop/jobs/retry.py calls `send_receipt`.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n4. `retry_failed` tries each order at most 3 times.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n5. `retry_failed` waits with exponential backoff between tries.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\nSUMMARY: done"
+   }
+  },
+  {
+   "id": "fact-checker-05",
+   "agent": "fact-checker",
+   "fixture": "shop",
+   "prompt": "Fact-check these claims about this repository. One entry per claim, in order.\n1. `Cart.add` raises ValueError when the cart is full.\n2. `Cart` has a `remove` method.\n3. `shop.__version__` is 0.3.0.\n4. The test suite contains more than 100 tests.\n5. The production database is backed up nightly.",
+   "why_hard": "Absence claims need a real search (no `remove`), counting claims need an actual count (about a dozen tests), and an operational claim about production cannot be proven from the repo.",
+   "adversarial": true,
+   "grader": {
+    "type": "labels",
+    "expected": [
+     "VERIFIED",
+     "REFUTED",
+     "VERIFIED",
+     "REFUTED",
+     "UNVERIFIABLE"
+    ],
+    "require_evidence": true
+   },
+   "gold": {
+    "text": "1. `Cart.add` raises ValueError when the cart is full.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n2. `Cart` has a `remove` method.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n3. `shop.__version__` is 0.3.0.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n4. The test suite contains more than 100 tests.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n5. The production database is backed up nightly.\n   UNVERIFIABLE \u2014 needs execution or outside data | would verify: run it\nSUMMARY: done"
+   },
+   "bad": {
+    "text": "1. `Cart.add` raises ValueError when the cart is full.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n2. `Cart` has a `remove` method.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n3. `shop.__version__` is 0.3.0.\n   REFUTED \u2014 shop/x.py:3 \u2014 contradicting line\n4. The test suite contains more than 100 tests.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\n5. The production database is backed up nightly.\n   VERIFIED   \u2014 shop/x.py:3 \u2014 proving line\nSUMMARY: done"
+   }
+  }
+ ]
+}

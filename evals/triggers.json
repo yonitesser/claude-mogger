@@ -1,0 +1,347 @@
+{
+ "skills": {
+  "mogger-code-health": {
+   "should": [
+    "My app is getting big and app.py is now 900 lines. Before I add the next feature, what should I watch for?",
+    "I am about to change the database schema to add an orders table. Any rules I should follow?",
+    "We call a paid image API inside a loop over all users. Is that safe to ship?",
+    "Add a list endpoint that returns every row from the invoices table.",
+    "Before we ship, can you check the code for things that break at 500 users?",
+    "I keep copy-pasting the same fetch code everywhere. What is the standard here for outbound calls and timeouts?"
+   ],
+   "should_not": [
+    "What is the difference between a list and a tuple in Python?",
+    "Rename the variable tmp to result in utils.py.",
+    "Write a haiku about databases.",
+    "Fix the typo in the README title.",
+    "Explain what a foreign key is, I just want the definition.",
+    "What time zone does the server log use?"
+   ]
+  },
+  "mogger-decisions": {
+   "should": [
+    "Should we use Postgres or SQLite for this project? Pick one and record why.",
+    "We just rejected Redux for state. Log that so nobody proposes it again.",
+    "Two reviewers disagree on whether to use a queue here. How do we settle it and keep a record?",
+    "I want to swap our auth library for a different one. Did we already decide something about that?",
+    "Why did we choose Tailwind in the first place?",
+    "We are picking a date library. Check what we decided before and add the new choice."
+   ],
+   "should_not": [
+    "What does Postgres stand for?",
+    "Add a unit test for the parse_date helper.",
+    "Summarise what happened in the last meeting.",
+    "Format this JSON file with 2-space indentation.",
+    "How do I undo my last git commit?",
+    "List the files in the src directory."
+   ]
+  },
+  "mogger-docs": {
+   "should": [
+    "Write the README for this project from what is really in the code.",
+    "We added new env vars, please update .env.example.",
+    "Before shipping, make sure the docs match the scripts in package.json.",
+    "Start of a new project: generate the README and .env.example.",
+    "Run the docs check and fix what it flags.",
+    "The README still says npm start but we moved to pnpm. Fix the docs."
+   ],
+   "should_not": [
+    "Add a docstring to the add() function.",
+    "What is Markdown?",
+    "Translate this paragraph into French.",
+    "Fix the failing unit test in test_cart.py.",
+    "Add a comment above the retry loop explaining the backoff.",
+    "Delete the unused import in main.py."
+   ]
+  },
+  "mogger-edge-cases": {
+   "should": [
+    "Add a signup form with an email field.",
+    "It breaks when I submit an empty form. Make it robust.",
+    "Write an endpoint that accepts a JSON body with a quantity.",
+    "My fetch to the payments API sometimes hangs. Make the client handle timeouts and 500s.",
+    "The upload button works on my screen but users report weird crashes. Harden it.",
+    "Review this input handler for the unhappy paths."
+   ],
+   "should_not": [
+    "Explain how HTTP status codes work.",
+    "Rename the CSS class btn-primary to button-main everywhere.",
+    "What does the fetch API return?",
+    "Bump the version in package.json to 1.2.0.",
+    "Draw an ASCII diagram of a request lifecycle.",
+    "Change the button colour to blue."
+   ]
+  },
+  "mogger-explain": {
+   "should": [
+    "Explain that.",
+    "What did you change?",
+    "I don't follow, can you explain what the last change did in plain words?",
+    "Explain the diff to me like I am not a programmer.",
+    "The task is done. Give me a plain-English note about what changed.",
+    "What did that commit actually change in the code?"
+   ],
+   "should_not": [
+    "Explain how Python decorators work.",
+    "What is a closure in JavaScript?",
+    "Explain the difference between TCP and UDP.",
+    "Write a plain-English description of our company for the About page.",
+    "What is the capital of France?",
+    "Explain what a monad is."
+   ]
+  },
+  "mogger-grounding": {
+   "should": [
+    "Which library version does this project use for requests? Only say what you can prove.",
+    "Before you write the end-of-task report, check every claim you plan to make against the code.",
+    "Does the function refund_order exist in this codebase? Do not guess.",
+    "I want to be sure the API you describe actually exists. Verify before you tell me.",
+    "Write the final report for this task, and cite file and line for each statement.",
+    "Track which of your assumptions are unverified in TASKS.md."
+   ],
+   "should_not": [
+    "Write a limerick about a cat.",
+    "What is 17 times 23?",
+    "Rename the file utils.py to helpers.py.",
+    "Tell me a fun fact about octopuses.",
+    "Add a print statement to the start of main().",
+    "Convert this list to a set."
+   ]
+  },
+  "mogger-handoff": {
+   "should": [
+    "Context is almost full. Write a handoff note for the next session.",
+    "I am done for today. Leave notes so I can pick this up tomorrow.",
+    "Prepare a handoff so another developer can continue without our chat history.",
+    "We are about to compact the conversation; save where we are first.",
+    "Write a handoff note from TASKS.md and git status.",
+    "Passing this project to my colleague. Summarise state and next steps for them."
+   ],
+   "should_not": [
+    "Summarise this article in three bullets.",
+    "What is git rebase?",
+    "Send my colleague a friendly greeting message.",
+    "Show me git log for the last five commits.",
+    "Update the TODO comment in main.py.",
+    "Write a cover letter for a job application."
+   ]
+  },
+  "mogger-idea": {
+   "should": [
+    "mogger idea: a habit tracker for teenagers.",
+    "Build me an app that helps my sister track her freelance invoices.",
+    "I want to make something like Notion but simpler. Where do we start?",
+    "Build me a website for my bakery with ordering.",
+    "I have a vague idea for a social app for dog owners. Help me turn it into a plan.",
+    "Make me an app that tells me when my plants need water."
+   ],
+   "should_not": [
+    "Add a dark-mode toggle to the settings page in src/Settings.tsx.",
+    "Fix the null pointer in checkout.py line 42.",
+    "Write a SQL query that counts orders per day.",
+    "Rename the function getUser to fetchUser everywhere.",
+    "What are some good names for a bakery?",
+    "Explain what a spec document is."
+   ]
+  },
+  "mogger-init": {
+   "should": [
+    "Set up mogger in this project.",
+    "init mogger",
+    "Run the first-run setup for the plugin here.",
+    "I just installed mogger. Create CONSTRAINTS.md, RUNS.md and STACK.md.",
+    "Check that jq and python3 are installed for the mogger hooks and initialise the state folder.",
+    "Please initialise mogger and tell me what is now gated."
+   ],
+   "should_not": [
+    "Initialise a git repository here.",
+    "Run npm init for me.",
+    "Set up ESLint with the recommended config.",
+    "Create a virtualenv and install the requirements.",
+    "What does a plugin do in Claude Code?",
+    "Set up a pre-commit hook for prettier."
+   ]
+  },
+  "mogger-loop": {
+   "should": [
+    "Add a password-reset feature to this app.",
+    "Fix the bug where the cart total is wrong after removing an item.",
+    "Implement the next task from TASKS.md.",
+    "Which model should each job in this workflow run on, and who approves what?",
+    "I want you to build a new settings page, with tests and review.",
+    "You keep reading files and running tests yourself. How should work be delegated here?"
+   ],
+   "should_not": [
+    "What is the weather like on Mars?",
+    "Translate 'good morning' into Spanish.",
+    "Explain the CAP theorem.",
+    "Tell me a joke about programmers.",
+    "What is the syntax for a Python list comprehension?",
+    "Give me three names for a cat."
+   ]
+  },
+  "mogger-privacy": {
+   "should": [
+    "Run the privacy inventory before we share this with real users.",
+    "What user data do we keep?",
+    "I added an analytics script to the page. Does that change our privacy picture?",
+    "Fill in DATA.md from what the code collects.",
+    "We added a phone number column to the users table. What should we record about it?",
+    "Before launch, list every place we store or send personal data."
+   ],
+   "should_not": [
+    "What is GDPR? Explain it in two lines.",
+    "Add a phone number field to the signup form.",
+    "Write a privacy policy joke.",
+    "Hash this string with sha256 in Python.",
+    "How do cookies work in browsers?",
+    "Change the footer text to say 2026."
+   ]
+  },
+  "mogger-rewind": {
+   "should": [
+    "Undo that.",
+    "Rewind to before you edited the config file.",
+    "Roll back the last change, it broke everything.",
+    "Put it back how it was.",
+    "List the checkpoints so I can restore one.",
+    "That refactor was a mistake. Restore the files from before it."
+   ],
+   "should_not": [
+    "Rewind the video to the start of the demo section, what timestamp is that?",
+    "How do I undo a git commit that I already pushed to GitHub?",
+    "Write a function that reverses a string.",
+    "What does the word 'rewind' mean in French?",
+    "Undo the last edit in my text editor using keyboard shortcuts, which keys?",
+    "Revert this one line to use single quotes."
+   ]
+  },
+  "mogger-security": {
+   "should": [
+    "Write an API route that lets a user update their profile.",
+    "Add login with email and password.",
+    "Where should I store the Stripe secret key?",
+    "Add a database query that looks up an order by id from the URL.",
+    "Read this security scan report and tell me what to fix first.",
+    "Should the security-reviewer agent look at this payments change?"
+   ],
+   "should_not": [
+    "Change the page title to 'Home'.",
+    "Write a function to compute the average of a list.",
+    "Explain what a for loop does.",
+    "Convert this CSV to JSON.",
+    "Center the heading with CSS.",
+    "What is the difference between let and const?"
+   ]
+  },
+  "mogger-ship-check": {
+   "should": [
+    "Is this ready to ship?",
+    "All the tasks are done. Run the ship-readiness checklist.",
+    "Can we launch tomorrow? Check everything.",
+    "Run the ship check and tell me what is failing.",
+    "Before I deploy, do a final readiness pass.",
+    "Are we good to go live?"
+   ],
+   "should_not": [
+    "Ship it: push to main and deploy.",
+    "How long does a typical container ship take to cross the Atlantic?",
+    "Write the release notes for version 2.0.",
+    "Add a shipping address field to the checkout form.",
+    "What is a checklist for a good code review?",
+    "Bump the patch version."
+   ]
+  },
+  "mogger-standards": {
+   "should": [
+    "Review this pull request for code quality before merge.",
+    "I am about to add a new dependency for date parsing. What is the process?",
+    "Write a new module for the invoice exporter, following our standards.",
+    "Is it fine to install this random npm package I found?",
+    "What counts as clean code here beyond running the formatter?",
+    "Keep the change surgical: only touch what the task needs."
+   ],
+   "should_not": [
+    "What year was Python first released?",
+    "Summarise the plot of Hamlet in one sentence.",
+    "Run the tests.",
+    "Print the current date.",
+    "Tell me what the file logo.png is.",
+    "Show the git branch name."
+   ]
+  },
+  "mogger-superpowers-preset": {
+   "should": [
+    "I have both mogger and Superpowers installed. How should I combine them?",
+    "Should I use Superpowers instead of mogger's own agents?",
+    "How do I run mogger's hooks underneath Superpowers' TDD workflow?",
+    "Is there a tested config for mogger plus Superpowers?",
+    "Do mogger and Superpowers conflict on worktrees and planning?",
+    "Set up the mogger superpowers preset."
+   ],
+   "should_not": [
+    "What are superpowers in Marvel comics?",
+    "Install the prettier plugin for my editor.",
+    "How do git worktrees work?",
+    "Write a test-driven function for FizzBuzz.",
+    "What is the best code editor?",
+    "Explain what a Claude Code plugin is."
+   ]
+  },
+  "mogger-verify-run": {
+   "should": [
+    "The tests pass. Does the app actually start and respond?",
+    "Confirm the server runs before you call this task done.",
+    "Run the smoke check.",
+    "Is the UI task finished? Make sure the app really runs, not just the tests.",
+    "Verify the CLI actually works end to end.",
+    "Check that the dev server boots and returns 200."
+   ],
+   "should_not": [
+    "Start writing a Dockerfile for this app.",
+    "What does the term smoke test mean?",
+    "Run the unit tests in tests/.",
+    "Explain what HTTP 200 means.",
+    "Restart my laptop, how?",
+    "Add a health-check endpoint to the server code."
+   ]
+  },
+  "mogger-evals": {
+   "should": [
+    "Are the cheap Haiku agents actually good enough, or should some run on Sonnet?",
+    "Set up mogger evals with a small budget.",
+    "How much do the mogger evals cost, and can I raise the cap?",
+    "Turn off the evals nudge, I do not want it.",
+    "Test whether the explorer agent on Haiku is as good as on Sonnet.",
+    "Run the hillclimb on one of the plugin's skill descriptions."
+   ],
+   "should_not": [
+    "Write a unit test for the cart total function.",
+    "What is the difference between Haiku and a sonnet in poetry?",
+    "Evaluate this arithmetic expression: 3 * (4 + 5).",
+    "Set a spending cap on my cloud provider account.",
+    "Which is cheaper, npm or pnpm for CI?",
+    "Explain what a benchmark is in general terms."
+   ]
+  },
+  "mogger-app-evals": {
+   "should": [
+    "My app calls the Anthropic SDK. Help me build an eval for my prompts.",
+    "Is Haiku enough for my app's classification calls?",
+    "Hillclimb my app's system prompt against a held-out set.",
+    "What is the cost of my app's Claude calls and can I lower the effort level?",
+    "Eval my app: does the summariser still work after I changed the model?",
+    "I use @anthropic-ai/sdk. How do I test prompt quality properly?"
+   ],
+   "should_not": [
+    "Add a retry to my OpenAI client wrapper.",
+    "Write a Jest test for the login form.",
+    "Which model does mogger route the explorer agent to?",
+    "Optimise this SQL query.",
+    "How do I write a good prompt for a poem?",
+    "Set up GitHub Actions to run lint."
+   ]
+  }
+ },
+ "note": "should = prompts that ought to activate the skill; should_not = near-misses (first ~half is topical, the rest are unrelated). Near-miss prompts were written by a human to be hard, not chosen because a model failed them."
+}

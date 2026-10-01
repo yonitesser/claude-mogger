@@ -221,12 +221,53 @@ subagent where it can be worth it. Never bump `tester`, `explorer`, or
 `bulk-reader` — there is no task they do that gets better with a smarter
 model.
 
+### Optional cost dial: the advisor tool
+
+Claude Code has an experimental **advisor**: a cheaper main model (say
+Sonnet) can consult a stronger model (say Opus) at decision points, such as
+before it picks an approach, when an error keeps coming back, and before it
+says "done". The user turns it on with `/advisor opus` (or the
+`advisorModel` setting, or `claude --advisor opus`). A plugin cannot turn it
+on for them. Facts from Anthropic's docs (code.claude.com/docs, "Escalate
+hard decisions with the advisor tool"):
+
+- The advisor must be at least as capable as the main model. Sonnet 5.5 as
+  main accepts Fable, Opus 4.7 or later, or Sonnet 5 or later as advisor.
+- Claude decides when to call it. It cannot be forced or counted by a hook.
+  So it supports mogger's gates. It never replaces them: tests, review and
+  the approval gates still run by exit code.
+- It bills advisor tokens (API rates, or plan usage limits), and it needs
+  the Anthropic API. It is not available on Bedrock, Vertex or Foundry, and
+  it stays off when `DISABLE_TELEMETRY` is set.
+- Subagents inherit the advisor. Mogger's `savings-report` does not count it.
+
+If the user wants a cheaper Lead: Sonnet as Lead plus an Opus advisor can
+cost less than Opus as Lead all session. Try it on one project. If you are
+stuck on a recurring failure and the advisor is on, ask it before trying a
+fourth fix.
+
 ## Recording runs
 
 After each task clears reviewer, append one entry to RUNS.md. Include the
 `tokens:` line — run `/cost` and copy the session figure. This is the only
 way anyone (including you) can tell whether this kit is actually saving
 anything on this project. Claims without this number are just claims.
+
+### Savings log — the Lead writes it, not the Haiku agents
+
+`bulk-reader`, `explorer` and `code-writer` have no Bash tool on purpose (they
+stay read-only or write-only), so they cannot log anything themselves. After
+one of them returns, the Lead runs one line:
+
+```
+bash "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/log-savings.sh" <agent> haiku INPUT_CHARS OUTPUT_CHARS
+```
+
+`OUTPUT_CHARS` is the length of the reply the Lead received. `INPUT_CHARS` is
+the size of what the agent had to read: use `wc -c` on the files named in the
+request (skip the log if you cannot tell). Agents that do have Bash
+(`tester`, `fact-checker`, `explainer`, `docs-writer`, `verifier`) still log
+their own runs. Both kinds stay self-reported estimates.
 
 ## Optional: the savings estimate is a different thing than RUNS.md tokens
 

@@ -1,0 +1,145 @@
+{
+ "agent": "explorer",
+ "tasks": [
+  {
+   "id": "explorer-01",
+   "agent": "explorer",
+   "fixture": "shop",
+   "prompt": "Where is `parse_invoice` defined? Give the path and line.",
+   "why_hard": "A near-name `parse_invoice_v1` sits in the same file, docs/CHANGELOG.md quotes 'def parse_invoice(text)' and a test imports it; only one line is the real definition.",
+   "adversarial": true,
+   "grader": {
+    "type": "loc",
+    "file": "shop/billing/parser.py",
+    "pattern": "def parse_invoice(text)",
+    "tol": 0
+   },
+   "gold": {
+    "text": "FOUND:\n- shop/billing/parser.py:12 \u2014 def parse_invoice(text), parses SKU QTY PRICE lines\n\nNOT FOUND / UNCERTAIN:\nnone"
+   },
+   "bad": {
+    "text": "FOUND:\n- docs/CHANGELOG.md:4 \u2014 def parse_invoice(text) mentioned\n\nNOT FOUND / UNCERTAIN:\nnone"
+   }
+  },
+  {
+   "id": "explorer-02",
+   "agent": "explorer",
+   "fixture": "shop",
+   "prompt": "What calls `send_receipt`? List every caller with path and line. Do not list the definition.",
+   "why_hard": "There are two real callers in different packages (orders and the retry job); a comment in cart.py mentions send_receipt and the import line in orders.py is not a call.",
+   "adversarial": true,
+   "grader": {
+    "type": "all",
+    "checks": [
+     {
+      "type": "loc",
+      "file": "shop/orders.py",
+      "pattern": "send_receipt(email, order)",
+      "tol": 0
+     },
+     {
+      "type": "loc",
+      "file": "shop/jobs/retry.py",
+      "pattern": "send_receipt(order[",
+      "tol": 0
+     },
+     {
+      "type": "section_none",
+      "section": "FOUND",
+      "values": [
+       "cart.py"
+      ]
+     }
+    ]
+   },
+   "gold": {
+    "text": "FOUND:\n- shop/orders.py:11 \u2014 place_order calls send_receipt(email, order)\n- shop/jobs/retry.py:13 \u2014 retry_failed calls send_receipt\n\nNOT FOUND / UNCERTAIN:\nnone"
+   },
+   "bad": {
+    "text": "FOUND:\n- shop/orders.py:11 \u2014 place_order calls send_receipt\n- shop/cart.py:6 \u2014 mentions send_receipt\n\nNOT FOUND / UNCERTAIN:\nnone"
+   }
+  },
+  {
+   "id": "explorer-03",
+   "agent": "explorer",
+   "fixture": "shop",
+   "prompt": "Which module actually reads the SHOP_TAX_RATE environment variable? Path and line.",
+   "why_hard": "Documentation and tests could mention the variable, but only one line reads it from the environment; README documents SHOP_CURRENCY only, so a doc-driven guess points at the wrong variable.",
+   "adversarial": true,
+   "grader": {
+    "type": "loc",
+    "file": "shop/config.py",
+    "pattern": "os.environ.get(\"SHOP_TAX_RATE\"",
+    "tol": 0
+   },
+   "gold": {
+    "text": "FOUND:\n- shop/config.py:4 \u2014 TAX_RATE = float(os.environ.get(\"SHOP_TAX_RATE\", \"0.08\"))\n\nNOT FOUND / UNCERTAIN:\nnone"
+   },
+   "bad": {
+    "text": "FOUND:\n- README.md:7 \u2014 configuration table\n\nNOT FOUND / UNCERTAIN:\nnone"
+   }
+  },
+  {
+   "id": "explorer-04",
+   "agent": "explorer",
+   "fixture": "shop",
+   "prompt": "How does an order flow from the cart to the receipt? List the source files in the order the code runs them, using their paths.",
+   "why_hard": "The import order at the top of orders.py (notify, cart, pricing) is NOT the run order (cart total, then discount, then receipt); reading place_order is required.",
+   "adversarial": true,
+   "grader": {
+    "type": "ordered",
+    "items": [
+     "shop/cart\\.py",
+     "shop/pricing\\.py",
+     "shop/notify\\.py"
+    ]
+   },
+   "gold": {
+    "text": "FOUND:\n- shop/orders.py:7 \u2014 place_order drives the flow\n\nSTRUCTURE:\nshop/cart.py (total) -> shop/pricing.py (apply_discount) -> shop/notify.py (send_receipt)\n\nNOT FOUND / UNCERTAIN:\nnone"
+   },
+   "bad": {
+    "text": "FOUND:\n- shop/orders.py:7 \u2014 place_order\n\nSTRUCTURE:\nshop/notify.py -> shop/cart.py -> shop/pricing.py\n\nNOT FOUND / UNCERTAIN:\nnone"
+   }
+  },
+  {
+   "id": "explorer-05",
+   "agent": "explorer",
+   "fixture": "shop",
+   "prompt": "Where is `refund_order` defined?",
+   "why_hard": "It does not exist: docs/CHANGELOG.md lists it as planned. The trap is to invent a location. Correct behaviour is to say NOT FOUND.",
+   "adversarial": true,
+   "grader": {
+    "type": "all",
+    "checks": [
+     {
+      "type": "contains_any",
+      "values": [
+       "not found",
+       "no definition",
+       "does not exist",
+       "doesn't exist",
+       "could not locate",
+       "couldn't locate",
+       "no match",
+       "0 matches",
+       "not defined"
+      ]
+     },
+     {
+      "type": "section_none",
+      "section": "FOUND",
+      "values": [
+       "refund_order"
+      ]
+     }
+    ]
+   },
+   "gold": {
+    "text": "FOUND:\n(none)\n\nNOT FOUND / UNCERTAIN:\nrefund_order is not defined anywhere. docs/CHANGELOG.md lists it as planned."
+   },
+   "bad": {
+    "text": "FOUND:\n- shop/orders.py:12 \u2014 refund_order defined here\n\nNOT FOUND / UNCERTAIN:\nnone"
+   }
+  }
+ ]
+}

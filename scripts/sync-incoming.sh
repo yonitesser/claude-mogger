@@ -9,8 +9,11 @@ mkdir -p incoming/.claude/agents incoming/.claude/hooks
 cp agents/*.md incoming/.claude/agents/
 cp hooks/scripts/*.sh incoming/.claude/hooks/
 chmod +x incoming/.claude/hooks/*.sh
-cp templates/CONSTRAINTS.md templates/RUNS.md templates/STACK.md templates/DECISIONS.md templates/SPEC.md templates/pricing.json incoming/
-cp scripts/savings-report.py scripts/savings-report.sh scripts/mogger-rewind.sh scripts/smoke-check.sh scripts/smoke-browser.mjs scripts/ship-check.sh scripts/cost-report.sh incoming/
+cp templates/CONSTRAINTS.md templates/RUNS.md templates/STACK.md templates/DECISIONS.md templates/SPEC.md templates/DATA.md templates/HANDOFF.md templates/pricing.json incoming/
+cp scripts/savings-report.py scripts/savings-report.sh scripts/mogger-rewind.sh scripts/smoke-check.sh scripts/smoke-browser.mjs scripts/ship-check.sh scripts/cost-report.sh scripts/context-cost.sh scripts/a11y-browser.mjs incoming/
+mkdir -p incoming/checks
+cp scripts/checks/*.sh incoming/checks/
+chmod +x incoming/checks/*.sh
 chmod +x incoming/*.sh incoming/savings-report.py
 # settings.json = hooks.json with plugin paths rewritten to project-relative paths
 sed 's|bash \\"${CLAUDE_PLUGIN_ROOT}\\"/hooks/scripts/|bash .claude/hooks/|g' hooks/hooks.json > incoming/.claude/settings.json
