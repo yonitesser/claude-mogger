@@ -83,5 +83,6 @@ fi
 
 echo "Grounding: no guessing. Cite file:line or command output for every claim about the code; label anything unchecked UNVERIFIED:. Verify a symbol exists before calling it (fact-checker agent, Context7 for library APIs)."
 
+mogger_event info "mogger is on for this session"
 echo "mogger active: git push/merge-to-protected/deploy/money are hook-blocked. Haiku reads, Sonnet builds, you orchestrate. Don't Read or Grep yourself — use explorer/bulk-reader."
 exit 0

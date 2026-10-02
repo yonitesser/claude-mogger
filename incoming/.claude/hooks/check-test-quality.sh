@@ -402,7 +402,7 @@ EOT
 
 if [ -n "$BLOCK" ]; then
   {
-    echo "BLOCKED: fake tests - these cannot fail, so they prove nothing:"
+    mogger_event block "blocked fake tests in ${REL##*/}"; echo "BLOCKED: fake tests - these cannot fail, so they prove nothing:"
     printf '%s' "$BLOCK"
     if [ -n "$WARN" ]; then echo "Also (warnings):"; printf '%s' "$WARN"; fi
     echo "Fix: make each test assert an observable result (a return value, a state change, a thrown error) that would differ if the code were wrong. Remove .only. Set MOGGER_CHECK_TESTS=off to disable this check."
@@ -411,6 +411,7 @@ if [ -n "$BLOCK" ]; then
 fi
 
 if [ -n "$WARN" ]; then
+  mogger_event warn "weak tests in ${REL##*/}"
   printf 'WARN (test quality):\n%s' "$WARN" >&2
   if command -v jq >/dev/null 2>&1 || command -v python3 >/dev/null 2>&1; then
     printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"%s"}}\n' "$(tq_json_escape "Test quality warnings (not blocking):

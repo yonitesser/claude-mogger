@@ -12,6 +12,7 @@ FILE=$(json_get "$INPUT" '.tool_input.file_path')
 [ -z "$FILE" ] || [ ! -f "$FILE" ] && exit 0
 
 EXT="${FILE##*.}"
+SUM_BEFORE=$(cksum < "$FILE" 2>/dev/null)
 has() { command -v "$1" >/dev/null 2>&1; }
 cfg() { for f in "$@"; do [ -f "$f" ] && return 0; done; return 1; }
 
@@ -51,6 +52,7 @@ case "$EXT" in
     has shfmt && shfmt -w "$FILE" >/dev/null 2>&1
     ;;
 esac
+[ "$(cksum < "$FILE" 2>/dev/null)" != "$SUM_BEFORE" ] && mogger_event ok "formatted ${FILE##*/}"
 
 # Always exit 0 — a formatter failure should never block Claude's edit.
 # Formatting is a nicety layered on top; correctness gating is the

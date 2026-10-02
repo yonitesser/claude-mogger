@@ -163,6 +163,7 @@ $DMSG"; else MSG="$DMSG"; fi
 fi
 
 if [ -n "$MSG" ]; then
+  mogger_event block "blocked a big or copied code block in ${FILE_PATH##*/}"
   printf '%s\n' "$MSG" >&2
   exit 2
 fi

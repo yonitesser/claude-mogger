@@ -1,0 +1,9 @@
+{
+  "name": "mogger-status",
+  "version": "0.1.0",
+  "description": "Shows that the mogger guard hooks are running: status line, a bar above the prompt, and a toast when mogger blocks or warns.",
+  "types": "./types/index.d.ts",
+  "author": {
+    "name": "claude-mogger"
+  }
+}

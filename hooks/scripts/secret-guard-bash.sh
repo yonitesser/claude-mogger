@@ -44,12 +44,12 @@ while IFS= read -r seg; do
       tok="${tok%\"}"; tok="${tok#\"}"; tok="${tok%\'}"; tok="${tok#\'}"
       case "$tok" in
         -f|--force)
-          echo "BLOCKED: 'git add $tok' force-adds files past .gitignore, which is how secrets get committed. Add files normally; if a file is ignored, it is ignored on purpose." >&2
+          mogger_event block "blocked git add -f"; echo "BLOCKED: 'git add $tok' force-adds files past .gitignore, which is how secrets get committed. Add files normally; if a file is ignored, it is ignored on purpose." >&2
           exit 2 ;;
         -A|--all|-a|.|:/) ADD_ALL=1 ;;
         -*) ;;
         *) if is_env_file "$tok"; then
-             echo "BLOCKED: '$tok' is a secrets file — never stage it. Add it to .gitignore, commit .env.example with placeholders instead." >&2
+             mogger_event block "blocked staging a secrets file"; echo "BLOCKED: '$tok' is a secrets file — never stage it. Add it to .gitignore, commit .env.example with placeholders instead." >&2
              exit 2
            fi ;;
       esac
@@ -57,7 +57,7 @@ while IFS= read -r seg; do
     if [ "$ADD_ALL" -eq 1 ]; then
       ENVS=$(git ls-files -o --exclude-standard 2>/dev/null | while IFS= read -r f; do is_env_file "$f" && echo "$f"; done)
       if [ -n "$ENVS" ]; then
-        echo "BLOCKED: 'git add' of everything would stage an untracked secrets file: $(echo "$ENVS" | head -n1). Add it to .gitignore first, or stage specific files by name." >&2
+        mogger_event block "blocked staging a secrets file"; echo "BLOCKED: 'git add' of everything would stage an untracked secrets file: $(echo "$ENVS" | head -n1). Add it to .gitignore first, or stage specific files by name." >&2
         exit 2
       fi
     fi
@@ -70,7 +70,7 @@ while IFS= read -r seg; do
 $(git diff 2>/dev/null)"
     fi
     FOUND=$(printf '%s\n' "$DIFF" | grep -E '^\+' | grep -vE '^\+\+\+' | mogger_find_secret) && {
-      echo "BLOCKED: this commit would include what looks like a hardcoded secret: $FOUND. Unstage the file (git restore --staged <file>), move the value to an environment variable, and rotate the credential if it was ever real. Do not commit around this." >&2
+      mogger_event block "blocked a secret in a commit"; echo "BLOCKED: this commit would include what looks like a hardcoded secret: $FOUND. Unstage the file (git restore --staged <file>), move the value to an environment variable, and rotate the credential if it was ever real. Do not commit around this." >&2
       exit 2
     }
   fi

@@ -87,7 +87,7 @@ fi
 HITS=$(awk -v EXT="$EXT" -v OFF="$OFF" -f "$TMP/swallow.awk" "$TARGET" 2>/dev/null | head -5)
 if [ -n "$HITS" ]; then
   {
-    echo "BLOCKED: $FILE_PATH swallows errors silently:"
+    mogger_event block "blocked silent error catch in ${FILE_PATH##*/}"; echo "BLOCKED: $FILE_PATH swallows errors silently:"
     printf '%s\n' "$HITS" | sed "s|^|  $FILE_PATH:|"
     echo "An empty catch/except hides failures until a customer reports them. Do one of:"
     echo "  - log it with context (logger.error / console.error with the error and what was being done)"

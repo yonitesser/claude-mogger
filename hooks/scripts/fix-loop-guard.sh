@@ -186,6 +186,7 @@ if [ "$WOULD_WARN" -eq 1 ]; then
 fi
 
 if [ "$COUNT" -ge "$MAX" ]; then
+  mogger_event block "stopped a fix loop: same error ${COUNT} times"
   {
     echo "STOP the fix loop. '${NCMD}' has now failed ${COUNT} times in a row with the same error (${NLINE})."
     echo "Do not make another edit for this failure yet. Instead:"
@@ -202,6 +203,7 @@ if [ "$COUNT" -ge "$MAX" ]; then
 fi
 
 if [ -n "$WARNMSG" ]; then
+  mogger_event warn "more tests fail after the last edit"
   echo "$WARNMSG" >&2
   HE="${EVENT:-PostToolUse}"
   case "$HE" in PostToolUse|PostToolUseFailure) ;; *) HE=PostToolUse ;; esac

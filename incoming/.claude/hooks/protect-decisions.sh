@@ -18,7 +18,7 @@ FILE_PATH=$(json_get "$INPUT" '.tool_input.file_path')
 TOOL=$(json_get "$INPUT" '.tool_name')
 
 block() {
-  echo "BLOCKED: DECISIONS.md is append-only. $1 Add a new entry at the end instead, and to retire an old one change only its 'Status: active' line to 'Status: superseded-by #n'. (Human override: MOGGER_DECISIONS_LOCK=off.)" >&2
+  mogger_event block "blocked a change to DECISIONS.md"; echo "BLOCKED: DECISIONS.md is append-only. $1 Add a new entry at the end instead, and to retire an old one change only its 'Status: active' line to 'Status: superseded-by #n'. (Human override: MOGGER_DECISIONS_LOCK=off.)" >&2
   exit 2
 }
 

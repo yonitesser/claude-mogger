@@ -55,6 +55,7 @@ for e in "${ENTRIES[@]}"; do
 done
 
 if [ "$MATCH" -eq 0 ]; then
+  mogger_event block "blocked an edit outside task scope: ${REL##*/}"
   cat >&2 <<EOF
 BLOCKED (scope): '$REL' is not in the current task's declared scope.
 Task: $(printf '%s' "$TASK_LINE" | sed 's/^\s*- \[ \] //' | cut -c1-90)

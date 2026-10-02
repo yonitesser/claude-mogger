@@ -152,10 +152,12 @@ STATUS="${1:-}"; SPENT="${2:-0}"
 case "$STATUS" in
   BLOCK)
     [ "${MOGGER_BUDGET_OVERRIDE:-off}" = "on" ] && exit 0
+    mogger_event block "blocked work: budget reached"
     printf 'Budget $%s reached ($%s spent, estimated from transcript). Stop and tell the user; they can raise MOGGER_BUDGET_USD.\n' \
       "$BUDGET" "$(printf '%.2f' "$SPENT" 2>/dev/null || printf '%s' "$SPENT")" >&2
     exit 2 ;;
   WARN)
+    mogger_event warn "over 80 percent of the budget"
     printf 'mogger: over 80%% of the $%s budget ($%s spent, estimated from transcript). Continuing; raise MOGGER_BUDGET_USD or wrap up.\n' \
       "$BUDGET" "$(printf '%.2f' "$SPENT" 2>/dev/null || printf '%s' "$SPENT")" >&2
     exit 0 ;;

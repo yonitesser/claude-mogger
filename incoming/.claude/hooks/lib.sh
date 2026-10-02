@@ -38,3 +38,28 @@ is_protected_branch() {
   local b="$1" pat="${MOGGER_PROTECTED_BRANCHES:-main|master|prod|production|release/.*}"
   [[ "$b" =~ ^($pat)$ ]]
 }
+
+# mogger_event KIND "short message" — append one line (epoch<TAB>kind<TAB>message)
+# to $CLAUDE_PROJECT_DIR/.claude/state/mogger-events.log so a Claude Code mod
+# (mods/mogger-status) can show that mogger is working. KIND: block|warn|ok.
+# Fail-open: prints nothing, always returns 0. Keep messages short, plain, no
+# secrets, no command text: file basenames only. File is capped near 200 lines.
+mogger_event() {
+  (
+    local dir f kind msg n
+    dir="${CLAUDE_PROJECT_DIR:-.}/.claude/state"
+    f="$dir/mogger-events.log"
+    kind=$(printf '%s' "${1:-}" | tr -c 'a-z' '_' | cut -c1-12)
+    msg=$(printf '%s' "${2:-}" | tr '\t\r\n' '   ' | tr -d '[:cntrl:]' | cut -c1-120)
+    [ -n "$kind" ] && [ -n "$msg" ] || exit 0
+    mkdir -p "$dir" || exit 0
+    printf '%s\t%s\t%s\n' "$(date +%s)" "$kind" "$msg" >> "$f" || exit 0
+    n=$(wc -l < "$f" | tr -d '[:space:]')
+    case "$n" in ''|*[!0-9]*) exit 0 ;; esac
+    if [ "$n" -gt 240 ]; then
+      tail -n 200 "$f" > "$f.$$" && mv "$f.$$" "$f"
+      rm -f "$f.$$"
+    fi
+  ) >/dev/null 2>&1
+  return 0
+}

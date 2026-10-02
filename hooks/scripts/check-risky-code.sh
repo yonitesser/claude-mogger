@@ -134,7 +134,7 @@ fi
 [ -s "$TMPF" ] || exit 0
 while IFS='|' read -r ln msg; do add "$msg" "$ln"; done < "$TMPF"
 {
-  echo "BLOCKED: $FILE has a high-confidence security problem:$FOUND"
+  mogger_event block "blocked a security risk in ${FILE##*/}"; echo "BLOCKED: $FILE has a high-confidence security problem:$FOUND"
   echo "Fix it now: keep secrets server-side (no NEXT_PUBLIC_/VITE_ prefix, no reading them in client files), use parameterized queries, never disable TLS checks, never eval request data, never open Firebase rules to 'if true'. False positive? Set MOGGER_CHECK_RISKY=off for this session and tell the user."
 } >&2
 exit 2
