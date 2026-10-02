@@ -15,6 +15,9 @@
 #   mogger-eval.sh hillclimb --skill NAME [--rounds N] [--repeats N] [--budget USD]
 #   mogger-eval.sh apply <proposal-id> [--yes] [--target PATH] [--force]
 #   mogger-eval.sh validate                 (checks tasks/graders/fixtures; free)
+#   mogger-eval.sh ab estimate|plan|status|report|validate    (A/B benchmark: plain vs mogger; free)
+#   mogger-eval.sh ab run [--budget USD] [--model M] [--repeats N] [--tasks a,b] [--jobs N] [--background]
+#     Does installing mogger change cost and correctness? Header of scripts/eval/ab.py; docs checked below.
 # Extra options: --jobs N (parallel runs, default 3), --agents a,b, --skills a,b,
 #   --no-effort-grid (haiku/sonnet at the agent's own effort only), --min-gain F,
 #   --force (hillclimb past the noise/headroom stop).
@@ -59,6 +62,21 @@
 #     from --agents plus --model/--effort given explicitly; the --settings permissions.deny
 #     path syntax used to hide evals/ from the agent is best effort.
 #
+# A/B BENCHMARK (`ab`; scripts/eval/ab.py, tasks and fixtures in evals/ab/): plain Claude Code vs the same
+#   plus this plugin, same model/effort/prompt/fixture copy/turn limit. Cost in USD is the CLI's client-side
+#   estimate. A claim of "more" or "less" per successful task is made only when the 95% CI excludes zero.
+#   VERIFIED (same docs, read 2026-10-02, CLI v2.1.287 --help): --include-hook-events, --permission-mode
+#     acceptEdits, --allowedTools/--disallowedTools, --setting-sources, --strict-mcp-config, --plugin-dir,
+#     --max-turns, --max-budget-usd, result-event usage/duration_ms/num_turns, init-event plugins[] and
+#     claude_code_version, hook_started/hook_response events (hook_event, hook_name), env
+#     CLAUDE_CODE_DISABLE_AUTO_MEMORY and CLAUDE_CODE_DISABLE_CLAUDE_MDS.
+#     https://code.claude.com/docs/en/headless  /cli-reference  /plugins/create  /env-vars  /agent-sdk/typescript
+#   ASSUMED, NOT PROVEN (needs one paid run to confirm): plugin hooks fire under acceptEdits; --setting-sources
+#     project keeps the user's plugins and hooks out; hook events name the script in a '.../scripts/NAME.sh'
+#     string. The report warns when arm B shows no hook events, or arm A shows any. --bare is not used (it
+#     skips hooks and needs an API key). acceptEdits is not a sandbox: trials run model-chosen python3 and
+#     grep commands in a temp folder as the current user.
+#
 # Overridable: MOGGER_CLAUDE_BIN (the claude binary; tests use a stub),
 #   MOGGER_EVAL_PLUGIN_ROOT, MOGGER_EVAL_DIR, MOGGER_EVAL_STATE_DIR, MOGGER_EVAL_PRICING,
 #   MOGGER_EVAL_TRIGGER_MODEL (default sonnet), MOGGER_EVAL_PROPOSER_MODEL (default sonnet),
@@ -93,10 +111,17 @@ pid_alive() {  # pid_alive <file>
   [ -n "$p" ] && kill -0 "$p" 2>/dev/null
 }
 
+is_run=0
+RS="$STATE"
 case "$cmd" in
-  run|hillclimb)
-    if [ "${MOGGER_EVAL_BG:-}" != "1" ] && pid_alive "$STATE/running.pid"; then
-      echo "An eval run is already going (pid $(tr -dc '0-9' < "$STATE/running.pid")). See: mogger-eval.sh status" >&2
+  run|hillclimb) is_run=1 ;;
+  ab) RS="$STATE/ab"; [ "${2:-}" = "run" ] && is_run=1 ;;
+esac
+
+case "$is_run" in
+  1)
+    if [ "${MOGGER_EVAL_BG:-}" != "1" ] && pid_alive "$RS/running.pid"; then
+      echo "An eval run is already going (pid $(tr -dc '0-9' < "$RS/running.pid")). See: mogger-eval.sh status" >&2
       exit 2
     fi
     if [ "$bg" = "1" ]; then
@@ -108,23 +133,26 @@ case "$cmd" in
       if [ "$has_budget" = "0" ] && [ ! -f "$STATE/consent.json" ]; then
         exec python3 "$PY_CLI" "${args[@]}"   # prints the refusal and exits 2
       fi
-      mkdir -p "$STATE"
-      MOGGER_EVAL_BG=1 nohup bash -c 'echo $$ > "$1"; shift; exec "$@"' _ "$STATE/running.pid" bash "$SELF" "${args[@]}" \
-        >> "$STATE/run.log" 2>&1 < /dev/null &
+      mkdir -p "$RS"
+      MOGGER_EVAL_BG=1 nohup bash -c 'echo $$ > "$1"; shift; exec "$@"' _ "$RS/running.pid" bash "$SELF" "${args[@]}" \
+        >> "$RS/run.log" 2>&1 < /dev/null &
       started=$!
       n=0
-      while [ ! -s "$STATE/running.pid" ] && [ "$n" -lt 30 ]; do sleep 0.1; n=$((n+1)); done
-      echo "Started in the background (pid $started). Log: $STATE/run.log"
+      while [ ! -s "$RS/running.pid" ] && [ "$n" -lt 30 ]; do sleep 0.1; n=$((n+1)); done
+      echo "Started in the background (pid $started). Log: $RS/run.log"
       echo "Check with: mogger-eval.sh status. Read results with: mogger-eval.sh report"
       exit 0
     fi
     python3 "$PY_CLI" "${args[@]}"
     rc=$?
-    if [ "${MOGGER_EVAL_BG:-}" = "1" ]; then rm -f "$STATE/running.pid"; fi
+    if [ "${MOGGER_EVAL_BG:-}" = "1" ]; then rm -f "$RS/running.pid"; fi
     exit $rc
     ;;
+esac
+
+case "$cmd" in
   ""|-h|--help|help)
-    sed -n '2,20p' "$SELF" | sed 's/^# \{0,1\}//'
+    sed -n '2,22p' "$SELF" | sed 's/^# \{0,1\}//'
     [ -z "$cmd" ] && exit 2
     exit 0
     ;;

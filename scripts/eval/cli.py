@@ -9,6 +9,7 @@ import sys
 import time
 
 import common
+import ab
 import graders
 import hillclimb as hc
 import report
@@ -400,6 +401,25 @@ def main(argv):
     p.add_argument("--min-gain", type=float, default=0.10)
     p.add_argument("--force", action="store_true")
     p.add_argument("--background", action="store_true")
+    p = sub.add_parser("ab")
+    asub = p.add_subparsers(dest="ab_cmd")
+    for name in ("estimate", "plan", "run"):
+        q = asub.add_parser(name)
+        q.add_argument("--model", default=None)
+        q.add_argument("--effort", default=None)
+        q.add_argument("--repeats", type=int, default=ab.DEFAULT_REPEATS)
+        q.add_argument("--tasks", default="")
+        q.add_argument("--jobs", type=int, default=int(os.environ.get("MOGGER_AB_JOBS", str(ab.DEFAULT_JOBS))))
+        q.add_argument("--seed", default=os.environ.get("MOGGER_AB_SEED", ab.DEFAULT_SEED))
+        if name == "run":
+            q.add_argument("--budget", default=None)
+            q.add_argument("--trial-cap", default=None)
+            q.add_argument("--background", action="store_true")
+    asub.add_parser("status")
+    asub.add_parser("validate")
+    q = asub.add_parser("report")
+    q.add_argument("--input", default=None)
+    q.add_argument("--seed", default=ab.DEFAULT_SEED)
     p = sub.add_parser("apply")
     p.add_argument("proposal")
     p.add_argument("--yes", action="store_true")
@@ -412,7 +432,8 @@ def main(argv):
     if getattr(a, "repeats", 1) < 1 or getattr(a, "jobs", 1) < 1:
         common.die("--repeats and --jobs must be 1 or more")
     return {"estimate": cmd_estimate, "consent": cmd_consent, "run": cmd_run, "status": cmd_status,
-            "report": cmd_report, "hillclimb": cmd_hillclimb, "apply": cmd_apply, "validate": cmd_validate}[a.cmd](a)
+            "report": cmd_report, "hillclimb": cmd_hillclimb, "apply": cmd_apply, "validate": cmd_validate,
+            "ab": lambda x: ab.main(x, out, read_consent)}[a.cmd](a)
 
 
 if __name__ == "__main__":
