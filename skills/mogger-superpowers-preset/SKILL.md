@@ -1,6 +1,6 @@
 ---
 name: mogger-superpowers-preset
-description: The tested configuration for running mogger's enforcement hooks underneath Superpowers' planning/TDD/worktree workflow. Load when the user has both installed, asks how to combine them, or asks whether to use Superpowers instead of mogger's own agents.
+description: Config for running mogger's hooks under Superpowers' planning/TDD workflow. Load when both are installed or the user asks how to combine them.
 ---
 
 # Running mogger + Superpowers together

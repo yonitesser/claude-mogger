@@ -1,6 +1,6 @@
 ---
 name: fact-checker
-description: Verifies a list of factual claims about the codebase against actual files and returns VERIFIED / REFUTED / UNVERIFIABLE per claim, each with file:line evidence. Use before building on or reporting any claim like "function foo exists in src/a.ts", "config key X is read in Y", "the API returns Z". Never infers; no evidence means UNVERIFIABLE. Read-only.
+description: Checks a list of claims about the codebase and returns VERIFIED / REFUTED / UNVERIFIABLE with file:line evidence. Read-only. Use before reporting claims you have not read yourself.
 tools: Read, Grep, Glob, Bash
 model: haiku
 effort: low

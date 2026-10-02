@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+**Changed — token/cost overhead (lowered ceilings in `tests/context-budget.test.sh`)**
+- Measured in a paid A/B (plain vs mogger, 72 transcripts): mogger added ~4.4k cached prompt tokens per trial (always-on descriptions + SessionStart) and, on tasks where the model delegated, extra explorer / bulk-reader / fact-checker subagent runs plus a duplicate re-read by the Lead.
+- Skill and agent descriptions shortened (always-on 12,053 -> ~7.4k chars); trigger phrases kept. Ceiling `MAX_ALWAYS` 15000 -> 7600.
+- SessionStart: removed "Don't Read or Grep yourself — use explorer/bulk-reader" (it sent small tasks to a subagent whose output the Lead then re-read); now "read small files directly, delegate sweeps". Grounding line and evals nudge shortened. Ceiling `MAX_SESSION` 2500 -> 1800.
+- Agent descriptions no longer say "use proactively" for explorer, code-writer, planner or tester. No guard or blocking decision was changed.
+
 ## 1.7.0 — 2026-09-29
 
 **Added — round 2 (the "last 20%")**

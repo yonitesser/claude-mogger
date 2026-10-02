@@ -1,6 +1,6 @@
 ---
 name: mogger-explain
-description: When and how the Lead dispatches the explainer agent to give the user a plain-English note about what changed. Use at the end of every task, and whenever the user says "explain that", "what did you change", or "I don't follow".
+description: When to dispatch the explainer agent for a plain-English note on what changed. Use at task end or on "explain that", "what did you change".
 ---
 
 # mogger explain

@@ -1,6 +1,6 @@
 ---
 name: mogger-privacy
-description: Run the privacy inventory (scripts/checks/privacy.sh) and fill DATA.md from what it found. Use before sharing an app with real users, when a form/database column/analytics script is added, or when the human asks "what user data do we keep?". Not legal advice.
+description: Runs scripts/checks/privacy.sh and fills DATA.md. Use before sharing an app with real users, when adding a form/column/analytics script, or on "what user data do we keep?". Not legal advice.
 ---
 
 # mogger privacy

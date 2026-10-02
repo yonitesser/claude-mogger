@@ -1,6 +1,6 @@
 ---
 name: verifier
-description: Runs scripts/smoke-check.sh to answer "does the app actually start and respond?" and returns pass/fail plus the exact error lines. Use after tester passes and before a UI/server task is called done. Never fixes anything.
+description: Runs scripts/smoke-check.sh to confirm the app starts and responds; returns pass/fail and error lines. Use before calling a UI/server task done. Never fixes.
 tools: Bash, Read, Grep
 model: haiku
 effort: low

@@ -1,6 +1,6 @@
 ---
 name: planner
-description: Breaks a feature request or bug fix into small, sequential, independently-testable tasks and writes them to TASKS.md. Use at the start of any non-trivial piece of work, before any code is written. Use proactively whenever the Lead is given a feature request rather than a single small fix.
+description: Breaks a multi-step feature into small testable tasks in TASKS.md. Use before coding a feature; skip for a single small fix.
 tools: Read, Write, Grep, Glob
 model: sonnet
 ---

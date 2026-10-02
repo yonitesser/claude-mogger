@@ -1,6 +1,6 @@
 ---
 name: mogger-docs
-description: When the Lead dispatches the docs-writer agent to write README.md and .env.example from verified facts, and how to use scripts/checks/docs.sh. Use at project start, before shipping, and after adding env vars or scripts.
+description: Dispatching docs-writer and scripts/checks/docs.sh to write README.md and .env.example from verified facts. Use at project start, before shipping, after adding env vars.
 ---
 
 # mogger docs

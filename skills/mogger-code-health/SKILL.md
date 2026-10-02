@@ -1,6 +1,6 @@
 ---
 name: mogger-code-health
-description: Code-health rules for vibe-coded apps — file and function size limits, no copy-paste, every error handled and logged, timeouts on every outbound call, pagination on every list, indexes on foreign keys, a backup plan, and caps on loops around paid APIs. Says which report-only check to run when (structure, resilience, database, cost-risk). Load before adding features to a growing codebase, before touching the database schema, before calling a paid API, and before shipping.
+description: Code-health rules: size limits, no copy-paste, handled errors, timeouts, pagination, indexes, backups, caps on paid-API loops; names which check to run. Load before growing a codebase, changing a DB schema, calling a paid API, or shipping.
 ---
 
 # mogger code health: fine for 5 users, still fine for 500

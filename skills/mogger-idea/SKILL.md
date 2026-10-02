@@ -1,6 +1,6 @@
 ---
 name: mogger-idea
-description: Spec-first interview for vague or big requests. Use when the user says "mogger idea" or gives an open-ended ask like "build me an app that...". Checks the repo first, asks at most 5 short questions one at a time (each with a default), writes SPEC.md, then hands off to the planner. Skip it when the request is already specific.
+description: Spec-first interview for vague or big asks ("build me an app that..."): at most 5 questions, writes SPEC.md, hands to planner. Use when the ask is vague. Skip when the request is already specific.
 ---
 
 # mogger idea: spec before plan

@@ -1,6 +1,6 @@
 ---
 name: mogger-rewind
-description: Undo AI edits. Lists, inspects, and restores the automatic working-tree checkpoints the mogger checkpoint hook takes before edits. Use when the user says "undo that", "rewind", "roll back", "put it back how it was", or when a change went wrong and reverting by hand would be risky.
+description: Undo AI edits: lists, inspects and restores the checkpoints taken before edits. Use on "undo that", "rewind", "roll back", or when a bad change is risky to revert by hand.
 ---
 
 # mogger rewind

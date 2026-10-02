@@ -110,17 +110,14 @@ _evn_gt() { awk -v a="$1" -v b="$2" 'BEGIN { exit !(a + 0 > b + 0) }'; }
 
 evals_nudge_text() {  # evals_nudge_text <estimate-or-empty>
   echo "## Mogger evals (paid, off until you agree)"
-  echo "Mogger can test if cheaper models do your agents' work as well as Sonnet."
-  echo "This can cut your bill. The tests call the Claude API, so they cost money."
+  echo "Tests if cheaper models do your agents' work as well. They call the Claude API and cost money."
   if [ -n "$1" ]; then
-    echo "Estimated cost: about \$$1 for one run. Nothing runs unless you say yes."
+    echo "Estimated cost: about \$$1 per run. Nothing runs unless you say yes."
   else
-    echo "Cost: run scripts/mogger-eval.sh estimate to see it. Nothing runs unless you say yes."
+    echo "Cost: run scripts/mogger-eval.sh estimate. Nothing runs unless you say yes."
   fi
-  echo "You pick a dollar cap once. After that, tests run by themselves inside the cap."
-  echo "Free checks with no cost: scripts/checks/evals-static.sh"
-  echo "To hide this message: MOGGER_EVALS=off"
-  echo "For Claude: tell the user this in one short paragraph. If they say yes, load skill mogger-evals."
+  echo "Free check: scripts/checks/evals-static.sh. Hide this: MOGGER_EVALS=off"
+  echo "For Claude: tell the user in one sentence; if they say yes, load skill mogger-evals."
 }
 
 evals_session_context() {

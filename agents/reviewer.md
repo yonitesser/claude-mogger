@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: Reviews a completed task's diff against project conventions, checks for obvious bugs/security issues, and gives a clear ready-or-not verdict. Use after tester reports passing tests, before telling the Lead the branch is ready for human approval.
+description: Reviews a finished task's diff for convention, bug and security problems and gives a ready-or-not verdict. Use after tester passes.
 tools: Read, Bash, Grep, Glob
 model: sonnet
 ---
