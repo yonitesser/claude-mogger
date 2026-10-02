@@ -29,6 +29,7 @@ if awk '/^## Open questions/{f=1;next} /^## /{f=0} f' TASKS.md | grep -qE '\S'; 
   exit 0
 fi
 
+mogger_event block "stopped early: $OPEN tasks still open"
 NEXT=$(grep -m1 '^\s*- \[ \]' TASKS.md | sed 's/^\s*- \[ \] //')
 cat >&2 <<EOF
 NOT DONE: TASKS.md has $OPEN open task(s) and no blocker recorded. Next: "$NEXT"

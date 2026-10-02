@@ -24,7 +24,7 @@ fi
 LINES=$(wc -l < "$FILE_PATH" 2>/dev/null || echo 0)
 
 if [ "$LINES" -gt "$THRESHOLD" ]; then
-  echo "BLOCKED: '$FILE_PATH' has $LINES lines (limit: $THRESHOLD). Don't read it via Bash either. Delegate to the bulk-reader subagent (Task tool, subagent_type: bulk-reader) instead." >&2
+  mogger_event block "blocked a big file read in the shell"; echo "BLOCKED: '$FILE_PATH' has $LINES lines (limit: $THRESHOLD). Don't read it via Bash either. Delegate to the bulk-reader subagent (Task tool, subagent_type: bulk-reader) instead." >&2
   exit 2
 fi
 

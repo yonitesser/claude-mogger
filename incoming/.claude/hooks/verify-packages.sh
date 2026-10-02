@@ -69,7 +69,7 @@ check() {  # check <ecosystem> <name>
 }
 
 block() {
-  echo "BLOCKED: package '$1' does not exist on $2 — AI assistants invent package names, attackers register them. Verify the correct name (check the project's docs or an existing lockfile) before installing anything." >&2
+  mogger_event block "blocked unknown package $1"; echo "BLOCKED: package '$1' does not exist on $2 — AI assistants invent package names, attackers register them. Verify the correct name (check the project's docs or an existing lockfile) before installing anything." >&2
   exit 2
 }
 

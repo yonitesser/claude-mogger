@@ -12,7 +12,7 @@ if [ -z "$FILE_PATH" ]; then
 fi
 
 if echo "$FILE_PATH" | grep -qiE '(\.github/workflows/|\.gitlab-ci\.yml|Dockerfile|docker-compose.*\.yml|terraform/|\.tf$|stripe|billing|payment)'; then
-  echo "BLOCKED: '$FILE_PATH' controls deployment or payments. Editing it requires human approval. Explain the change you want to make instead of making it." >&2
+  mogger_event block "blocked an edit of ${FILE_PATH##*/}"; echo "BLOCKED: '$FILE_PATH' controls deployment or payments. Editing it requires human approval. Explain the change you want to make instead of making it." >&2
   exit 2
 fi
 

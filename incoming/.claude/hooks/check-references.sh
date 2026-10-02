@@ -353,4 +353,6 @@ sys.exit(0)
 PYEOF
 
 python3 -c "$PY" "$FILE_PATH"
-exit $?
+RC=$?
+[ "$RC" -eq 2 ] && mogger_event block "blocked unresolved references in ${FILE_PATH##*/}"
+exit $RC

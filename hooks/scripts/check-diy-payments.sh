@@ -83,7 +83,7 @@ fi
 
 [ -z "$FOUND" ] && exit 0
 {
-  echo "BLOCKED: $FILE looks like hand-rolled payment handling:$FOUND"
+  mogger_event block "blocked DIY payment code in ${FILE##*/}"; echo "BLOCKED: $FILE looks like hand-rolled payment handling:$FOUND"
   echo "Use Stripe Checkout / Payment Element / your provider's hosted fields; never handle card numbers. Store only the provider's customer/payment ids (and last4). Webhooks must verify the signature (stripe.webhooks.constructEvent / Webhook.construct_event with the raw body). False positive? MOGGER_CHECK_PAYMENTS=off, and tell the user."
 } >&2
 exit 2

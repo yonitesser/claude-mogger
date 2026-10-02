@@ -22,7 +22,7 @@ BASE="${FILE##*/}"
 case "$BASE" in
   .env.example|.env.sample|.env.template) ;;
   .env|.env.*)
-    echo "BLOCKED: '$BASE' is a secrets file — do not write it. Put placeholder keys in .env.example instead and tell the user which real values they need to set themselves. Never ask for or invent real credentials." >&2
+    mogger_event block "blocked a write to secrets file $BASE"; echo "BLOCKED: '$BASE' is a secrets file — do not write it. Put placeholder keys in .env.example instead and tell the user which real values they need to set themselves. Never ask for or invent real credentials." >&2
     exit 2 ;;
 esac
 
@@ -31,7 +31,7 @@ NEW=$(json_get "$INPUT" '.tool_input.new_string')
 [ -z "$CONTENT$NEW" ] && exit 0
 
 FOUND=$(printf '%s\n%s\n' "$CONTENT" "$NEW" | mogger_find_secret) && {
-  echo "BLOCKED: this write to '$FILE' contains what looks like a hardcoded secret: $FOUND. Read it from the environment instead (process.env.X / os.environ['X']) and document the variable in .env.example. If it is a deliberate fake for a test fixture, build it at runtime or use an obvious placeholder like 'your-key-here'." >&2
+  mogger_event block "blocked a secret in $BASE"; echo "BLOCKED: this write to '$FILE' contains what looks like a hardcoded secret: $FOUND. Read it from the environment instead (process.env.X / os.environ['X']) and document the variable in .env.example. If it is a deliberate fake for a test fixture, build it at runtime or use an obvious placeholder like 'your-key-here'." >&2
   exit 2
 }
 exit 0

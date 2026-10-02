@@ -33,13 +33,13 @@ fi
 MARKER=".claude/state/last_test_result.json"
 
 if [ ! -f "$MARKER" ]; then
-  echo "BLOCKED: no test result at $MARKER. Delegate to tester first — reviewer cannot run on an unverified change." >&2
+  mogger_event block "blocked review: no test result"; echo "BLOCKED: no test result at $MARKER. Delegate to tester first — reviewer cannot run on an unverified change." >&2
   exit 2
 fi
 
 STATUS=$(json_get "$(cat "$MARKER")" '.status')
 if [ "$STATUS" != "pass" ]; then
-  echo "BLOCKED: last recorded test status is '${STATUS:-missing}', not 'pass'. Fix (builder), re-run tester, then reviewer." >&2
+  mogger_event block "blocked review: tests did not pass"; echo "BLOCKED: last recorded test status is '${STATUS:-missing}', not 'pass'. Fix (builder), re-run tester, then reviewer." >&2
   exit 2
 fi
 
@@ -48,7 +48,7 @@ fi
 # full suite once at the end — reviewer needs the full one.
 SCOPE=$(json_get "$(cat "$MARKER")" '.scope')
 if [ -n "$SCOPE" ] && [ "$SCOPE" != "full" ]; then
-  echo "BLOCKED: last test run was scope '$SCOPE', not 'full'. Affected-only runs are for the build loop; reviewer requires a full-suite pass. Re-run tester with the complete suite." >&2
+  mogger_event block "blocked review: tests ran on a part only"; echo "BLOCKED: last test run was scope '$SCOPE', not 'full'. Affected-only runs are for the build loop; reviewer requires a full-suite pass. Re-run tester with the complete suite." >&2
   exit 2
 fi
 
@@ -58,7 +58,7 @@ NEWER=$(find . -type f -newer "$MARKER" \
   -not -path './.venv/*' -not -path './target/*' -not -path './dist/*' -not -path './build/*' \
   -not -name 'RUNS.md' -not -name 'TASKS.md' 2>/dev/null | head -1)
 if [ -n "$NEWER" ]; then
-  echo "BLOCKED: '$NEWER' changed after the last test run. The pass is stale. Re-run tester." >&2
+  mogger_event block "blocked review: test pass is stale"; echo "BLOCKED: '$NEWER' changed after the last test run. The pass is stale. Re-run tester." >&2
   exit 2
 fi
 

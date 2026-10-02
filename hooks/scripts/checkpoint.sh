@@ -40,7 +40,7 @@ run() {
   fi
   local label="before edit"
   [ -n "$line" ] && label="before task: $(printf '%s' "$line" | sed -E 's/^[[:space:]]*- \[ \][[:space:]]*//' | cut -c1-80)"
-  mogger_cp_snapshot "$label" >/dev/null 2>&1
+  [ -n "$(mogger_cp_snapshot "$label" 2>/dev/null)" ] && mogger_event ok "saved a checkpoint"
   printf '%s %s\n' "$now" "$task" > "$state" 2>/dev/null
   return 0
 }

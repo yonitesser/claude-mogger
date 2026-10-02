@@ -14,7 +14,11 @@ mogger_cp_tree() {  # prints the tree hash of the current working tree
   idx=$(mktemp "${TMPDIR:-/tmp}/mogger-idx.XXXXXX") || return 1
   rm -f "$idx"
   [ -f "$gitdir/index" ] && cp -p "$gitdir/index" "$idx"   # -p: keep mtime, git's racy-stat check depends on it
-  GIT_INDEX_FILE="$idx" git add -A >/dev/null 2>&1 && GIT_INDEX_FILE="$idx" git write-tree 2>/dev/null
+  # mogger-events.log is a status feed, not work: keep it out of snapshots so
+  # logging an event never makes the tree look changed.
+  GIT_INDEX_FILE="$idx" git add -A >/dev/null 2>&1 \
+    && { GIT_INDEX_FILE="$idx" git rm -q --cached --ignore-unmatch -- ':(top).claude/state/mogger-events.log' >/dev/null 2>&1; true; } \
+    && GIT_INDEX_FILE="$idx" git write-tree 2>/dev/null
   rc=$?
   rm -f "$idx"
   return $rc
