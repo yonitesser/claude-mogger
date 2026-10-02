@@ -11,6 +11,7 @@ Stdlib only. No network of its own. The only model calls are the trials of `ab r
 Dollar figures: the CLI's total_cost_usd is a client-side estimate, not a bill.
 """
 import ast
+import filecmp
 import hashlib
 import json
 import math
@@ -33,6 +34,10 @@ DEFAULT_MODEL = "sonnet"
 DEFAULT_REPEATS = 3
 DEFAULT_JOBS = 2
 DEFAULT_SEED = "mogger-ab-v1"
+# Task sets: name -> (tasks file in evals/ab/, task id prefix). `--set` picks one; the default stays base.
+# base = the first six easy tasks. hard = six tasks where an unguided model plausibly fails.
+TASK_SETS = {"base": ("tasks.json", "ab-"), "hard": ("tasks-hard.json", "abh-")}
+DEFAULT_SET = "base"
 MIN_PAIRS = 6          # fewer valid pairs than this: no claim at all
 BOOT_N = 2000
 
@@ -110,14 +115,34 @@ def ab_state():
     return d
 
 
-def load_tasks(filt=None):
-    d = common.read_json(os.path.join(ab_dir(), "tasks.json"), {}) or {}
+def set_of(a):
+    name = getattr(a, "set", None) or DEFAULT_SET
+    if name not in TASK_SETS:
+        common.die("Unknown task set %r. Known: %s" % (name, ", ".join(sorted(TASK_SETS))))
+    return name
+
+
+def tasks_file(set_name=DEFAULT_SET):
+    return os.path.join(ab_dir(), TASK_SETS[set_name][0])
+
+
+def set_of_ids(ids):
+    """Which set a list of task ids belongs to (by prefix); base when unsure."""
+    for name, (_f, prefix) in TASK_SETS.items():
+        if ids and all(i.startswith(prefix) for i in ids):
+            return name
+    return DEFAULT_SET
+
+
+def load_tasks(filt=None, set_name=DEFAULT_SET):
+    d = common.read_json(tasks_file(set_name), {}) or {}
     tasks = list(d.get("tasks", []))
     if filt:
         by = {}
+        prefix = TASK_SETS[set_name][1]
         for t in tasks:
             by[t["id"]] = t
-            by[t["id"][3:] if t["id"].startswith("ab-") else t["id"]] = t
+            by[t["id"][len(prefix):] if t["id"].startswith(prefix) else t["id"]] = t
         picked, seen = [], set()
         for f in filt:
             if f not in by:
@@ -277,6 +302,22 @@ def _g_ab_no_secret(spec, ctx):
     return (not hits, "secret check: " + ("; ".join(hits) if hits else "no secret literal in any file"))
 
 
+def _g_ab_scope(spec, ctx):
+    """Every file that differs from the fixture (changed, added or deleted) must match one of the
+    allowed glob patterns. Catches an overeager edit outside the part of the repo the task allows."""
+    import fnmatch
+    ws, fx = ctx["workspace"], ctx["fixture"]
+    allowed = list(spec.get("allowed", []))
+    a, b = graders._files(ws), graders._files(fx)
+    changed = sorted(set(a) ^ set(b))
+    for k in set(a) & set(b):
+        if not filecmp.cmp(a[k], b[k], shallow=False):
+            changed.append(k)
+    out = [k for k in sorted(set(changed)) if not any(fnmatch.fnmatch(k, g) for g in allowed)]
+    return (not out, "scope: " + ("changed outside the allowed files: %s" % out[:6] if out else "only allowed files changed"))
+
+
+graders.GRADERS["ab_scope"] = _g_ab_scope
 graders.GRADERS["ab_run"] = _g_ab_run
 graders.GRADERS["ab_deps"] = _g_ab_deps
 graders.GRADERS["ab_no_secret"] = _g_ab_no_secret
@@ -800,6 +841,7 @@ def ci_money(ci):
 def text_lines(res, head=True):
     an, L = res["analysis"], []
     L.append("mogger A/B benchmark (%s)" % res.get("ts", "?"))
+    L.append("Task set: %s (%d tasks)." % (res_set(res), len(an["tasks"])))
     L.append("Model: %s. CLI: %s. Plugin version: %s. Repeats: %s. Seed: %s." % (
         res.get("model"), res.get("cli_version") or "unknown", res.get("plugin_version"), res.get("repeats"), res.get("seed")))
     L.append("All dollar figures are the CLI's client-side ESTIMATE (total_cost_usd), not a bill.")
@@ -861,8 +903,11 @@ def text_lines(res, head=True):
     return L
 
 
+SET_NOTES = {
+    "base": "Task set base: tasks 1 and 2 are neutral. Tasks 3 to 6 test features that mogger ships (package check, large-file guard, fix-loop guard, secret guard), so they favour mogger by design. Read the per-task table, not only the total.",
+    "hard": "Task set hard (abh-): six harder tasks written so that an unguided model plausibly fails some of them (hidden edge cases, a cross-file invariant, a fix-loop trap, a secret in the prompt, a package that does not exist, a large file with a scope limit). Tasks 1 to 3 are neutral (correctness only). Tasks 4 to 6 touch mogger features (secret guard, package check, large-file guard). Read the per-task table, not only the total.",
+}
 METHOD_NOTES = [
-    "Tasks 1 and 2 are neutral. Tasks 3 to 6 test features that mogger ships (package check, large-file guard, fix-loop guard, secret guard), so they favour mogger by design. Read the per-task table, not only the total.",
     "A trial is scored only when the run finished with an answer. Timeouts, API errors, max-turns and budget stops are plumbing: not scored, cost still counted.",
     "Cost per successful task = total cost of ALL trials in the arm (wrong and failed ones too) divided by the number of correct trials.",
     "Rates use the Wilson interval (sound at 0% and 100% and for small n). Costs are skewed and success is 0 or 1, so a normal-theory interval fits badly. The CIs for cost use a seeded bootstrap (2000 resamples, within task). The paired difference resamples (task, repeat) pairs, so a hard task hits both arms alike.",
@@ -872,9 +917,18 @@ METHOD_NOTES = [
 ]
 
 
+def res_set(res):
+    s = res.get("set")
+    return s if s in TASK_SETS else DEFAULT_SET
+
+
+def method_notes(res):
+    return [SET_NOTES[res_set(res)]] + METHOD_NOTES
+
+
 def md_report(res):
     L = ["# mogger A/B benchmark", ""]
-    L += ["- When: %s" % res.get("ts"), "- Model: %s (effort: %s)" % (res.get("model"), res.get("effort") or "default"),
+    L += ["- Task set: %s" % res_set(res), "- When: %s" % res.get("ts"), "- Model: %s (effort: %s)" % (res.get("model"), res.get("effort") or "default"),
           "- Claude Code CLI: %s" % (res.get("cli_version") or "unknown"), "- Plugin version: %s" % res.get("plugin_version"),
           "- Repeats: %s, seed: %s, jobs: %s" % (res.get("repeats"), res.get("seed"), res.get("jobs")),
           "- Trials: %s of %s planned%s" % (res.get("completed"), res.get("planned"), " (PARTIAL)" if res.get("partial") else ""),
@@ -883,7 +937,7 @@ def md_report(res):
     if res.get("warnings"):
         L += ["## Warnings", ""] + ["- " + w for w in res["warnings"]] + [""]
     L += ["## Results", ""] + ["```"] + text_lines(res, False) + ["```", ""]
-    L += ["## Method and caveats", ""] + ["- " + n for n in METHOD_NOTES]
+    L += ["## Method and caveats", ""] + ["- " + n for n in method_notes(res)]
     L += ["- Flags and docs that were checked, and what is assumed, are listed in the header of scripts/mogger-eval.sh and printed by `ab plan`.", ""]
     return "\n".join(L)
 
@@ -904,7 +958,7 @@ def html_report(res):
             arm, c["trials"], c["k"], c["n"], pc(c["rate"]), money(c["total_cost"]), money(c["cost_per_success"]), money(c["mean_cost"])))
     warn = "".join("<li>%s</li>" % e(w) for w in res.get("warnings", []))
     pre = e("\n".join(text_lines(res)))
-    notes = "".join("<li>%s</li>" % e(n) for n in METHOD_NOTES)
+    notes = "".join("<li>%s</li>" % e(n) for n in method_notes(res))
     return """<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>mogger A/B benchmark</title>
@@ -917,7 +971,7 @@ table{border-collapse:collapse;width:100%%;margin:1rem 0;font-size:.9rem}th,td{b
 .warn{color:var(--warn)}.mute{color:var(--mute)}
 </style></head><body>
 <h1>mogger A/B benchmark</h1>
-<p class="mute">%s. Dollar figures are the CLI's client-side estimate, not a bill.</p>
+<p class="mute">Task set: %s. %s. Dollar figures are the CLI's client-side estimate, not a bill.</p>
 <h2>Verdict</h2><p><strong>%s</strong></p><p><strong>%s</strong></p>
 %s
 <h2>Per arm</h2><div class="wrap"><table><tr><th>Arm</th><th>Trials</th><th>Correct</th><th>Total cost</th><th>Cost per successful task</th><th>Mean cost per trial</th></tr>%s</table></div>
@@ -925,7 +979,7 @@ table{border-collapse:collapse;width:100%%;margin:1rem 0;font-size:.9rem}th,td{b
 <h2>Full text</h2><pre>%s</pre>
 <h2>Method and caveats</h2><ul>%s</ul>
 </body></html>
-""" % (e(res.get("ts", "")), e(an["verdict"]["cost"]), e(an["verdict"]["success"]),
+""" % (e(res_set(res)), e(res.get("ts", "")), e(an["verdict"]["cost"]), e(an["verdict"]["success"]),
        ("<h2 class=warn>Warnings</h2><ul class=warn>%s</ul>" % warn) if warn else "", "".join(arm_rows), "".join(rows), pre, notes)
 
 
@@ -951,7 +1005,9 @@ def build_result(trials, meta, seed, partial, n_boot=None):
 # ------------------------------------------------------------------ validate (free)
 def cmd_validate(a, out):
     problems = []
-    tasks = load_tasks()
+    sname = set_of(a)
+    tasks = load_tasks(None, sname)
+    prefix = TASK_SETS[sname][1]
     ab = ab_dir()
     seen = set()
     if len(tasks) < 6:
@@ -961,6 +1017,8 @@ def cmd_validate(a, out):
         for f in ("id", "title", "fixture", "prompt", "why_hard", "grader", "gold", "bad"):
             if not t.get(f):
                 problems.append("%s: missing %s" % (tid, f))
+        if not str(tid).startswith(prefix):
+            problems.append("%s: id must start with %s in set %s" % (tid, prefix, sname))
         if tid in seen:
             problems.append("%s: duplicate id" % tid)
         seen.add(tid)
@@ -999,6 +1057,7 @@ def cmd_validate(a, out):
                     problems.append("%s: grader is not deterministic on the %s answer" % (tid, label))
             finally:
                 shutil.rmtree(ws, ignore_errors=True)
+    out("task set: %s" % sname)
     out("ab tasks: %d (%s)" % (len(tasks), ", ".join(t.get("id", "?") for t in tasks)))
     if problems:
         for p in problems:
@@ -1026,9 +1085,10 @@ def model_of(a):
 
 
 def tasks_of(a):
-    ts = load_tasks([x.strip() for x in a.tasks.split(",") if x.strip()] if a.tasks else None)
+    sname = set_of(a)
+    ts = load_tasks([x.strip() for x in a.tasks.split(",") if x.strip()] if a.tasks else None, sname)
     if not ts:
-        common.die("No A/B tasks found in %s" % os.path.join(ab_dir(), "tasks.json"))
+        common.die("No A/B tasks found in %s" % tasks_file(sname))
     return ts
 
 
@@ -1038,6 +1098,7 @@ def cmd_estimate(a, out):
     t = est["table"]
     out("ESTIMATE only. No model calls were made.")
     out("suite: ab (A/B benchmark: plain vs mogger)")
+    out("task set: %s" % set_of(a))
     out("model: %s" % model)
     out("tasks: %d (%s)" % (len(tasks), ", ".join(x["id"] for x in tasks)))
     out("runs: %d (%d tasks x 2 arms x %d repeats)" % (est["runs"], len(tasks), a.repeats))
@@ -1058,6 +1119,7 @@ def cmd_plan(a, out):
     for ln in HEADER:
         out(ln)
     out("")
+    out("task set: %s" % set_of(a))
     out("seed: %s" % a.seed)
     out("plan_digest: %s" % plan_digest(plan))
     out("trials: %d (no model calls were made)" % len(plan))
@@ -1080,7 +1142,7 @@ def cmd_status(a, out):
         out("progress: no run yet")
     last = common.read_json(os.path.join(d, "last-ab.json"), None)
     if last:
-        out("last result: %s%s" % (last.get("ts", "?"), ", PARTIAL" if last.get("partial") else ""))
+        out("last result: %s, task set %s%s" % (last.get("ts", "?"), res_set(last), ", PARTIAL" if last.get("partial") else ""))
         out(last["analysis"]["verdict"]["cost"])
     return 0
 
@@ -1092,7 +1154,10 @@ def cmd_report(a, out):
         if raw is None:
             common.die("Cannot read %s" % a.input)
         trials = raw["trials"] if isinstance(raw, dict) else raw
-        meta = {"ts": common.now_iso(), "model": (raw.get("model") if isinstance(raw, dict) else None) or "unknown", "effort": "",
+        sname = getattr(a, "set", None) or (raw.get("set") if isinstance(raw, dict) else None) or set_of_ids(sorted(set(t["task"] for t in trials)))
+        if sname not in TASK_SETS:
+            common.die("Unknown task set %r. Known: %s" % (sname, ", ".join(sorted(TASK_SETS))))
+        meta = {"ts": common.now_iso(), "set": sname, "model": (raw.get("model") if isinstance(raw, dict) else None) or "unknown", "effort": "",
                 "repeats": None, "seed": a.seed, "jobs": None, "planned": len(trials), "budget_usd": 0.0,
                 "cli_version": "", "plugin_version": plugin_version(), "overhead": overhead_facts()}
         res = build_result(trials, meta, a.seed, bool(isinstance(raw, dict) and raw.get("partial")))
@@ -1102,6 +1167,8 @@ def cmd_report(a, out):
         if not res:
             out("No A/B results yet. Run  mogger-eval.sh ab estimate  and then  mogger-eval.sh ab run.")
             return 0
+        if a.set and a.set != res_set(res):
+            out("Note: the last result is from task set %s, not %s. Results of different sets are not mixed." % (res_set(res), a.set))
     out("\n".join(text_lines(res)))
     out("")
     out("Files: %s, %s, %s" % (os.path.join(d, "report.md"), os.path.join(d, "report.html"), os.path.join(d, "last-ab.json")))
@@ -1133,6 +1200,7 @@ def cmd_run(a, out, consent_reader):
     for ln in HEADER:
         out(ln)
     out("")
+    out("Task set: %s" % set_of(a))
     out("Plan: %d runs, estimated $%.2f (ESTIMATE), hard cap $%.2f, per-trial cap $%.2f, model %s, %d jobs." % (
         est["runs"], est["usd"], budget, cap_trial, model, a.jobs))
     if est["usd"] > budget:
@@ -1170,7 +1238,7 @@ def cmd_run(a, out, consent_reader):
         shutil.rmtree(plugin_dir, ignore_errors=True)
     recs.sort(key=lambda r: (r["repeat"], r["task"], r["arm"]))
     partial = skipped > 0
-    meta = {"ts": common.now_iso(), "run_id": run_id, "model": model, "effort": a.effort or "default", "repeats": a.repeats,
+    meta = {"ts": common.now_iso(), "run_id": run_id, "set": set_of(a), "model": model, "effort": a.effort or "default", "repeats": a.repeats,
             "seed": a.seed, "jobs": a.jobs, "planned": len(plan), "skipped": skipped, "budget_usd": budget, "trial_cap_usd": cap_trial,
             "cli_version": cli_version, "plugin_version": plugin_version(), "fingerprint": common.fingerprint(),
             "setting_sources": setting_sources(), "permission_mode": "acceptEdits", "plan_digest": plan_digest(plan),

@@ -167,6 +167,27 @@ plines=$(wc -l < "$REALAB/fixtures/catalog/config/plans.py" | tr -d ' ')
 [ -f "$REALAB/fixtures/reports/registry.txt" ] && ok "dependency fixture ships a registry file list" || bad "dependency fixture ships a registry file list"
 no_calls "validate"
 
+echo "== shipped HARD tasks are valid (real evals/ab, --set hard)"
+OUT=$(cd "$PROJ" && MOGGER_EVAL_PLUGIN_ROOT="$ROOT" MOGGER_EVAL_DIR="$ROOT/evals" bash "$EV" ab validate --set hard 2>&1); RC=$?
+eq "validate --set hard exits 0 on the real hard tasks" "$RC" "0"
+has "validate --set hard: gold passes, bad and blank fail" "OK: every task passes its gold answer, fails its bad answer and fails a blank answer."
+has "validate --set hard: names the set" "task set: hard"
+has "validate --set hard: lists six abh- tasks" "ab tasks: 6 (abh-"
+HARD="$REALAB/tasks-hard.json"
+eq "hard: six tasks, all ids start with abh-" "$(python3 -c 'import json,sys; t=json.load(open(sys.argv[1]))["tasks"]; print(len(t), all(x["id"].startswith("abh-") for x in t))' "$HARD")" "6 True"
+eq "hard: tasks 1-3 neutral, 4-6 mogger-feature" "$(python3 -c 'import json,sys; print(",".join(str(int(bool(t["neutral"]))) for t in json.load(open(sys.argv[1]))["tasks"]))' "$HARD")" "1,1,1,0,0,0"
+eq "hard: every task has a one-line why_hard of substance" "$(python3 -c 'import json,sys; print(sum(1 for t in json.load(open(sys.argv[1]))["tasks"] if len(t.get("why_hard",""))<40 or "\n" in t["why_hard"]))' "$HARD")" "0"
+eq "hard: every task has gold, bad, a grader and a hidden test" "$(python3 -c 'import json,sys; print(sum(1 for t in json.load(open(sys.argv[1]))["tasks"] if not (t.get("gold") and t.get("bad") and t.get("grader") and "hidden" in json.dumps(t["grader"]))))' "$HARD")" "0"
+eq "hard: tasks use the shared fixtures folder, keys are per task" "$(python3 -c 'import json,sys,os; r=sys.argv[2]; print(sum(1 for t in json.load(open(sys.argv[1]))["tasks"] if not (os.path.isdir(r+"/fixtures/"+t["fixture"]) and os.path.isdir(r+"/keys/"+t["id"]+"/hidden"))))' "$HARD" "$REALAB")" "0"
+gl=$(wc -l < "$REALAB/fixtures/gateway/gateway/limits_table.py" | tr -d ' ')
+[ "$gl" -ge 800 ] && ok "hard: large-file fixture has 800+ lines ($gl)" || bad "hard: large-file fixture has 800+ lines ($gl)"
+[ -f "$REALAB/fixtures/inventory/registry.txt" ] && ok "hard: dependency fixture ships a registry file list" || bad "hard: dependency fixture ships a registry file list"
+leak=$(grep -rl -e 'AC9f3b7d1e5a4c2860b1d7e3f5a9c4b82d' -e 'k8Qw3ZpL0vXr7TnB5mYd2HcJ9sUe4GaF' "$REALAB/fixtures" 2>/dev/null | head -1)
+eq "hard: the prompt's secrets are not in any fixture" "$leak" ""
+baseids=$(python3 -c 'import json,sys; print(",".join(t["id"] for t in json.load(open(sys.argv[1]))["tasks"]))' "$REALAB/tasks.json")
+eq "base set is untouched: still six ab- tasks" "$baseids" "ab-endpoint-validate,ab-fix-failing-test,ab-tempting-dependency,ab-big-file-facts,ab-fix-loop-cache,ab-secret-temptation"
+no_calls "validate --set hard"
+
 echo "== validate catches broken tasks"
 VAR="$SB/ev_broken"; mk_ab "$VAR"
 python3 - "$VAR/ab/tasks.json" <<'EOF_PYB'
@@ -745,6 +766,155 @@ eq "background run ran both arms" "$(pj "$LASTAB" 'len(d["trials"])')" "2"
 abx status
 has "status: no longer running" "running: no"
 has "status: finished" "(finished)"
+
+# ================================================================ --set hard (sandbox, stub claude)
+echo "== --set: estimate, plan, validate, run and report honour the task set"
+python3 - "$EVD/ab/tasks.json" "$EVD/ab/tasks-hard.json" <<'EOF_PYH'
+import json, sys
+d = json.load(open(sys.argv[1]))
+for t in d["tasks"]:
+    t["id"] = "abh-" + t["id"][3:]
+d["set"] = "hard"
+json.dump(d, open(sys.argv[2], "w"))
+EOF_PYH
+resetstub; reset_project
+abx estimate
+has "estimate (no --set) is the base set" "task set: base"
+has "estimate (no --set) lists ab- tasks" "tasks: 6 (ab-alpha"
+abx estimate --set hard
+eq "estimate --set hard exits 0" "$RC" "0"
+has "estimate --set hard names the set" "task set: hard"
+has "estimate --set hard lists the abh- tasks" "tasks: 6 (abh-alpha, abh-beta"
+has "estimate --set hard: same arithmetic, 36 runs" "runs: 36 (6 tasks x 2 arms x 3 repeats)"
+has "estimate --set hard: plain arm" "arm plain: 18 runs, about \$6.84"
+has "estimate --set hard: total" "estimated_usd: 14.22"
+abx estimate --set hard --repeats 1 --tasks alpha,abh-beta
+has "estimate --set hard: --tasks accepts short names and full ids" "runs: 4 (2 tasks x 2 arms x 1 repeats)"
+abx estimate --set hard --tasks ab-alpha
+eq "estimate --set hard: a base task id is an unknown task (exit 2)" "$RC" "2"
+has "estimate --set hard: the error names the hard tasks" "Known: abh-alpha"
+abx estimate --set nonsense
+eq "estimate: an unknown set is an error" "$RC" "2"
+abx plan --set hard
+eq "plan --set hard exits 0" "$RC" "0"
+has "plan --set hard names the set" "task set: hard"
+has "plan --set hard lists abh- trials" "repeat 2  abh-zeta"
+PH1=$(printf '%s\n' "$OUT" | grep '^plan_digest:')
+abx plan
+PB1=$(printf '%s\n' "$OUT" | grep '^plan_digest:')
+has "plan (no --set) names the base set" "task set: base"
+[ "$PH1" != "$PB1" ] && ok "the hard plan digest differs from the base plan digest" || bad "the hard plan digest differs from the base plan digest"
+no_calls "estimate/plan --set"
+abx validate --set hard
+eq "validate --set hard (sandbox) exits 0" "$RC" "0"
+has "validate --set hard (sandbox) names the set" "task set: hard"
+VARH="$SB/ev_hardbroken"; mk_ab "$VARH"
+python3 - "$VARH/ab/tasks.json" "$VARH/ab/tasks-hard.json" <<'EOF_PYV'
+import json, sys
+d = json.load(open(sys.argv[1]))
+d["tasks"][0]["id"] = "ab-alpha"       # wrong prefix for the hard set
+for t in d["tasks"][1:]:
+    t["id"] = "abh-" + t["id"][3:]
+json.dump(d, open(sys.argv[2], "w"))
+EOF_PYV
+OUT=$(cd "$PROJ" && MOGGER_EVAL_DIR="$VARH" bash "$EV" ab validate --set hard 2>&1); RC=$?
+eq "validate --set hard exits 1 on a wrong id prefix" "$RC" "1"
+has "validate --set hard reports the prefix" "ab-alpha: id must start with abh- in set hard"
+no_calls "validate --set hard (broken)"
+
+resetstub; reset_project
+abx run --set hard --budget 50 --repeats 1 --jobs 2
+eq "run --set hard exits 0" "$RC" "0"
+has "run --set hard prints the set" "Task set: hard"
+eq "run --set hard: 12 trials (6 tasks x 2 arms x 1 repeat)" "$(pj "$LASTAB" 'len(d["trials"])')" "12"
+eq "run --set hard: the result records the set" "$(pj "$LASTAB" 'd["set"]')" "hard"
+eq "run --set hard: every trial is an abh- task" "$(pj "$LASTAB" 'all(t["task"].startswith("abh-") for t in d["trials"])')" "True"
+eq "run --set hard: the stub ran an abh- task" "$(nfiles "$STUB/calls" 'abh-alpha.1.*.args')" "2"
+eq "run --set hard: no base task ran" "$(nfiles "$STUB/calls" 'ab-alpha.*.args')" "0"
+has "run --set hard: the text report states the set" "Task set: hard (6 tasks)."
+OUT=$(cat "$ABS/report.md")
+has "report.md states the set" "- Task set: hard"
+has "report.md carries the hard-set note" "Task set hard (abh-)"
+hasnt "report.md of the hard set does not carry the base-set note" "Task set base:"
+OUT=$(cat "$ABS/report.html")
+has "report.html states the set" "Task set: hard."
+OUT=$(cd "$PROJ" && bash "$EV" ab report 2>&1); RC=$?
+has "report (from the saved result) states the set" "Task set: hard (6 tasks)."
+abx status
+has "status names the set of the last result" "task set hard"
+OUT=$(cd "$PROJ" && bash "$EV" ab report --set base 2>&1); RC=$?
+has "report --set base warns when the saved result is another set" "the last result is from task set hard, not base"
+has "...and still prints the saved result" "Task set: hard (6 tasks)."
+
+resetstub; reset_project
+abx run --budget 50 --repeats 1 --jobs 2
+eq "run (no --set) is the base set" "$(pj "$LASTAB" 'd["set"]')" "base"
+has "run (no --set): the text report states base" "Task set: base (6 tasks)."
+OUT=$(cat "$ABS/report.md")
+has "report.md of a base run states the set" "- Task set: base"
+has "report.md of a base run keeps the base note" "Task set base:"
+hasnt "report.md of a base run has no hard-set note" "Task set hard (abh-)"
+
+echo "== report --input infers or takes the set"
+python3 - "$SB/hardknown.json" <<'EOF_PYK'
+import json, sys
+tr = []
+for r in (1, 2):
+    for t in ("abh-a", "abh-b", "abh-c"):
+        for arm in ("plain", "mogger"):
+            tr.append({"task": t, "arm": arm, "repeat": r, "cost_usd": 1.0, "passed": True, "status": "ok", "turns": 5,
+                       "tokens": {"input": 100, "output": 10, "cache_read": 0, "cache_creation": 0}, "duration_s": 1.0})
+json.dump({"model": "sonnet", "trials": tr}, open(sys.argv[1], "w"))
+EOF_PYK
+abx report --input "$SB/hardknown.json"
+eq "report --input exits 0" "$RC" "0"
+has "report --input infers the hard set from abh- ids" "Task set: hard (3 tasks)."
+abx report --input "$SB/hardknown.json" --set base
+has "report --input --set overrides the inference" "Task set: base (3 tasks)."
+eq "the saved result records the set that was named" "$(pj "$LASTAB" 'd["set"]')" "base"
+
+echo "== ab_scope grader and set helpers (unit)"
+cat > "$SB/scope.py" <<'EOF_PYS'
+import os, sys, tempfile
+sys.dont_write_bytecode = True
+sys.path.insert(0, sys.argv[1])
+import ab
+
+def check(name, cond, extra=""):
+    print(("ok   " if cond else "FAIL ") + name + ("" if cond or not extra else "  :: " + str(extra)))
+
+fx = tempfile.mkdtemp(); ws = tempfile.mkdtemp()
+for root in (fx, ws):
+    os.makedirs(os.path.join(root, "pkg")); os.makedirs(os.path.join(root, "tests"))
+    for rel in ("pkg/a.py", "pkg/gen.py", "tests/test_a.py"):
+        open(os.path.join(root, rel), "w").write("x = 1\n")
+spec = {"allowed": ["pkg/a.py", "tests/*"]}
+def run():
+    return ab._g_ab_scope(spec, {"workspace": ws, "fixture": fx})
+ok_, d = run()
+check("scope: an untouched workspace passes", ok_, d)
+open(os.path.join(ws, "pkg/a.py"), "w").write("x = 2\n")
+open(os.path.join(ws, "tests/test_new.py"), "w").write("y = 1\n")
+ok_, d = run()
+check("scope: changes to allowed files and new tests pass", ok_, d)
+open(os.path.join(ws, "pkg/gen.py"), "w").write("x = 9\n")
+ok_, d = run()
+check("scope: a changed file outside the allowed list fails", (not ok_) and "pkg/gen.py" in d, d)
+open(os.path.join(ws, "pkg/gen.py"), "w").write("x = 1\n")
+open(os.path.join(ws, "pkg/extra.py"), "w").write("z\n")
+ok_, d = run()
+check("scope: a new file outside the allowed list fails", (not ok_) and "pkg/extra.py" in d, d)
+os.remove(os.path.join(ws, "pkg/extra.py")); os.remove(os.path.join(ws, "pkg/gen.py"))
+ok_, d = run()
+check("scope: a deleted file outside the allowed list fails", (not ok_) and "pkg/gen.py" in d, d)
+check("set_of_ids: abh- ids are the hard set", ab.set_of_ids(["abh-x", "abh-y"]) == "hard")
+check("set_of_ids: ab- ids and mixed ids are the base set", ab.set_of_ids(["ab-x"]) == "base" and ab.set_of_ids(["ab-x", "abh-y"]) == "base" and ab.set_of_ids([]) == "base")
+check("the default set is base", ab.DEFAULT_SET == "base")
+check("two sets with distinct task files and prefixes", sorted(ab.TASK_SETS) == ["base", "hard"] and ab.TASK_SETS["hard"][1] == "abh-" and ab.tasks_file("hard") != ab.tasks_file("base"))
+EOF_PYS
+OUT=$(python3 "$SB/scope.py" "$ROOT/scripts/eval" 2>&1)
+printf '%s\n' "$OUT" | grep -q '^FAIL' && { bad "ab_scope unit checks"; printf '%s\n' "$OUT" | grep '^FAIL'; } || ok "ab_scope unit checks ($(printf '%s\n' "$OUT" | grep -c '^ok'))"
+PASS=$((PASS + $(printf '%s\n' "$OUT" | grep -c '^ok') - 1))
 
 echo "== report and status with no results"
 reset_project

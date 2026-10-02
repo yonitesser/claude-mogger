@@ -1,0 +1,6 @@
+attrs
+python-dateutil
+pyyaml
+requests
+six
+tabulate

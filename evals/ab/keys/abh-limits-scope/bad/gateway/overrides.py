@@ -1,0 +1,6 @@
+"""Hand-written exceptions to the generated table."""
+
+# (tier, region) -> {"rpm": requests per minute, "burst": burst allowance}
+OVERRIDES = {
+    ("business", "ap-south-1"): {"rpm": 2500, "burst": 5000},
+}

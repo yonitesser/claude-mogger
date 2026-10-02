@@ -15,8 +15,8 @@
 #   mogger-eval.sh hillclimb --skill NAME [--rounds N] [--repeats N] [--budget USD]
 #   mogger-eval.sh apply <proposal-id> [--yes] [--target PATH] [--force]
 #   mogger-eval.sh validate                 (checks tasks/graders/fixtures; free)
-#   mogger-eval.sh ab estimate|plan|status|report|validate    (A/B benchmark: plain vs mogger; free)
-#   mogger-eval.sh ab run [--budget USD] [--model M] [--repeats N] [--tasks a,b] [--jobs N] [--background]
+#   mogger-eval.sh ab estimate|plan|status|report|validate [--set base|hard]   (A/B benchmark: plain vs mogger; free)
+#   mogger-eval.sh ab run [--set base|hard] [--budget USD] [--model M] [--repeats N] [--tasks a,b] [--jobs N] [--background]
 #     Does installing mogger change cost and correctness? Header of scripts/eval/ab.py; docs checked below.
 # Extra options: --jobs N (parallel runs, default 3), --agents a,b, --skills a,b,
 #   --no-effort-grid (haiku/sonnet at the agent's own effort only), --min-gain F,
