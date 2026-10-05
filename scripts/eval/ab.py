@@ -38,6 +38,9 @@ DEFAULT_SEED = "mogger-ab-v1"
 # base = the first six easy tasks. hard = six tasks where an unguided model plausibly fails.
 TASK_SETS = {"base": ("tasks.json", "ab-"), "hard": ("tasks-hard.json", "abh-")}
 DEFAULT_SET = "base"
+# The long set (multi-stage projects + irreversible-damage scenarios) has its own engine: scripts/eval/ablong.py.
+LONG_SET = "long"
+ALL_SETS = sorted(list(TASK_SETS) + [LONG_SET])
 MIN_PAIRS = 6          # fewer valid pairs than this: no claim at all
 BOOT_N = 2000
 
@@ -543,13 +546,14 @@ class Cap:
                 self.stopped = True
 
 
-def execute(plan, cap, jobs, fn, model, log, on_done=None):
-    """Runs the plan in order with `jobs` workers. fn(item, budget_left) -> record."""
+def execute(plan, cap, jobs, fn, model, log, on_done=None, est_fn=None):
+    """Runs the plan in order with `jobs` workers. fn(item, budget_left) -> record.
+    est_fn(item) -> USD estimate used to reserve the cap (default: the short-set per-trial estimate)."""
     records, skipped, lock = [], [0], threading.Lock()
     total = len(plan)
 
     def work(item):
-        est = trial_est_usd(item["arm"], model)
+        est = est_fn(item) if est_fn else trial_est_usd(item["arm"], model)
         if not cap.try_start(est):
             with lock:
                 skipped[0] += 1
@@ -1261,6 +1265,13 @@ def main(a, out, consent_reader):
     sub = a.ab_cmd
     if sub is None:
         common.die("Usage: mogger-eval.sh ab estimate|run|plan|status|report|validate")
+    if getattr(a, "set", None) == LONG_SET:
+        import ablong
+        return ablong.main(a, out, consent_reader)
+    if getattr(a, "suite", None) not in (None, "all"):
+        common.die("--suite applies to the long set only (--set long)")
+    if getattr(a, "repeats", 1) is None:
+        a.repeats = DEFAULT_REPEATS
     if sub == "validate":
         return cmd_validate(a, out)
     if sub == "status":

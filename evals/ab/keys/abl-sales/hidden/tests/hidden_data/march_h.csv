@@ -1,0 +1,6 @@
+order_id,date,product,category,amount_cents,email
+M1,2024-06-02,Café table,Furniture,21000,lu@acme-mail.test
+M2,2024-06-04,"Mug, large",Kitchen,1450,mo@acme-mail.test
+M3,2024-06-07,Broken row,Decor
+M4,2024-06-09,Wall clock,Decor,abc,ot@acme-mail.test
+M5,2024-06-12,Crème throw,Textiles,6200,pa@acme-mail.test

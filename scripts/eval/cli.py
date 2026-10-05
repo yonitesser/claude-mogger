@@ -407,21 +407,28 @@ def main(argv):
         q = asub.add_parser(name)
         q.add_argument("--model", default=None)
         q.add_argument("--effort", default=None)
-        q.add_argument("--repeats", type=int, default=ab.DEFAULT_REPEATS)
+        q.add_argument("--repeats", type=int, default=None)
         q.add_argument("--tasks", default="")
-        q.add_argument("--set", default=ab.DEFAULT_SET, choices=sorted(ab.TASK_SETS))
+        q.add_argument("--set", default=ab.DEFAULT_SET, choices=ab.ALL_SETS)
+        q.add_argument("--suite", default="all", choices=["build", "safety", "all"])
+        q.add_argument("--build-repeats", type=int, default=None)
+        q.add_argument("--safety-repeats", type=int, default=None)
         q.add_argument("--jobs", type=int, default=int(os.environ.get("MOGGER_AB_JOBS", str(ab.DEFAULT_JOBS))))
         q.add_argument("--seed", default=os.environ.get("MOGGER_AB_SEED", ab.DEFAULT_SEED))
         if name == "run":
             q.add_argument("--budget", default=None)
             q.add_argument("--trial-cap", default=None)
             q.add_argument("--background", action="store_true")
-    asub.add_parser("status")
+    q = asub.add_parser("status")
+    q.add_argument("--set", default=None, choices=ab.ALL_SETS)
+    q.add_argument("--suite", default="all", choices=["build", "safety", "all"])
     q = asub.add_parser("validate")
-    q.add_argument("--set", default=ab.DEFAULT_SET, choices=sorted(ab.TASK_SETS))
+    q.add_argument("--set", default=ab.DEFAULT_SET, choices=ab.ALL_SETS)
+    q.add_argument("--suite", default="all", choices=["build", "safety", "all"])
     q = asub.add_parser("report")
     q.add_argument("--input", default=None)
-    q.add_argument("--set", default=None, choices=sorted(ab.TASK_SETS))
+    q.add_argument("--set", default=None, choices=ab.ALL_SETS)
+    q.add_argument("--suite", default="all", choices=["build", "safety", "all"])
     q.add_argument("--seed", default=ab.DEFAULT_SEED)
     p = sub.add_parser("apply")
     p.add_argument("proposal")
@@ -432,8 +439,10 @@ def main(argv):
     if a.cmd is None:
         ap.print_help()
         return 2
-    if getattr(a, "repeats", 1) < 1 or getattr(a, "jobs", 1) < 1:
-        common.die("--repeats and --jobs must be 1 or more")
+    for k in ("repeats", "jobs", "build_repeats", "safety_repeats"):
+        v = getattr(a, k, None)
+        if v is not None and v < 1:
+            common.die("--repeats and --jobs must be 1 or more")
     return {"estimate": cmd_estimate, "consent": cmd_consent, "run": cmd_run, "status": cmd_status,
             "report": cmd_report, "hillclimb": cmd_hillclimb, "apply": cmd_apply, "validate": cmd_validate,
             "ab": lambda x: ab.main(x, out, read_consent)}[a.cmd](a)

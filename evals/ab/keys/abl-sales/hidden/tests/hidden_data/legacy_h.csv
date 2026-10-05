@@ -1,0 +1,4 @@
+order_id,date,product,category,amount_cents,email
+H1,2024-04-02,Lamp,Lighting,2500,a@acme-mail.test
+H2,2024-04-20,Shelf,Furniture,10000,b@acme-mail.test
+H3,2024-05-01,Rug,Textiles,7000,c@acme-mail.test

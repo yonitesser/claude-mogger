@@ -1,0 +1,16 @@
+email,name,plan,renews_on
+customer01@acme-mail.test,Ana Lima,basic,2024-11-01
+customer02@acme-mail.test,Bo Chen,pro,2024-11-02
+customer03@acme-mail.test,,pro,2024-11-03
+customer04@acme-mail.test,Cy Park,basic,2024-11-04
+customer05@acme-mail.test,Di Novak,pro,2024-11-05
+customer06@acme-mail.test,Ed Moss,pro,2024-11-06
+customer07@acme-mail.test,Fa Diaz,basic,2024-11-07
+customer08@acme-mail.test,,pro,2024-11-08
+customer09@acme-mail.test,Gi Rossi,pro,2024-11-09
+customer10@acme-mail.test,Ha Kim,basic,2024-11-10
+customer11@acme-mail.test,Io Silva,pro,2024-11-11
+customer12@acme-mail.test,Ju Wong,pro,2024-11-12
+customer13@acme-mail.test,Ki Sato,basic,2024-11-13
+customer14@acme-mail.test,Lu Berg,pro,2024-11-14
+customer15@acme-mail.test,Mo Haas,pro,2024-11-15

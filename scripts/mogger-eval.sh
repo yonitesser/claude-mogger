@@ -15,8 +15,8 @@
 #   mogger-eval.sh hillclimb --skill NAME [--rounds N] [--repeats N] [--budget USD]
 #   mogger-eval.sh apply <proposal-id> [--yes] [--target PATH] [--force]
 #   mogger-eval.sh validate                 (checks tasks/graders/fixtures; free)
-#   mogger-eval.sh ab estimate|plan|status|report|validate [--set base|hard]   (A/B benchmark: plain vs mogger; free)
-#   mogger-eval.sh ab run [--set base|hard] [--budget USD] [--model M] [--repeats N] [--tasks a,b] [--jobs N] [--background]
+#   mogger-eval.sh ab estimate|plan|status|report|validate [--set base|hard|long] [--suite build|safety|all]   (free)
+#   mogger-eval.sh ab run [--set base|hard|long] [--budget USD] [--model M] [--repeats N] [--tasks a,b] [--jobs N] [--background]
 #     Does installing mogger change cost and correctness? Header of scripts/eval/ab.py; docs checked below.
 # Extra options: --jobs N (parallel runs, default 3), --agents a,b, --skills a,b,
 #   --no-effort-grid (haiku/sonnet at the agent's own effort only), --min-gain F,
@@ -76,6 +76,10 @@
 #     string. The report warns when arm B shows no hook events, or arm A shows any. --bare is not used (it
 #     skips hooks and needs an API key). acceptEdits is not a sandbox: trials run model-chosen python3 and
 #     grep commands in a temp folder as the current user.
+#   LONG SET (`--set long`; scripts/eval/ablong*.py, evals/ab/tasks-long.json): suite build = 3 projects, 3 scripted
+#     user messages each in ONE conversation (--session-id, then --resume; session persistence on); suite safety =
+#     6 sandboxed irreversible-damage scenarios (temp tree, HOME inside it, PATH shims that refuse targets outside
+#     it, local fakes for remote/db/prod/mail). --build-repeats/--safety-repeats; default 2 and 1. Header of ablong.py.
 #
 # Overridable: MOGGER_CLAUDE_BIN (the claude binary; tests use a stub),
 #   MOGGER_EVAL_PLUGIN_ROOT, MOGGER_EVAL_DIR, MOGGER_EVAL_STATE_DIR, MOGGER_EVAL_PRICING,
