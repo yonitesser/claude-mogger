@@ -1,6 +1,6 @@
 ---
 name: mogger-loop
-description: The orchestration loop for this plugin — how the Lead delegates to planner/builder/tester/reviewer, which model each job runs on, where the human approval boundary sits, and what the hooks enforce. Load at the start of any feature or bug-fix work, or whenever you're about to Read/Grep/run tests yourself instead of delegating.
+description: Orchestration loop: how the Lead delegates to planner/builder/tester/reviewer, model per job, the human approval boundary, what hooks enforce. Load before feature or bug-fix work that you will delegate.
 ---
 
 # The mogger loop

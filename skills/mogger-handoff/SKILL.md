@@ -1,6 +1,6 @@
 ---
 name: mogger-handoff
-description: Write a handoff note so the next session, or a developer, can continue without the chat history. Use before context runs low, at the end of a work session, before a long task is compacted, or before passing the project to someone else. Builds it from TASKS.md, git, and test markers, never from memory.
+description: Writes a handoff note from TASKS.md, git and test markers so the next session can continue without chat history. Use before context runs low, at session end, or before compaction.
 ---
 
 # mogger handoff

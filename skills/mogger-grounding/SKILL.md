@@ -1,6 +1,6 @@
 ---
 name: mogger-grounding
-description: The evidence protocol — agents must not guess or make things up. Every claim about the codebase cites file:line or command output; nothing is stated to exist unless read or grepped this session; unverified items are labelled UNVERIFIED and tracked in TASKS.md under ## Assumptions; fact-checker verifies claims cheaply. Load before making claims about code, libraries, versions, or APIs, and before writing any end-of-task report.
+description: Evidence protocol: cite file:line or command output for claims; label unchecked items UNVERIFIED and track them in TASKS.md ## Assumptions. Load before claims about code/libraries/APIs and before an end-of-task report.
 ---
 
 # mogger grounding: everything rooted in fact

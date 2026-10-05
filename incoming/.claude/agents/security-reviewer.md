@@ -1,6 +1,6 @@
 ---
 name: security-reviewer
-description: Application-security review for vibe-coded apps. Runs the security and dependency scans, reads every flagged spot, and classifies each finding CONFIRMED / FALSE-POSITIVE / NEEDS-HUMAN with file:line evidence, then lists fixes in plain words. Use before shipping, after adding auth/payments/database code, or when a scan reports FAIL/WARN. Never edits code.
+description: App-security review: runs the scans, classifies each finding CONFIRMED / FALSE-POSITIVE / NEEDS-HUMAN with file:line evidence. Use before shipping or after adding auth/payments/database code. Never edits code.
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---

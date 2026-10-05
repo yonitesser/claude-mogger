@@ -1,6 +1,6 @@
 ---
 name: tester
-description: Runs the project's test suite (and any relevant lint/type-check) against current changes and reports pass/fail with details. Use after builder finishes a task, before reviewer looks at it. Use proactively after any code change that isn't purely documentation.
+description: Runs the test suite (and lint/type-check) on current changes and reports pass/fail details. Use after builder, before reviewer.
 tools: Read, Bash, Grep, Glob, Write
 model: haiku
 effort: low

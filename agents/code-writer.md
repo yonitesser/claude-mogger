@@ -1,6 +1,6 @@
 ---
 name: code-writer
-description: Writes repetitive, boilerplate, or pattern-matched code — new test files that mirror existing ones, CRUD endpoints, simple config files, DTOs, straightforward refactors that follow a pattern already shown elsewhere in the codebase. Use proactively for any code that is structurally identical to code that already exists nearby, so the main model doesn't spend budget re-deriving a pattern it can just copy. Do NOT use for architecture decisions, tricky logic, security-sensitive code, or anything without a clear existing pattern to follow.
+description: Use when writing boilerplate that mirrors code already nearby (tests like existing ones, CRUD endpoints, DTOs, pattern refactors). Not for architecture, tricky logic or security-sensitive code.
 tools: Read, Write, Edit, Glob, Grep
 model: haiku
 effort: low

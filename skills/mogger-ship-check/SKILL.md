@@ -1,6 +1,6 @@
 ---
 name: mogger-ship-check
-description: Run the ship-readiness checklist (scripts/ship-check.sh) when the human asks "is this ready to ship?" or when all TASKS are done. Report-only; it never pushes or deploys.
+description: Use when asked "is this ready to ship?" or all TASKS are done. Report-only.
 ---
 
 # Ship-readiness checklist

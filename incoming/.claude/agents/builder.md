@@ -1,6 +1,6 @@
 ---
 name: builder
-description: Implements exactly one task from TASKS.md. Use after planner has written a task board, one task at a time — never hand it the whole board at once.
+description: Implements exactly one TASKS.md task. Use after planner, one task at a time.
 tools: Read, Write, Edit, Bash, Glob, Grep
 model: sonnet
 ---

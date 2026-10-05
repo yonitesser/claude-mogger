@@ -1,6 +1,6 @@
 ---
 name: retro
-description: Reads RUNS.md and recent history to find repeated mistakes, then proposes specific edits to CONSTRAINTS.md or CLAUDE.md as a diff for human approval. Never edits those files directly. Run this on demand (e.g. weekly, or after a rough week) — it does not run automatically.
+description: Use when asked for a retro (on demand only): reads RUNS.md to find repeated mistakes and proposes CONSTRAINTS.md/CLAUDE.md edits as a diff for human approval.
 tools: Read, Grep, Glob
 model: sonnet
 ---

@@ -1,6 +1,6 @@
 ---
 name: explorer
-description: Navigates the codebase to answer "where is X / how does Y fit together / what calls Z" questions. Use whenever the Lead needs to locate code, understand structure, or trace a call path — instead of the Lead running Grep/Glob/Read itself. Cheap and fast; returns file paths and line numbers, not opinions.
+description: Use when you must locate code ("where is X / what calls Z") across a large or unfamiliar codebase; returns paths and line numbers. Skip for a few known files: read them directly.
 tools: Read, Grep, Glob
 model: haiku
 effort: low

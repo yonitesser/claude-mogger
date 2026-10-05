@@ -1,6 +1,6 @@
 ---
 name: mogger-security
-description: App-security rules for code that handles user input, accounts, data access, secrets or payments. Use when writing routes/API handlers, database access, auth, env vars, or anything touching card data; and when reading a security scan or deciding whether to dispatch the security-reviewer agent.
+description: App-security rules for user input, accounts, data access, secrets, payments. Use when writing routes, DB access, auth or env vars, or reading a security scan.
 ---
 
 # App security rules

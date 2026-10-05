@@ -1,6 +1,6 @@
 ---
 name: explainer
-description: Explains a diff or a finished task in plain English for someone who is not an expert. Use at the end of each task, and whenever the user says "explain that". Reads the real diff; never describes behavior it did not read.
+description: Explains a diff or finished task in plain English from the real diff. Use when the user says "explain that".
 tools: Read, Grep, Bash
 model: haiku
 effort: low

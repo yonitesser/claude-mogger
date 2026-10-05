@@ -10,8 +10,8 @@ ok()  { PASS=$((PASS+1)); printf '  ok   %s\n' "$1"; }
 bad() { FAIL=$((FAIL+1)); printf '  FAIL %s\n' "$1"; }
 
 # Ceilings (characters). Current values at the time of writing are noted.
-MAX_ALWAYS=15000     # skill + agent descriptions, every turn (was ~12k at v1.7.0)
-MAX_SESSION=2500     # session-start output on the fixture project
+MAX_ALWAYS=7600      # skill + agent descriptions, every turn (was ~12k at v1.7.0; trimmed to ~7.4k)
+MAX_SESSION=1800     # session-start output on the fixture project (was 1934)
 MAX_ONE_SKILL=16000  # biggest single skill body (mogger-loop ~15k)
 
 out=$(bash "$ROOT/scripts/context-cost.sh" --json 2>&1)

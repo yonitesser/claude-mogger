@@ -1,6 +1,6 @@
 ---
 name: library-scout
-description: Decides whether an existing library should be used for a need, or whether to write it by hand. Use BEFORE writing any non-trivial utility — date math, retries, validation, parsing, HTTP, caching, auth, state machines, anything that sounds like a solved problem. Also use when a task would add a dependency, to sanity-check the choice. Returns a recommendation with a named winner or an explicit "write it yourself."
+description: Decides use-a-library vs write-it-yourself and names a winner. Use before writing a non-trivial utility (dates, retries, validation, parsing, HTTP, auth) or adding a dependency.
 tools: Read, Grep, Glob, WebSearch, WebFetch
 model: sonnet
 ---

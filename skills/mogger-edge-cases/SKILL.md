@@ -1,6 +1,6 @@
 ---
 name: mogger-edge-cases
-description: The unhappy-path protocol. For every input handler, form, endpoint, or fetch, add tests for empty, whitespace, huge, wrong-type, duplicate-submit, timeout/offline, server 500, slow-response, and permission-denied cases before calling it done. Use when building or reviewing anything that takes user input or does I/O, or when the user says "it breaks when I submit an empty form", "works on my screen", or "make it robust".
+description: Unhappy-path protocol: tests for empty, huge, wrong-type, duplicate, timeout, 500 and permission-denied cases on every input handler or I/O. Use when building user-input code or when asked to "make it robust".
 ---
 
 # Unhappy paths

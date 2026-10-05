@@ -1,0 +1,4 @@
+# Packages available on the offline mirror (one per line)
+requests
+python-dateutil
+pyyaml

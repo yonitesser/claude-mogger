@@ -1,6 +1,6 @@
 ---
 name: mogger-verify-run
-description: How and when the Lead confirms the app actually runs (not just that tests pass) using scripts/smoke-check.sh and the verifier agent. Load before calling any UI, server, or CLI task done.
+description: Confirms the app actually runs (not just tests) with scripts/smoke-check.sh and the verifier agent. Load before calling a UI, server or CLI task done.
 ---
 
 # Verify it runs

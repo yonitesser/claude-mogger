@@ -1,6 +1,6 @@
 ---
 name: mogger-evals
-description: Paid model evals for mogger's own agents — tests whether cheaper models (Haiku) do the same work as Sonnet, so routing saves money without losing quality. Use when the user asks about model routing, the cost of agents, evals, "are the cheap agents good enough", "set up mogger evals", "raise the evals cap", "turn off evals", or when the session-start message mentions mogger evals. Triggers on "evals", "hillclimb", "eval budget", "cost cap for evals".
+description: Paid evals of mogger's own agents (do cheaper models match Sonnet?). Use when asked about "evals", "raise the evals cap", "turn off evals", model-routing cost questions, or when the session-start message mentions evals.
 ---
 
 # mogger evals

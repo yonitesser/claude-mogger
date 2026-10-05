@@ -1,6 +1,6 @@
 ---
 name: mogger-decisions
-description: Project memory for "why we chose X". Use when choosing a library, architecture, or pattern, rejecting an approach, or resolving a review dispute, and before proposing any change that might contradict an earlier choice. Maintains the append-only DECISIONS.md log.
+description: Append-only DECISIONS.md log of why we chose X. Use when choosing a library/architecture, rejecting an approach, or before proposing something that may contradict an earlier choice.
 ---
 
 # mogger decisions

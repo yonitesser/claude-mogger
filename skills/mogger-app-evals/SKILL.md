@@ -1,6 +1,6 @@
 ---
 name: mogger-app-evals
-description: Evals for the user's OWN app that calls Claude. Use when the project depends on the Anthropic SDK (anthropic or @anthropic-ai/sdk) and the user asks about testing prompts, model choice, effort, quality, or the cost of their Claude calls, or says "eval my app", "build an eval", "hillclimb", "is Haiku enough for my app". Triggers on those phrases. Points to Anthropic's claude-api skill commands. Not for mogger's own agents (see mogger-evals).
+description: Evals for the user's OWN Claude-calling app (anthropic / @anthropic-ai/sdk): prompts, model choice, cost. Use when asked "eval my app", "hillclimb", "is Haiku enough for my app". Not mogger's own agents (see mogger-evals).
 ---
 
 # mogger app evals: the user's own Claude app
