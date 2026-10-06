@@ -39,8 +39,10 @@ ACTIVE=$(json_get "$INPUT" '.stop_hook_active')
 if [ "${MOGGER_STOP_TESTS:-on}" != "off" ] && [ $((CODE + TESTS)) -gt 0 ]; then
   CMD=$(stop_test_cmd)
   if [ -n "$CMD" ]; then
-    OUT=$(timeout "${MOGGER_STOP_TESTS_TIMEOUT:-90}" bash -c "$CMD" 2>&1); RC=$?
-    if [ "$RC" -ne 0 ] && [ "$RC" -ne 124 ]; then
+    # macOS has no `timeout`; use gtimeout, else run unbounded
+    TO=""; for c in timeout gtimeout; do command -v "$c" >/dev/null 2>&1 && { TO="$c ${MOGGER_STOP_TESTS_TIMEOUT:-90}"; break; }; done
+    OUT=$($TO bash -c "$CMD" 2>&1); RC=$?
+    if [ "$RC" -ne 0 ] && [ "$RC" -ne 124 ] && [ "$RC" -ne 127 ]; then
       mogger_event block "stopped with failing tests"
       printf 'TESTS FAIL: "%s" exited %s. Fix the code (not the tests), run it again, then finish. Last output:\n%s\n' "$CMD" "$RC" "$(printf '%s' "$OUT" | tail -n 25 | cut -c1-300)" >&2
       exit 2
