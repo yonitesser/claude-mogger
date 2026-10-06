@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+**Added — "done" needs proof (`stop-claim-check`)**
+- New Stop hook `stop-claim-check.sh` (+ `claim-lib.sh`). Default mode `proof`: if the final message claims success after code edits and nothing ran after the last edit, send the model back once ("NOT PROVEN"). 0 tokens otherwise. Mode `always` also asks for a per-requirement check after every claim; `off` disables. SessionStart carries one more line: show output proving each ask, plus one awkward input (session text still 1800 chars, other lines trimmed to pay for it).
+- MEASURED (hard set, 6 tasks x 3, both arms, ~$2 per arm per run, 5 runs): mogger 17-18/18 vs plain 14-15/18 in every run, and the win is the secret/phantom-package guards, not this hook. `always` mode fired in 18 of 18 mogger runs: cost +62% per run vs plain, pass rate 17/18 (no gain; coupon 2/3). That is why it is not the default. Plain-mode firing could not be tested on this set: eval runs write no transcript, so the hook cannot see edits there.
+- Eval runner (`scripts/eval/ab.py`): trials no longer inherit the parent session id (all trials shared one transcript file in cloud sessions).
+
 **Added — run the tests before "done"**
 - `stop-tests-added.sh` now runs the project's own test command (npm test, pytest if configured, go test, cargo test) when the turn changed code or tests, and sends the model back if it is red. Zero tokens when green; on red it returns the last 25 lines. Once per stop, 90s timeout. Escape hatch `MOGGER_STOP_TESTS=off`. Aims at the false "done" claims (4 of 9 runs in plain and mogger alike). MEASURED (build suite, mogger arm only, 9 runs, $7.54): pass 8/9 (plain 8/9), false "done" 5 (plain 4), cost $0.84/run (plain $0.86). No gain: 3 of the 5 false claims are one hidden units check in abl-sales stage 1 that no project test would catch. Kept because it costs nothing when green. Tests in `tests/gates.test.sh`.
 

@@ -431,6 +431,9 @@ def child_env(task_id, repeat):
     env["PYTHONDONTWRITEBYTECODE"] = "1"
     env["CLAUDE_CODE_DISABLE_AUTO_MEMORY"] = "1"
     env["CLAUDE_CODE_DISABLE_CLAUDE_MDS"] = "1"
+    # A parent session id makes every trial share one transcript file; each trial needs its own.
+    for k in ("CLAUDE_CODE_SESSION_ID", "CLAUDE_CODE_REMOTE_SESSION_ID"):
+        env.pop(k, None)
     return env
 
 

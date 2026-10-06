@@ -54,5 +54,36 @@ printf '{"name":"x","scripts":{"test":"echo \\"Error: no test specified\\" && ex
 pre app/main.py; rc=$(stop); [ "$rc" = 0 ] && ok "npm default stub ignored" || bad "stub counted as a suite"
 rm -f package.json
 
+echo "== stop-claim-check"
+tr() { printf '%s\n' "$@" > "$SB/tr.jsonl"; }
+U='{"type":"user","message":{"role":"user","content":"add a coupon"}}'
+E='{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Edit","input":{"file_path":"/a/cart.py"}}]}}'
+R='{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Bash","input":{"command":"python3 -m unittest"}}]}}'
+D='{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Done, all tests pass."}]}}'
+Q='{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Which rounding do you want?"}]}}'
+cc() { printf '{"transcript_path":"%s/tr.jsonl","stop_hook_active":%s}' "$SB" "${1:-false}" | bash "$H/stop-claim-check.sh" 2>"$SB/err" >/dev/null; echo $?; }
+tr "$U" "$E" "$D"; rc=$(cc); [ "$rc" = 2 ] && grep -q "NOT PROVEN" "$SB/err" && ok "claim, no run after edit -> blocked as not proven" || bad "noproof not blocked"
+tr "$U" "$E" "$R" "$D"; rc=$(cc); [ "$rc" = 0 ] && ok "claim after a run -> silent by default (0 tokens)" || bad "default mode blocked a proven claim"
+tr "$U" "$E" "$R" "$D"; rc=$(MOGGER_CLAIM_CHECK=always cc); [ "$rc" = 2 ] && ! grep -q "NOT PROVEN" "$SB/err" && grep -q "CHECK BEFORE" "$SB/err" && ok "always mode -> requirement check after a run" || bad "always mode did not check"
+tr "$U" "$E" "$R" "$D"; rc=$(cc true); [ "$rc" = 0 ] && ok "stop_hook_active -> no loop" || bad "looped"
+tr "$U" "$E" "$Q"; rc=$(cc); [ "$rc" = 0 ] && ok "no claim -> silent" || bad "blocked a question"
+tr "$U" "$D"; rc=$(cc); [ "$rc" = 0 ] && ok "no code edit -> silent" || bad "blocked without edits"
+tr "$U" '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Edit","input":{"file_path":"/a/README.md"}}]}}' "$D"; rc=$(cc); [ "$rc" = 0 ] && ok "docs-only edit -> silent" || bad "blocked docs edit"
+B='{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Bash","input":{"command":"python3 - <<E\nopen(\"shop/cart.py\",\"w\").write(s)\nE"}}]}}'
+tr "$U" "$B" "$D"; rc=$(cc); [ "$rc" = 2 ] && ok "edit done through a Bash script counts as a code edit" || bad "bash edit missed"
+tr "$U" "$B" "$R" "$D"; rc=$(MOGGER_CLAIM_CHECK=always cc); [ "$rc" = 2 ] && grep -q "CHECK BEFORE" "$SB/err" && ! grep -q "NOT PROVEN" "$SB/err" && ok "bash edit then a run -> requirement check" || bad "bash edit then run wrong"
+# no transcript (eval runner): git/file fingerprint decides
+ERRD=$(mktemp -d)   # outside the work tree, so the fingerprint ignores it
+NT() { printf '{"stop_hook_active":false,"last_assistant_message":"%s"}' "$1" | bash "$H/stop-claim-check.sh" 2>"$ERRD/err" >/dev/null; echo $?; }
+source "$H/claim-lib.sh"; claim_baseline
+rc=$(NT "Done, it works."); [ "$rc" = 0 ] && ok "no transcript, nothing changed -> silent" || bad "blocked with no change"
+printf 'def f(x):\n    return x + 2\n' > app/main.py
+rc=$(MOGGER_CLAIM_CHECK=always NT "Done, it works."); [ "$rc" = 2 ] && grep -q "CHECK BEFORE" "$ERRD/err" && ok "no transcript, code changed + claim -> check" || bad "fingerprint path missed"
+rc=$(MOGGER_CLAIM_CHECK=always NT "Done, it works."); [ "$rc" = 0 ] && ok "same change not re-checked next turn" || bad "re-fired on same change"
+printf 'def f(x):\n    return x + 3\n' > app/main.py
+rc=$(NT "Which one do you want?"); [ "$rc" = 0 ] && ok "no transcript, changed but no claim -> silent" || bad "blocked a question"
+tr "$U" "$E" "$D"; rc=$(MOGGER_CLAIM_CHECK=off cc); [ "$rc" = 0 ] && ok "escape hatch" || bad "hatch ignored"
+tr "$E" "$D" "$U" "$Q"; rc=$(cc); [ "$rc" = 0 ] && ok "earlier turn's edits not counted" || bad "old turn counted"
+
 echo; echo "gates: $PASS passed, $FAIL failed"
 [ "$FAIL" -eq 0 ]
