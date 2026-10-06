@@ -41,5 +41,18 @@ pre app/main.py; pre app/main.py; pre app/main.py; pre tests/test_a.py; rc=$(sto
 printf 'x\n' > README.md; pre README.md; rc=$(stop); [ "$rc" = 0 ] && ok "docs only -> passes" || bad "docs blocked"
 pre app/main.py; pre app/main.py; pre app/main.py; rc=$(MOGGER_TESTS_ADDED=off stop); [ "$rc" = 0 ] && ok "escape hatch" || bad "escape hatch ignored"
 
+echo "== stop runs the project tests"
+printf '{"name":"x","scripts":{"test":"exit 1"}}' > package.json
+pre app/main.py; rc=$(stop); [ "$rc" = 2 ] && grep -q "TESTS FAIL" "$SB/err" && ok "red suite -> blocks the stop" || bad "red suite passed (rc=$rc)"
+pre app/main.py; rc=$(stop true); [ "$rc" = 0 ] && ok "stop_hook_active -> no loop on red" || bad "looped on red"
+printf '{"name":"x","scripts":{"test":"exit 0"}}' > package.json
+pre app/main.py; rc=$(stop); [ "$rc" = 0 ] && ok "green suite -> passes" || bad "green suite blocked"
+printf '{"name":"x","scripts":{"test":"exit 1"}}' > package.json
+rc=$(stop); [ "$rc" = 0 ] && ok "no edits this turn -> suite not run" || bad "ran with no edits"
+pre app/main.py; rc=$(MOGGER_STOP_TESTS=off stop); [ "$rc" = 0 ] && ok "escape hatch for the test run" || bad "hatch ignored"
+printf '{"name":"x","scripts":{"test":"echo \\"Error: no test specified\\" && exit 1"}}' > package.json
+pre app/main.py; rc=$(stop); [ "$rc" = 0 ] && ok "npm default stub ignored" || bad "stub counted as a suite"
+rm -f package.json
+
 echo; echo "gates: $PASS passed, $FAIL failed"
 [ "$FAIL" -eq 0 ]
