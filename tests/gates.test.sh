@@ -18,11 +18,11 @@ stop() { printf '{"stop_hook_active":%s}' "${1:-false}" | bash "$H/stop-tests-ad
 
 echo "== track-edits"
 pre tests/test_a.py; pre app/main.py
-[ "$(ls .claude/state/test-baseline | wc -l)" = 1 ] && ok "baseline copy of the test file taken" || bad "no baseline"
+[ "$(ls .claude/state/test-baseline | wc -l | tr -d ' ')" = 1 ] && ok "baseline copy of the test file taken" || bad "no baseline"
 grep -q '^T tests/test_a.py' .claude/state/edits.log && grep -q '^C app/main.py' .claude/state/edits.log && ok "test and code edits logged" || bad "edits.log wrong: $(cat .claude/state/edits.log)"
 
 echo "== tamper works without git (baseline)"
-sed -i '/f(2) == 3/d' tests/test_a.py
+grep -v 'f(2) == 3' tests/test_a.py > tests/t.tmp; mv tests/t.tmp tests/test_a.py
 rc=$(post tests/test_a.py); [ "$rc" = 0 ] && grep -q "Test weakened" "$SB/err" && ok "assertion removed -> warns" || bad "baseline not used"
 printf 'def test_one():\n    assert f(1) == 2\n    assert f(2) == 3\n\ndef test_renamed():\n    assert f(0) == 1\n' > tests/test_a.py
 pre tests/test_a.py
