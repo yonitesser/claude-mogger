@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+**Added — run the tests before "done"**
+- `stop-tests-added.sh` now runs the project's own test command (npm test, pytest if configured, go test, cargo test) when the turn changed code or tests, and sends the model back if it is red. Zero tokens when green; on red it returns the last 25 lines. Once per stop, 90s timeout. Escape hatch `MOGGER_STOP_TESTS=off`. Aims at the false "done" claims (4 of 9 runs in plain and mogger alike). MEASURED (build suite, mogger arm only, 9 runs, $7.54): pass 8/9 (plain 8/9), false "done" 5 (plain 4), cost $0.84/run (plain $0.86). No gain: 3 of the 5 false claims are one hidden units check in abl-sales stage 1 that no project test would catch. Kept because it costs nothing when green. Tests in `tests/gates.test.sh`.
+
 **Added — v2 step 1 (see the Mogger v2 proposal)**
 - `hooks/scripts/check-test-tamper.sh` (PostToolUse, Edit|Write): warns when an edit to a committed test file removes assertions or test cases, or adds skips. Warn only, silent otherwise, zero model tokens. Escape hatch `MOGGER_CHECK_TAMPER=off`. Tests in `tests/tamper.test.sh`.
 - SessionStart now carries a one-line "least code" ladder (skip, reuse, stdlib, one-liner, new code last). The grounding and mogger-active lines were shortened to pay for it; `MAX_SESSION` ceiling (1800) unchanged, session text is now 1688 chars.
