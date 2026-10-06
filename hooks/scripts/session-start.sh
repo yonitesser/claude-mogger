@@ -81,8 +81,8 @@ if [ -f "$(dirname "$0")/evals-nudge.sh" ]; then
   [ -n "$EV" ] && printf '%s\n\n' "$EV"
 fi
 
-echo "Least code, never least tests: skip code if not needed, reuse the repo (grep first), then stdlib, then new code last. Every behaviour change gets a test (keep old test names). Cite file:line for code claims; mark unchecked ones UNVERIFIED:."
+echo "Least code, never least tests: skip code if not needed, reuse the repo (grep first), then stdlib, then new code last. Every behaviour change gets a test (keep old test names). Do what was asked; if you disagree, do it and say so. Cite file:line for code claims; mark unchecked ones UNVERIFIED:."
 
 mogger_event info "mogger is on for this session"
-echo "mogger: push, merge-to-protected, deploy and money are hook-blocked. Read small files directly; explorer/bulk-reader only for big sweeps."
+echo "mogger: push, merge-to-protected, deploy, money are hook-blocked. Read small files directly; agents only for big sweeps."
 exit 0
