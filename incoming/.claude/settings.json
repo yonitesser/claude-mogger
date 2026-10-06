@@ -158,6 +158,10 @@
           },
           {
             "type": "command",
+            "command": "bash .claude/hooks/stop-claim-check.sh"
+          },
+          {
+            "type": "command",
             "command": "bash .claude/hooks/update-status.sh"
           }
         ]
