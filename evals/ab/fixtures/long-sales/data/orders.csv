@@ -1,0 +1,9 @@
+order_id,date,product,category,amount_cents,email
+L-1001,2024-01-03,Desk lamp,Lighting,4599,ana@acme-mail.test
+L-1002,2024-01-09,Oak shelf,Furniture,12900,bo@acme-mail.test
+L-1003,2024-01-15,Floor lamp,Lighting,8950,cy@acme-mail.test
+L-1004,2024-01-20,Desk lamp,Lighting,-4599,ana@acme-mail.test
+L-1005,2024-02-02,Wall clock,Decor,3125,di@acme-mail.test
+L-1006,2024-02-11,Oak shelf,Furniture,12900,ed@acme-mail.test
+L-1007,2024-02-14,Test order,Decor,100,qa@example.com
+L-1008,2024-02-20,Rug,Textiles,15999,fa@acme-mail.test

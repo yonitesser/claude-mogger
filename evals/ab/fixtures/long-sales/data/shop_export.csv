@@ -1,0 +1,7 @@
+Order ID,Created At,Item,Category,Total,Customer Email,Status
+S-77,2024-01-28T10:02:11Z,Linen throw,Textiles,$49.00,gi@acme-mail.test,paid
+S-78,2024-02-03T14:22:01Z,Standing desk,Furniture,"$1,234.50",ha@acme-mail.test,paid
+S-79,2024-02-05T09:15:40Z,Desk lamp,Lighting,$45.99,io@acme-mail.test,refunded
+S-80,2024-02-18T19:40:00Z,Candle set,Decor,$4.35,ju@acme-mail.test,paid
+S-81,2024-02-19T08:00:00Z,Test item,Decor,$1.15,shop-test@example.com,paid
+S-82,2024-03-01T12:30:00Z,Rug,Textiles,$159.99,ki@acme-mail.test,paid
