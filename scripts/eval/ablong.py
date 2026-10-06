@@ -256,12 +256,15 @@ def build_plan(items, reps, seed):
     """Repeat-major; inside a repeat the suites alternate (one project, two scenarios, ...); the two arms of
     an item run back to back in a seeded random order. A run cut short by the cap is a fair prefix."""
     plan = []
+    only_arm = os.environ.get("MOGGER_AB_ONLY_ARM", "")  # rerun one arm; the other arm's old results are reused by hand
     order = interleave(items)
     for r in range(1, max(reps.values()) + 1):
         for t in order:
             if r > reps[t["suite"]]:
                 continue
             for arm in ab.arm_order(seed, t["id"], r):
+                if only_arm and arm != only_arm:
+                    continue
                 plan.append({"task": t, "arm": arm, "repeat": r})
     return plan
 

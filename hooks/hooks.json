@@ -59,6 +59,10 @@
           },
           {
             "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/track-edits.sh"
+          },
+          {
+            "type": "command",
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/scope-guard.sh"
           },
           {
@@ -147,6 +151,10 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/stop-done-means-done.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/stop-tests-added.sh"
           },
           {
             "type": "command",
