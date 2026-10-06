@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+**Added — v2 step 1 (see the Mogger v2 proposal)**
+- `hooks/scripts/check-test-tamper.sh` (PostToolUse, Edit|Write): warns when an edit to a committed test file removes assertions or test cases, or adds skips. Warn only, silent otherwise, zero model tokens. Escape hatch `MOGGER_CHECK_TAMPER=off`. Tests in `tests/tamper.test.sh`.
+- SessionStart now carries a one-line "least code" ladder (skip, reuse, stdlib, one-liner, new code last). The grounding and mogger-active lines were shortened to pay for it; `MAX_SESSION` ceiling (1800) unchanged, session text is now 1688 chars.
+
+**Measured — long A/B, 19 of 24 trials (build suite, plain vs mogger)**
+- In the mogger arm the model made 30 to 45 percent more tool calls and turns (notes 38 vs 29, notify 54 vs 40, sales 13 vs 10) and cost 20 to 50 percent more. Hooks themselves call no model; the extra cost is more diligence turns (more reads, extra README edits, extra checks), each re-reading the cache. Every run passed all checks in both arms, so the extra work bought no measured correctness. n is 1 to 2 per cell: a lead, not a proof.
+
 **Changed — token/cost overhead (lowered ceilings in `tests/context-budget.test.sh`)**
 - Measured in a paid A/B (plain vs mogger, 72 transcripts): mogger added ~4.4k cached prompt tokens per trial (always-on descriptions + SessionStart) and, on tasks where the model delegated, extra explorer / bulk-reader / fact-checker subagent runs plus a duplicate re-read by the Lead.
 - Skill and agent descriptions shortened (always-on 12,053 -> ~7.4k chars); trigger phrases kept. Ceiling `MAX_ALWAYS` 15000 -> 7600.

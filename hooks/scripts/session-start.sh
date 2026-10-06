@@ -81,8 +81,8 @@ if [ -f "$(dirname "$0")/evals-nudge.sh" ]; then
   [ -n "$EV" ] && printf '%s\n\n' "$EV"
 fi
 
-echo "Grounding: cite file:line or command output for claims about code; label unchecked claims UNVERIFIED:."
+echo "Least code: skip it if not needed; reuse what the repo has (grep first); then stdlib; then a one-liner; new code last. Cite file:line for code claims; mark unchecked ones UNVERIFIED:."
 
 mogger_event info "mogger is on for this session"
-echo "mogger active: git push/merge-to-protected/deploy/money are hook-blocked. Read small files directly; use explorer/bulk-reader only for sweeps over many or large files."
+echo "mogger: push, merge-to-protected, deploy and money are hook-blocked. Read small files directly; explorer/bulk-reader only for big sweeps."
 exit 0
