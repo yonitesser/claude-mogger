@@ -25,7 +25,7 @@ echo "== unchanged file is silent"
 rc=$(run tests/test_a.py); [ "$rc" = 0 ] && ! warns && ok "no change -> no warning" || bad "unchanged warned"
 
 echo "== removed assertion warns, never blocks"
-sed -i '/f(2) == 3/d' tests/test_a.py
+grep -v 'f(2) == 3' tests/test_a.py > tests/t.tmp; mv tests/t.tmp tests/test_a.py
 rc=$(run tests/test_a.py); [ "$rc" = 0 ] && warns && ok "assertion removed -> warns, exit 0" || bad "removed assertion not flagged"
 git checkout -q tests/test_a.py
 
@@ -37,7 +37,7 @@ rc=$(run tests/test_a.py); [ "$rc" = 0 ] && warns && grep -q "test cases" "$SB/e
 git checkout -q tests/test_a.py
 
 echo "== added skip warns"
-sed -i 's/^def test_two/@pytest.mark.skip\ndef test_two/' tests/test_a.py
+python3 -c "p='tests/test_a.py';s=open(p).read();open(p,'w').write(s.replace('def test_two','@pytest.mark.skip\\ndef test_two',1))"
 rc=$(run tests/test_a.py); [ "$rc" = 0 ] && warns && ok "skip added -> warns" || bad "skip not flagged"
 git checkout -q tests/test_a.py
 
@@ -51,7 +51,7 @@ printf 'def test_new():\n    pass\n' > tests/test_new.py
 rc=$(run tests/test_new.py); [ "$rc" = 0 ] && ! warns && ok "untracked new test -> silent" || bad "new file warned"
 
 echo "== escape hatch"
-sed -i '/f(2) == 3/d' tests/test_a.py
+grep -v 'f(2) == 3' tests/test_a.py > tests/t.tmp; mv tests/t.tmp tests/test_a.py
 rc=$(printf '{"tool_input":{"file_path":"%s/tests/test_a.py"}}' "$SB" | MOGGER_CHECK_TAMPER=off bash "$H" 2>"$SB/err"; echo $?)
 [ "$rc" = 0 ] && ! warns && ok "MOGGER_CHECK_TAMPER=off is silent" || bad "escape hatch ignored"
 
