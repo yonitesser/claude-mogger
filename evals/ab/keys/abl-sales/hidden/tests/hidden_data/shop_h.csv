@@ -1,0 +1,6 @@
+Order ID,Created At,Item,Category,Total,Customer Email,Status
+X1,2024-04-03T10:00:00Z,Candle,Decor,$4.35,d@acme-mail.test,paid
+X2,2024-04-05T10:00:00Z,Desk,Furniture,"$1,234.50",e@acme-mail.test,paid
+X3,2024-05-06T10:00:00Z,Lamp,Lighting,$19.99,f@acme-mail.test,refunded
+X4,2024-05-07T10:00:00Z,Mat,Textiles,$0.10,g@acme-mail.test,paid
+X5,2024-05-08T10:00:00Z,Probe,Decor,$1.15,qa@example.com,paid

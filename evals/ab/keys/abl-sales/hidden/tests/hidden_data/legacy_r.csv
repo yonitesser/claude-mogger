@@ -1,0 +1,10 @@
+order_id,date,product,category,amount_cents,email
+R1,2024-04-02,Lamp,Lighting,2500,a@acme-mail.test
+R2,2024-04-10,Lamp,Lighting,-2500,a@acme-mail.test
+R3,2024-04-12,Shelf,Furniture,10000,b@acme-mail.test
+R4,2024-05-01,Rug,Textiles,7000,c@acme-mail.test
+R5,2024-05-02,Probe,Decor,100,qa@example.com
+R6,2024-05-03,Clock,Decor,3000,h@acme-mail.test
+R7,2024-05-04,Vase,Decor,2000,i@acme-mail.test
+R8,2024-05-05,Pan,Kitchen,1500,j@acme-mail.test
+R9,2024-05-06,Towel,Bath,900,k@acme-mail.test

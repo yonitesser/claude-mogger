@@ -1,0 +1,7 @@
+order_id,date,product,category,amount_cents,email
+L-2001,2024-03-02,Café table,Furniture,21000,lu@acme-mail.test
+L-2002,2024-03-04,"Mug, large",Kitchen,1450,mo@acme-mail.test
+L-2003,2024-03-06,Desk lamp,Lighting,4599,ni@acme-mail.test
+L-2005,2024-03-09,Wall clock,Decor,abc,ot@acme-mail.test
+L-2006,2024-03-12,Crème throw,Textiles,6200,pa@acme-mail.test
+L-2007,2024-03-15,Desk lamp,Lighting,-4599,ni@acme-mail.test
