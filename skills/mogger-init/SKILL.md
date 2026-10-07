@@ -75,8 +75,8 @@ overwrites a file that already exists.
      orchestrates.
    - Context7 is available for current library docs; SkillSpector is
      installed (or the user has the one command to add it).
-   - `bash scripts/savings-report.py` shows an *estimate* of cost avoided
-     by Haiku routing so far — self-reported by the agents, not verified,
+   - `bash scripts/savings-report.py` shows an *estimate* of what the
+     Haiku-routed calls would cost at the Lead's rate — self-reported by the agents, not verified,
      and clearly labeled as such in its own output. Not required reading,
      just available if the user is curious.
 

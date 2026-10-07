@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+**Changed — wording only: no savings claims**
+- Paid A/B tests show mogger costs about 13-23% more per run than plain Claude. README, skills, agent text, INTEGRATION.md, CONSIDERED.md and plugin descriptions no longer say or imply it saves money or tokens. The pitch is now: it fixes the common problems of vibe coding and stops dangerous mistakes. Haiku routing stays, described as routing. Script and file names (`savings-report.py`, `savings.jsonl`) are unchanged.
+
 **Added — "done" needs proof (`stop-claim-check`)**
 - New Stop hook `stop-claim-check.sh` (+ `claim-lib.sh`). Default mode `proof`: if the final message claims success after code edits and nothing ran after the last edit, send the model back once ("NOT PROVEN"). 0 tokens otherwise. Mode `always` also asks for a per-requirement check after every claim; `off` disables. SessionStart carries one more line: show output proving each ask, plus one awkward input (session text still 1800 chars, other lines trimmed to pay for it).
 - MEASURED (hard set, 6 tasks x 3, both arms, ~$2 per arm per run, 5 runs): mogger 17-18/18 vs plain 14-15/18 in every run, and the win is the secret/phantom-package guards, not this hook. `always` mode fired in 18 of 18 mogger runs: cost +62% per run vs plain, pass rate 17/18 (no gain; coupon 2/3). That is why it is not the default. Plain-mode firing could not be tested on this set: eval runs write no transcript, so the hook cannot see edits there.

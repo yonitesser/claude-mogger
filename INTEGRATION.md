@@ -193,15 +193,14 @@ using project's actual file names for its own constraints/changelog file
 if different from CONSTRAINTS.md/RUNS.md.
 
 ### `incoming/.claude/agents/bulk-reader.md`, `code-writer.md`, and `explorer.md`
-**Intent:** cost-routing — all three run on Haiku so the expensive Lead
+**Intent:** model routing — all three run on Haiku so the Lead
 model never spends its context on I/O. `bulk-reader` reads big files and
 answers one question. `explorer` finds where code lives (grep + paths).
 `code-writer` copies an existing pattern into boilerplate.
 **Merge action:** unrelated to the approval-gate stuff. If the project
-already has cheap-model subagents for reading/searching, keep theirs —
+already has Haiku subagents for reading/searching, keep theirs —
 but check their `model:` line. If an existing read/search/test agent is
-running on Sonnet or Opus, that's the single easiest cost win in this
-whole merge: change it to `haiku`. Nothing those agents do gets better
+running on Sonnet or Opus, consider changing it to `haiku`. Nothing those agents do gets better
 with a smarter model. Skip these files entirely if headroom is installed —
 it handles the same job upstream.
 
@@ -264,8 +263,8 @@ script or leave this hook out; it's a no-op without a parseable board.
 ### `incoming/.claude/hooks/log-savings.sh`
 **Intent:** not a lifecycle hook (no entry in settings.json) — a script the
 four Haiku agents call directly at the end of their own turn, self-reporting
-approximate input/output size. Feeds `savings-report.py`'s estimate of cost
-avoided by routing to a cheaper model. Self-reported, not verified — a
+approximate input/output size. Feeds `savings-report.py`'s estimate of what
+routed calls would cost at the Lead's rate. Self-reported, not verified — a
 different trust tier than everything else with "require" in its name.
 **Merge action:** copy alongside the other hook scripts (same directory,
 `lib.sh` isn't needed by this one specifically but keeping it in the same

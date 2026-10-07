@@ -1,6 +1,6 @@
 ---
 name: mogger-evals
-description: Paid evals of mogger's own agents (do cheaper models match Sonnet?). Use when asked about "evals", "raise the evals cap", "turn off evals", model-routing cost questions, or when the session-start message mentions evals.
+description: Paid evals of mogger's own agents (do cheaper models match Sonnet?). Use when asked about "evals", "raise the evals cap", "turn off evals", model-routing questions, or when the session-start message mentions evals.
 ---
 
 # mogger evals
@@ -17,14 +17,15 @@ Two tiers. Keep them apart when you talk to the user.
 
 ## What the paid evals give the user (say this in one plain paragraph)
 
-They show which agents can stay on the cheap model (Haiku) and which need
-Sonnet, with numbers from test cases, not guesses. Agents that pass can
-save money. Agents that fail get a safer setting. After one yes to a cap,
+They show which agents can stay on Haiku and which need Sonnet, with
+numbers from test cases, not guesses. Agents that fail get a safer
+setting. After one yes to a cap,
 the tests re-run by themselves in the background when agents change, always
 inside the cap.
 
-Use short sentences and plain words. No jargon. Do not promise savings.
-Say "can" and give the estimate.
+Use short sentences and plain words. No jargon. Do not promise savings. Mogger
+costs about the same as or a little more than plain Claude. Give the
+estimate of the eval cost.
 
 ## Talk to the user
 
@@ -70,7 +71,7 @@ the plugin's own files. Show the diff first. Tell the user how to undo it
 - Never paste a failing case into a prompt. Fix the cause, not the case.
 - No change if the gain is within noise. Say so and do not apply.
 - Headroom. If the strongest model already scores about 95% or more, the
-  test cannot show quality gains. Aim at cost instead.
+  test cannot show quality gains. Aim at routing choices instead.
 - Read a sample of graded transcripts before you trust a grader.
 
 ## Limits

@@ -51,7 +51,7 @@ diff, write "Reason not stated.">
 
 Keep the whole note under about 200 words unless the diff is large.
 
-## Before you finish: log the savings estimate (optional but requested)
+## Before you finish: log the routing estimate (optional but requested)
 
 Run this, filling in your actual input size (diff/files you read) and output
 size (your reply) in characters. A rough count is fine, this feeds an

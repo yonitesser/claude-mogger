@@ -9,7 +9,7 @@ Everything below is the operating manual for running work through this
 plugin. The hooks enforce the hard parts (push/merge/deploy/money blocked;
 reviewer gated on real test results; Stop blocked while tasks are open).
 This skill covers the parts hooks can't: *how* to run the loop so it stays
-cheap and finishes.
+on track and finishes.
 
 ## How work runs — orchestration, not solo work
 
@@ -96,8 +96,8 @@ context stays in your window for the rest of the session.
   not a full read plus guessing
 
 This applies to you and to every subagent. It's advisory, not hooked —
-but it's one of the largest recurring savings available, because re-reads
-are the most common way a session's context quietly fills up.
+because re-reads are the most common way a session's context quietly
+fills up.
 
 ### Prompt ordering for cache hits
 
@@ -133,10 +133,10 @@ passed. Use your judgment on all of that. Only surface things to me that are:
 architecture decisions with real tradeoffs, anything reviewer flags as a
 security concern, or anything blocked by a hook.
 
-## Model routing — the expensive model thinks, the cheap model reads
+## Model routing — the Lead thinks, Haiku reads
 
 Every subagent in this kit has a `model:` line in its frontmatter. The
-assignment is deliberate and it's the biggest single lever on cost:
+assignment is deliberate:
 
 | Job | Model | Agent | Why |
 |---|---|---|---|
@@ -209,17 +209,16 @@ for at Opus rates and stays there for the rest of the session. Delegate:
 Then reason about what they hand back. The hooks enforce part of this
 (big Reads are blocked); the rest is discipline.
 
-**Tuning:** if a project is small and Sonnet is your Lead, the savings are
-smaller but the pattern still holds — Haiku for I/O, Sonnet for thought.
+**Tuning:** if a project is small and Sonnet is your Lead, the pattern still holds — Haiku for I/O, Sonnet for thought.
 If `planner` needs to make a genuinely hard architecture call on a large
 system, bump it to `model: opus` for that project — that's the one
 subagent where it can be worth it. Never bump `tester`, `explorer`, or
 `bulk-reader` — there is no task they do that gets better with a smarter
 model.
 
-### Optional cost dial: the advisor tool
+### Optional: the advisor tool
 
-Claude Code has an experimental **advisor**: a cheaper main model (say
+Claude Code has an experimental **advisor**: a smaller main model (say
 Sonnet) can consult a stronger model (say Opus) at decision points, such as
 before it picks an approach, when an error keeps coming back, and before it
 says "done". The user turns it on with `/advisor opus` (or the
@@ -237,8 +236,7 @@ hard decisions with the advisor tool"):
   it stays off when `DISABLE_TELEMETRY` is set.
 - Subagents inherit the advisor. Mogger's `savings-report` does not count it.
 
-If the user wants a cheaper Lead: Sonnet as Lead plus an Opus advisor can
-cost less than Opus as Lead all session. Try it on one project. If you are
+Sonnet as Lead plus an Opus advisor is one setup to try on a project. If you are
 stuck on a recurring failure and the advisor is on, ask it before trying a
 fourth fix.
 
@@ -246,10 +244,10 @@ fourth fix.
 
 After each task clears reviewer, append one entry to RUNS.md. Include the
 `tokens:` line — run `/cost` and copy the session figure. This is the only
-way anyone (including you) can tell whether this kit is actually saving
-anything on this project. Claims without this number are just claims.
+way anyone (including you) can see what this kit costs on this project.
+Claims without this number are just claims.
 
-### Savings log — the Lead writes it, not the Haiku agents
+### Routing log — the Lead writes it, not the Haiku agents
 
 `bulk-reader`, `explorer` and `code-writer` have no Bash tool on purpose (they
 stay read-only or write-only), so they cannot log anything themselves. After
@@ -265,7 +263,7 @@ request (skip the log if you cannot tell). Agents that do have Bash
 (`tester`, `fact-checker`, `explainer`, `docs-writer`, `verifier`) still log
 their own runs. Both kinds stay self-reported estimates.
 
-## Optional: the savings estimate is a different thing than RUNS.md tokens
+## Optional: the routing estimate is a different thing than RUNS.md tokens
 
 RUNS.md's `tokens:` field is the real, actual session total from `/cost` —
 solid ground. `bash scripts/savings-report.py` is something weaker and
@@ -274,6 +272,6 @@ would have cost if billed at the Lead's model rate instead, based on
 self-reported (not verified) output length. No task here was ever run
 twice to produce a real before/after number — this is a disclosed
 calculation, not a measurement. Both the terminal output and the generated
-`savings-dashboard.html` state this plainly. If asked "how much did this
-kit save," point to RUNS.md's real totals first; mention the estimate
+`savings-dashboard.html` state this plainly. If asked "how much does this
+kit cost," point to RUNS.md's real totals first; mention the estimate
 second, with its caveat intact.
