@@ -3,7 +3,7 @@
   "version": "1.7.0",
   "description": "Fixes the common problems of vibe coding and stops Claude from making dangerous mistakes. Curated Claude Code discipline kit: hook-enforced approval gates (push/merge/deploy/money), test-gated review, done-means-done Stop hook, Haiku-for-I/O model routing (not a cost saver), auto-format on edit, persistent corrections. Every inclusion justified in CURATION.md, every rejection in CONSIDERED.md.",
   "author": {
-    "name": "Jay",
+    "name": "Yoni Tesser",
     "url": "https://github.com/yonitesser/claude-mogger"
   },
   "homepage": "https://github.com/yonitesser/claude-mogger",
