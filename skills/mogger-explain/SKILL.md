@@ -1,7 +1,6 @@
 ---
 name: mogger-explain
 description: When to dispatch the explainer agent for a plain-English note on what changed. Use at task end or on "explain that", "what did you change".
-disable-model-invocation: true
 ---
 
 # mogger explain

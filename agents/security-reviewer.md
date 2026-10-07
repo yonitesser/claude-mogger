@@ -1,6 +1,6 @@
 ---
 name: security-reviewer
-description: App-security review: runs scans, classifies findings CONFIRMED / FALSE-POSITIVE / NEEDS-HUMAN. Use before shipping or after auth/payments/db code. Never edits.
+description: App-security review: runs the scans, classifies each finding CONFIRMED / FALSE-POSITIVE / NEEDS-HUMAN with file:line evidence. Use before shipping or after adding auth/payments/database code. Never edits code.
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---

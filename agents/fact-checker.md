@@ -1,6 +1,6 @@
 ---
 name: fact-checker
-description: Checks claims about the codebase: VERIFIED / REFUTED / UNVERIFIABLE with file:line. Read-only. Use before reporting unread claims.
+description: Checks a list of claims about the codebase and returns VERIFIED / REFUTED / UNVERIFIABLE with file:line evidence. Read-only. Use before reporting claims you have not read yourself.
 tools: Read, Grep, Glob, Bash
 model: haiku
 effort: low

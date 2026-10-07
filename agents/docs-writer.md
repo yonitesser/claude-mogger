@@ -1,6 +1,6 @@
 ---
 name: docs-writer
-description: Writes README.md and .env.example from verified facts; unknowns become TODO(owner). Use at project start or before shipping.
+description: Writes README.md and .env.example from verified facts only; unknowns become TODO(owner). Use at project start, before shipping, after adding env vars.
 tools: Read, Grep, Glob, Write, Bash
 model: sonnet
 effort: low

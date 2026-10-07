@@ -1,7 +1,6 @@
 ---
 name: mogger-ship-check
 description: Use when asked "is this ready to ship?" or all TASKS are done. Report-only.
-disable-model-invocation: true
 ---
 
 # Ship-readiness checklist

@@ -1,6 +1,6 @@
 ---
 name: retro
-description: On demand only: reads RUNS.md for repeated mistakes and proposes CONSTRAINTS.md/CLAUDE.md edits as a diff.
+description: Use when asked for a retro (on demand only): reads RUNS.md to find repeated mistakes and proposes CONSTRAINTS.md/CLAUDE.md edits as a diff for human approval.
 tools: Read, Grep, Glob
 model: sonnet
 ---

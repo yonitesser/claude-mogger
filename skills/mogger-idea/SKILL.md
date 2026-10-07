@@ -1,7 +1,6 @@
 ---
 name: mogger-idea
 description: Spec-first interview for vague or big asks ("build me an app that..."): at most 5 questions, writes SPEC.md, hands to planner. Use when the ask is vague. Skip when the request is already specific.
-disable-model-invocation: true
 ---
 
 # mogger idea: spec before plan

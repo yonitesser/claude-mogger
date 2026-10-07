@@ -1,6 +1,6 @@
 ---
 name: code-writer
-description: Writes boilerplate that mirrors nearby code (tests, CRUD, DTOs, pattern refactors). Not for architecture or security code.
+description: Use when writing boilerplate that mirrors code already nearby (tests like existing ones, CRUD endpoints, DTOs, pattern refactors). Not for architecture, tricky logic or security-sensitive code.
 tools: Read, Write, Edit, Glob, Grep
 model: haiku
 effort: low
