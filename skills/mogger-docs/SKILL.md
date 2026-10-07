@@ -1,6 +1,7 @@
 ---
 name: mogger-docs
 description: Dispatching docs-writer and scripts/checks/docs.sh to write README.md and .env.example from verified facts. Use at project start, before shipping, after adding env vars.
+disable-model-invocation: true
 ---
 
 # mogger docs

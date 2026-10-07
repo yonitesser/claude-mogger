@@ -1,6 +1,7 @@
 ---
 name: mogger-app-evals
 description: Evals for the user's OWN Claude-calling app (anthropic / @anthropic-ai/sdk): prompts, model choice, cost. Use when asked "eval my app", "hillclimb", "is Haiku enough for my app". Not mogger's own agents (see mogger-evals).
+disable-model-invocation: true
 ---
 
 # mogger app evals: the user's own Claude app

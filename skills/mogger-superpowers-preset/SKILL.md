@@ -1,6 +1,7 @@
 ---
 name: mogger-superpowers-preset
 description: Config for running mogger's hooks under Superpowers' planning/TDD workflow. Load when both are installed or the user asks how to combine them.
+disable-model-invocation: true
 ---
 
 # Running mogger + Superpowers together

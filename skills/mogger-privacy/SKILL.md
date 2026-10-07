@@ -1,6 +1,7 @@
 ---
 name: mogger-privacy
 description: Runs scripts/checks/privacy.sh and fills DATA.md. Use before sharing an app with real users, when adding a form/column/analytics script, or on "what user data do we keep?". Not legal advice.
+disable-model-invocation: true
 ---
 
 # mogger privacy

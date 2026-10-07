@@ -1,6 +1,7 @@
 ---
 name: mogger-handoff
 description: Writes a handoff note from TASKS.md, git and test markers so the next session can continue without chat history. Use before context runs low, at session end, or before compaction.
+disable-model-invocation: true
 ---
 
 # mogger handoff

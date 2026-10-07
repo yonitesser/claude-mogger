@@ -1,6 +1,6 @@
 ---
 name: explorer
-description: Use when you must locate code ("where is X / what calls Z") across a large or unfamiliar codebase; returns paths and line numbers. Skip for a few known files: read them directly.
+description: Finds code ("where is X / what calls Z") in a large codebase; returns paths and lines. Skip for a few known files.
 tools: Read, Grep, Glob
 model: haiku
 effort: low

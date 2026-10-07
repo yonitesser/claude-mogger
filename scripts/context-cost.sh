@@ -30,6 +30,8 @@ front() {  # print only the frontmatter block of a markdown file
 SK=0; SKN=0
 for f in "$ROOT"/skills/*/SKILL.md; do
   [ -f "$f" ] || continue
+  # manual-only skills (disable-model-invocation) are not listed to the model, so they cost nothing always-on
+  front "$f" | grep -q '^disable-model-invocation: *true' && continue
   n=$(front "$f" | count); SK=$((SK + n)); SKN=$((SKN + 1))
 done
 AG=0; AGN=0

@@ -1,6 +1,7 @@
 ---
 name: mogger-init
 description: First-run setup: creates CONSTRAINTS.md, RUNS.md, STACK.md and .claude/state/, checks jq/python3. Use when starting a project, or on "set up mogger".
+disable-model-invocation: true
 ---
 
 # mogger init

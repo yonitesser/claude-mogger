@@ -1,6 +1,6 @@
 ---
 name: library-scout
-description: Decides use-a-library vs write-it-yourself and names a winner. Use before writing a non-trivial utility (dates, retries, validation, parsing, HTTP, auth) or adding a dependency.
+description: Picks use-a-library vs write-it-yourself and names a winner. Use before non-trivial utilities or a new dependency.
 tools: Read, Grep, Glob, WebSearch, WebFetch
 model: sonnet
 ---

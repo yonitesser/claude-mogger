@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+**Changed — less always-on text (cost)**
+- Nine situational skills are now manual-only (`disable-model-invocation: true`): `mogger-app-evals`, `-init`, `-handoff`, `-ship-check`, `-privacy`, `-docs`, `-explain`, `-idea`, `-superpowers-preset`. Run them by name (for example `/mogger:mogger-init`) or ask for them; they no longer sit in the model's skill list every turn. The rest stay automatic.
+- Eight agent descriptions shortened. `scripts/context-cost.sh` skips manual-only skills. Always-on text: 7,412 to 5,210 characters (about 1,850 to 1,300 tokens).
+- Measured on a trivial prompt (cloud, Sonnet): extra context over plain Claude 3,186 tokens, $0.0072 per call, down to 2,258 tokens, $0.0034.
+- Eval runner sets `MOGGER_EVALS=off` for trials (the evals nudge is shown once per project, not once per trial).
+- Hooks cost no tokens when silent, so no hook was removed; the cost is the static text.
+
 **Added — "done" needs proof (`stop-claim-check`)**
 - New Stop hook `stop-claim-check.sh` (+ `claim-lib.sh`). Default mode `proof`: if the final message claims success after code edits and nothing ran after the last edit, send the model back once ("NOT PROVEN"). 0 tokens otherwise. Mode `always` also asks for a per-requirement check after every claim; `off` disables. SessionStart carries one more line: show output proving each ask, plus one awkward input (session text still 1800 chars, other lines trimmed to pay for it).
 - MEASURED (hard set, 6 tasks x 3, both arms, ~$2 per arm per run, 5 runs): mogger 17-18/18 vs plain 14-15/18 in every run, and the win is the secret/phantom-package guards, not this hook. `always` mode fired in 18 of 18 mogger runs: cost +62% per run vs plain, pass rate 17/18 (no gain; coupon 2/3). That is why it is not the default. Plain-mode firing could not be tested on this set: eval runs write no transcript, so the hook cannot see edits there.

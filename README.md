@@ -84,6 +84,7 @@ skills/mogger-standards coding principles, library rules, token discipline, Skil
 skills/mogger-init     first-run: scaffolds CONSTRAINTS/RUNS/STACK in your project
 skills/mogger-superpowers-preset  tested config for running these gates under Superpowers
 skills/ (19 in all)    the four above, plus idea, decisions, grounding, security, code-health, edge-cases, verify-run, ship-check, rewind, handoff, docs, privacy, explain, evals, app-evals
+                        (manual-only, run by name: init, idea, ship-check, handoff, docs, privacy, explain, app-evals, superpowers-preset; they are not in the model's skill list, which saves tokens every turn)
 templates/              the three project files above, plus pricing.json for the savings estimate
 tests/*.test.sh         2,521 assertions across 19 suites (`for t in tests/*.test.sh; do bash $t; done`). If these fail, the gates don't work.
 scripts/savings-report.py  optional: estimated cost avoided by model routing (self-reported, see below)
