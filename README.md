@@ -77,7 +77,7 @@ one does:
 .claude-plugin/         plugin.json + marketplace.json — install with two slash commands
 .mcp.json               bundles Context7 as a hosted remote MCP server — auto-registers on install
 agents/                 14 agents: planner, builder, reviewer, retro, library-scout, security-reviewer (Sonnet) · tester, explorer, bulk-reader, code-writer, fact-checker, verifier, explainer, docs-writer (Haiku)
-hooks/hooks.json        30 hook entries: SessionStart, PreToolUse, PostToolUse, Stop, PreCompact
+hooks/hooks.json        31 hook entries: SessionStart, PreToolUse, PostToolUse, Stop, PreCompact
 hooks/scripts/          the actual bash — every one tested in tests/hooks.test.sh
 skills/mogger-loop     the orchestration loop + model routing (loads when you start a feature)
 skills/mogger-standards coding principles, library rules, token discipline, SkillSpector rule
@@ -200,6 +200,7 @@ than cry wolf. Limits of each are in the script headers.
 | `require-tests-pass` | Task→reviewer | review without a *recorded* exit-0 **full-suite** run, or with edits since |
 | `stop-done-means-done` | Stop | ending the turn with open tasks and no `BLOCKED:` reason |
 | `stop-tests-added` | Stop | ending the turn over a red suite: runs your own test command (npm test, pytest, go test, cargo test) when code or tests changed; sends the model back with the last 25 lines. 0 tokens when green. Off: `MOGGER_STOP_TESTS=off` |
+| `stop-claim-check` | Stop | saying "done" after code edits when nothing ran after the last edit (needs the session transcript): sends the model back once with "NOT PROVEN". 0 tokens otherwise. `MOGGER_CLAIM_CHECK=always` also asks for a per-requirement check after every claim (measured +62% cost, no gain, so off). `=off` disables |
 | `check-test-tamper` | Edit/Write (post) | — warns when an edit to a test file removes assertions or cases, or adds skips. Warn only. Off: `MOGGER_CHECK_TAMPER=off` |
 | `check-file-size` / `check-bash-read` | Read / Bash | reading >350-line files directly (→ bulk-reader on Haiku) |
 | `session-start` | SessionStart | — injects CONSTRAINTS.md, STACK.md, task status, and a one-line "least code" ladder (skip, reuse, stdlib, one-liner, new code last) into context |
