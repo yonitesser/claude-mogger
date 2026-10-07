@@ -101,7 +101,7 @@ INTEGRATION.md          manual merge guide for projects with an existing .claude
 **As a plugin (recommended):**
 
 ```
-/plugin marketplace add <your-github-user>/claude-mogger
+/plugin marketplace add yonitesser/claude-mogger
 /plugin install mogger@claude-mogger
 ```
 
@@ -236,42 +236,6 @@ kit — install them only if you want to swap in the more mature version:
 | [Superpowers](https://github.com/obra/superpowers) | Mature brainstorming/TDD/git-worktree workflow — **better than this kit at planning and TDD** | this kit's `planner`/`builder`/`reviewer`; keep every hook. There's a tested preset for the combination — see below |
 
 Details and the one-adjustment-each notes are in `CLAUDE.md.snippet`.
-
-## Getting listed on a public marketplace
-
-Two different things, often confused:
-
-- **`claude-plugins-official`** — curated by Anthropic at their
-  discretion. **There is no application process.** No form adds a plugin
-  here; the community submission form explicitly does not. Nothing to do
-  but build something worth curating.
-- **`claude-community`** (`anthropics/claude-plugins-community`) — the
-  public community marketplace, where third-party submissions land after
-  review. This is the one you can actually submit to. Users add it with
-  `/plugin marketplace add anthropics/claude-plugins-community`.
-
-Submit via one of the in-app forms:
-
-- claude.ai: `claude.ai/admin-settings/directory/submissions/plugins/new`
-  — needs a Team/Enterprise org with directory-management access (org
-  Owners have it by default)
-- Console: `platform.claude.com/plugins/submit` — for individual authors
-  without a Team/Enterprise org
-
-Validate locally first; the review pipeline runs the same check plus
-automated safety screening:
-
-```
-claude plugin validate .
-claude plugin validate . --strict   # treat warnings as errors too
-```
-
-Approved plugins get pinned to a commit SHA in the community catalog, with
-CI bumping the pin as you push. The catalog syncs nightly, so expect a lag
-between approval and being installable.
-
-Self-hosted install (`/plugin marketplace add <owner>/claude-mogger`)
-works today and needs nobody's approval.
 
 ## Running this under Superpowers
 
