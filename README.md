@@ -5,10 +5,8 @@
 <br/>
 <br/>
 
-**Most "Claude enhancer" repos are a prompt that says "be a senior engineer" and a hope.**
-**This one is a bash script that says no and means it.**
-
-Mogger fixes the common problems of vibe coding and stops Claude from making dangerous mistakes.
+Vibe coding is full of unseen problems until it's too late.
+**Mogger fixes that.**
 
 [![tests](https://img.shields.io/badge/tests-2,521%20passing-ff5a1f?style=for-the-badge)](tests/)
 [![license](https://img.shields.io/badge/license-MIT-black?style=for-the-badge)](LICENSE)
@@ -29,7 +27,7 @@ script between it and anything that can't be undone.
 ## What this actually does
 
 
-No config file makes the model smarter. What a kit *can* do, and what this
+No config file can make an AI model smarter. What a kit *can* do, and what this
 one does:
 
 1. **Enforce discipline the model won't apply on its own.** Tests must
