@@ -19,5 +19,7 @@
     "code-quality",
     "context7",
     "mcp"
-  ]
+  ],
+  "icon": ".claude-plugin/icon.png",
+  "privacyPolicyUrl": "https://github.com/yonitesser/claude-mogger/blob/master/PRIVACY.md"
 }

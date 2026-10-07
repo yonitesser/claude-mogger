@@ -21,11 +21,11 @@ case "$EXT" in
     if cfg biome.json biome.jsonc && has biome; then
       biome format --write "$FILE" >/dev/null 2>&1
       biome lint --write "$FILE" >/dev/null 2>&1
-    elif cfg .prettierrc .prettierrc.json .prettierrc.js .prettierrc.cjs prettier.config.js prettier.config.mjs .prettierrc.yaml .prettierrc.yml && has npx; then
-      npx --no-install prettier --write "$FILE" >/dev/null 2>&1
+    elif cfg .prettierrc .prettierrc.json .prettierrc.js .prettierrc.cjs prettier.config.js prettier.config.mjs .prettierrc.yaml .prettierrc.yml && [ -x node_modules/.bin/prettier ]; then
+      node_modules/.bin/prettier --write "$FILE" >/dev/null 2>&1
     fi
-    if [[ "$EXT" =~ ^(js|jsx|ts|tsx|mjs|cjs)$ ]] && cfg eslint.config.js eslint.config.mjs eslint.config.cjs .eslintrc .eslintrc.js .eslintrc.cjs .eslintrc.json && has npx; then
-      npx --no-install eslint --fix "$FILE" >/dev/null 2>&1
+    if [[ "$EXT" =~ ^(js|jsx|ts|tsx|mjs|cjs)$ ]] && cfg eslint.config.js eslint.config.mjs eslint.config.cjs .eslintrc .eslintrc.js .eslintrc.cjs .eslintrc.json && [ -x node_modules/.bin/eslint ]; then
+      node_modules/.bin/eslint --fix "$FILE" >/dev/null 2>&1
     fi
     ;;
   py)
