@@ -53,7 +53,7 @@ Rules:
 Output: a short list of files written, the TODO(owner) count, and the docs.sh
 lines that still fail.
 
-## Before you finish: log the savings estimate (optional but requested)
+## Before you finish: log the routing estimate (optional but requested)
 
 Run this, filling in your actual input size (files you read) and output size
 (files you wrote plus your reply) in characters. A rough count is fine, this

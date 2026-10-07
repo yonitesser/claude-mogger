@@ -110,7 +110,7 @@ may be at their actual job.
   and git-worktree isolation. This kit is stronger at unconditional,
   non-bypassable gates (Superpowers' `finishing-a-development-branch`
   *offers* merge as a choice; it doesn't hard-block it the way
-  `require-approval.sh` does) and Haiku-routed cost savings (nothing in
+  `require-approval.sh` does) and Haiku routing of I/O work (nothing in
   Superpowers assigns cheaper models to I/O work). Verdict changed from
   "pick one" to "compose": use Superpowers' skills, keep this kit's hooks,
   retire this kit's planner/builder/reviewer agents specifically.

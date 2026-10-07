@@ -52,7 +52,7 @@ this file is the only thing standing between a broken build and reviewer
 saying it's ready. Falsifying it defeats the entire point of your role.
 
 
-## Before you finish: log the savings estimate (optional but requested)
+## Before you finish: log the routing estimate (optional but requested)
 
 Run this, filling in your actual input size (what you read/were given) and
 output size (your reply) in characters — a rough count is fine, this feeds

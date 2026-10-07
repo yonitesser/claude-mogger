@@ -41,8 +41,8 @@ claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp
 
 ### Output-token discipline
 
-Output tokens cost ~5× input on Opus-class models. Most of the waste is
-ceremony. Cut it:
+Output tokens cost more than input tokens, and ceremony adds noise.
+Keep replies short:
 
 - No preambles ("Great, let me…"), no restating the request, no sign-off
   summaries of what you just did unless asked.
@@ -135,10 +135,10 @@ Here's where each one actually wins:
   way `require-approval.sh` does. If a hard, unconditional block on
   push/merge/deploy/money matters to you, that's not something Superpowers
   replaces.
-- **Cost-aware model routing.** Nothing in Superpowers' skill list assigns
+- **Model routing.** Nothing in Superpowers' skill list assigns
   cheaper models to I/O-only work. This kit's `bulk-reader`/`explorer`/
-  `tester`/`code-writer` run on Haiku specifically so reads, searches, and
-  test runs don't burn frontier-model tokens. That's orthogonal to what
+  `tester`/`code-writer` run on Haiku so reads, searches, and
+  test runs stay out of the Lead's context. That's orthogonal to what
   Superpowers does and not something adopting it gives you.
 
 **The honest recommendation: compose them, don't choose one.** Install
@@ -156,7 +156,7 @@ checks for a subagent named `reviewer` — point it at whichever Superpowers
 step does final review (`MOGGER_REVIEWER_NAME` env var) before you'd
 approve a merge.
 
-### headroom vs this kit's cost routing — partial overlap, not full
+### headroom vs this kit's model routing — partial overlap, not full
 
 `headroomlabs-ai/headroom` (Apache 2.0) is a local compression proxy that
 shrinks tool output, logs, and file reads before they reach the model —

@@ -53,11 +53,10 @@ triggered it — that's why this composition works at all:
 
 **The Haiku-routed agents**: `bulk-reader`, `explorer`, `code-writer`,
 `tester`. Nothing in Superpowers' skill library assigns cheaper models to
-I/O-only work. This is mogger's largest cost lever and it's untouched
-territory for them.
+I/O-only work. This is untouched territory for them.
 
 **`library-scout`**, **`retro` + CONSTRAINTS.md**, **STACK.md**, and the
-savings estimate. No Superpowers equivalent for any of them.
+routing estimate. No Superpowers equivalent for any of them.
 
 ## Required config changes
 
@@ -126,7 +125,7 @@ Superpowers loads a logo image that reports its version. Opt out:
 export SUPERPOWERS_DISABLE_TELEMETRY=1
 ```
 
-Mogger's savings estimate is entirely local — nothing leaves the machine.
+Mogger's routing estimate is entirely local — nothing leaves the machine.
 
 ## What the Lead does under this preset
 
@@ -134,7 +133,7 @@ Mogger's savings estimate is entirely local — nothing leaves the machine.
    subagent-driven-development with TDD → code review.
 2. Still delegate reads and searches to mogger's Haiku agents
    (`explorer`, `bulk-reader`) rather than doing them yourself. Superpowers
-   won't do this for you and it's most of the cost saving.
+   won't do this for you, and it keeps the Lead's context clean.
 3. Still run `library-scout` before hand-rolling anything that sounds
    solved.
 4. Still append to RUNS.md and CONSTRAINTS.md — that's mogger's memory

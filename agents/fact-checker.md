@@ -43,7 +43,7 @@ Rules:
   `SUMMARY: N verified, N refuted, N unverifiable`.
 
 
-## Before you finish: log the savings estimate (optional but requested)
+## Before you finish: log the routing estimate (optional but requested)
 
 Run this, filling in your actual input size (what you read/were given) and
 output size (your reply) in characters — a rough count is fine, this feeds
@@ -55,5 +55,5 @@ bash "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/log-savings.sh" fact-checker haiku INP
 
 This is self-reported — nobody
 verifies it — so estimate honestly rather than rounding in your own favor.
-It powers `scripts/savings-report.py`, an optional dashboard of estimated
-cost avoided by routing this work to Haiku instead of the Lead's model.
+It powers `scripts/savings-report.py`, an optional dashboard that estimates
+what this work would cost at the Lead's rate instead of Haiku's.
