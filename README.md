@@ -6,7 +6,11 @@
 <br/>
 
 Vibe coding is full of unseen problems until it's too late.
+<br/>
+<br/>
 **Mogger fixes that.**
+<br/>
+<br/>
 
 [![tests](https://img.shields.io/badge/tests-2,521%20passing-ff5a1f?style=for-the-badge)](tests/)
 [![license](https://img.shields.io/badge/license-MIT-black?style=for-the-badge)](LICENSE)
