@@ -479,7 +479,7 @@ grep -q '"count":2' "$STATEF" && ok fix-loop-guard "state counts 2 (line numbers
 fl_fail "npm test" "$E1"; want 2 "3rd same failure => exit 2"
 case "$FLERR" in *"STOP the fix loop"*) ok fix-loop-guard "message starts STOP the fix loop" ;; *) bad fix-loop-guard "msg: $FLERR" ;; esac
 case "$FLERR" in *"hypothesis you have NOT yet verified"*) ok fix-loop-guard "message asks for unverified hypothesis" ;; *) bad fix-loop-guard "hypothesis" ;; esac
-case "$FLERR" in *"bash scripts/mogger-rewind.sh list"*) ok fix-loop-guard "message points at mogger-rewind list" ;; *) bad fix-loop-guard "rewind" ;; esac
+case "$FLERR" in *"mogger-rewind.sh\" list"*) ok fix-loop-guard "message points at mogger-rewind list" ;; *) bad fix-loop-guard "rewind" ;; esac
 case "$FLERR" in *"revert that edit"*"ask the user"*) ok fix-loop-guard "message: revert last edit, ask the user" ;; *) bad fix-loop-guard "revert/ask" ;; esac
 case "$FLERR" in *"re-read"*|*"Re-read"*) ok fix-loop-guard "message: re-read the failing test" ;; *) bad fix-loop-guard "reread" ;; esac
 fl_fail "npm test" "$E1"; want 2 "4th failure keeps blocking"

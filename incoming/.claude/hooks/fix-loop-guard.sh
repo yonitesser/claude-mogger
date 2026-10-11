@@ -191,7 +191,7 @@ if [ "$COUNT" -ge "$MAX" ]; then
     echo "STOP the fix loop. '${NCMD}' has now failed ${COUNT} times in a row with the same error (${NLINE})."
     echo "Do not make another edit for this failure yet. Instead:"
     echo "  1. State the hypothesis you have NOT yet verified (what you believe the cause is, and what you have not actually checked)."
-    echo "  2. Run: bash scripts/mogger-rewind.sh list   and consider restoring the last good checkpoint."
+    echo "  2. Run: bash \"${CLAUDE_PLUGIN_ROOT:-.}/scripts/mogger-rewind.sh\" list   and consider restoring the last good checkpoint."
     echo "  3. Re-read the failing test itself - is it testing what you think it is?"
     echo "  4. If new failures appeared after your last edit, say so and revert that edit."
     echo "  5. If the advisor tool is on (/advisor), ask it for a second opinion now."

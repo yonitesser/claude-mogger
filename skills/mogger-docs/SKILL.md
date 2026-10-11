@@ -11,7 +11,7 @@ the `docs-writer` agent (Sonnet, writes only README.md / .env.example / docs/)
 closes them without inventing anything.
 
 ## Run the check
-`bash scripts/checks/docs.sh`. Lines are `LEVEL|check-id|message`:
+`bash "${CLAUDE_PLUGIN_ROOT}/scripts/checks/docs.sh"`. Lines are `LEVEL|check-id|message`:
 
 | check-id | what it checks | level on problem |
 |---|---|---|

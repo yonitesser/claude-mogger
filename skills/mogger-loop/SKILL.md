@@ -281,7 +281,7 @@ their own runs. Both kinds stay self-reported estimates.
 ## Optional: the routing estimate is a different thing than RUNS.md tokens
 
 RUNS.md's `tokens:` field is the real, actual session total from `/cost` —
-solid ground. `bash scripts/savings-report.py` is something weaker and
+solid ground. `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/savings-report.py"` is something weaker and
 should never be confused with it: an *estimate* of what Haiku-routed calls
 would have cost if billed at the Lead's model rate instead, based on
 self-reported (not verified) output length. No task here was ever run

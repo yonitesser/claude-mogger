@@ -75,7 +75,7 @@ overwrites a file that already exists.
      orchestrates.
    - Context7 is available for current library docs; SkillSpector is
      installed (or the user has the one command to add it).
-   - `bash scripts/savings-report.py` shows an *estimate* of what the
+   - `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/savings-report.py"` shows an *estimate* of what the
      Haiku-routed calls would cost at the Lead's rate — self-reported by the agents, not verified,
      and clearly labeled as such in its own output. Not required reading,
      just available if the user is curious.
@@ -84,7 +84,7 @@ overwrites a file that already exists.
    time I do something you have to fix twice."
 
 8. **Offer the evals (last step).** Load `skills/mogger-evals`. Run
-   `bash scripts/mogger-eval.sh estimate` (if the script is missing, say
+   `bash "${CLAUDE_PLUGIN_ROOT}/scripts/mogger-eval.sh" estimate` (if the script is missing, say
    the paid evals are not installed and skip). Show the estimate in plain
    words, say it costs money and nothing runs without a yes, and ask for a
    dollar cap. Do not run anything paid yourself. If the project uses the

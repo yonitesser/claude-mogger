@@ -51,10 +51,10 @@ optional project directory:
 
 | Situation | Run |
 |---|---|
-| A file or feature keeps growing; before a refactor | `bash scripts/checks/structure.sh` |
-| Before adding routes, jobs or integrations; before a demo or launch | `bash scripts/checks/resilience.sh` |
-| Before or after touching models, migrations or the schema | `bash scripts/checks/database.sh` |
-| Before first calling a paid API; before publishing a public route that reaches one | `bash scripts/checks/cost-risk.sh` |
+| A file or feature keeps growing; before a refactor | `bash "${CLAUDE_PLUGIN_ROOT}/scripts/checks/structure.sh"` |
+| Before adding routes, jobs or integrations; before a demo or launch | `bash "${CLAUDE_PLUGIN_ROOT}/scripts/checks/resilience.sh"` |
+| Before or after touching models, migrations or the schema | `bash "${CLAUDE_PLUGIN_ROOT}/scripts/checks/database.sh"` |
+| Before first calling a paid API; before publishing a public route that reaches one | `bash "${CLAUDE_PLUGIN_ROOT}/scripts/checks/cost-risk.sh"` |
 | Before shipping | all four, then fix FAILs and read each WARN |
 
 Hooks (automatic, after Edit/Write): `check-structure.sh` blocks a file over

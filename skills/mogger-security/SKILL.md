@@ -41,7 +41,7 @@ code; the hooks and scans check for them.
 
 ## Reading the scan
 
-`bash scripts/checks/security.sh [dir]` and `bash scripts/checks/dep-audit.sh [dir]`
+`bash "${CLAUDE_PLUGIN_ROOT}/scripts/checks/security.sh" [dir]` and `bash "${CLAUDE_PLUGIN_ROOT}/scripts/checks/dep-audit.sh" [dir]`
 are report-only and always exit 0. Each line is `LEVEL|check-id|message`:
 
 - **FAIL**: evidence of a real problem (secret behind a public prefix,
