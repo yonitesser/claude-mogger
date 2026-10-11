@@ -39,21 +39,7 @@ INPUT=$(cat)
 CMD=$(json_get "$INPUT" '.tool_input.command')
 [ -n "$CMD" ] || exit 0
 
-# ---- is this a test/build/lint command? (cheap, before any other work)
-fl_recognised() {
-  local c="$1" re
-  re='(^|[[:space:];&|(/])(npm|pnpm|yarn|bun)([[:space:]]+run)?[[:space:]]+(test|t|lint|build|typecheck|type-check|check|ci)([[:space:]]|$)'
-  [[ "$c" =~ $re ]] && return 0
-  re='(^|[[:space:];&|(/])(vitest|jest|mocha|ava|tap|playwright[[:space:]]+test|cypress[[:space:]]+run|tsc|eslint|biome|ruff|mypy|pyright|flake8|pylint|pytest|py[.]test|tox|nox|rspec|phpunit|golangci-lint|clippy)([[:space:]]|$)'
-  [[ "$c" =~ $re ]] && return 0
-  re='(^|[[:space:];&|(/])(go[[:space:]]+(test|build|vet)|cargo[[:space:]]+(test|build|check|clippy)|make[[:space:]]+(test|tests|check|lint|build)|dotnet[[:space:]]+(test|build)|mvn[[:space:]]+(test|verify|package)|gradle[[:space:]]+(test|build|check)|[.]/gradlew[[:space:]]+(test|build|check)|deno[[:space:]]+(test|lint|check)|bundle[[:space:]]+exec[[:space:]]+rspec)([[:space:]]|$)'
-  [[ "$c" =~ $re ]] && return 0
-  re='python[0-9.]*[[:space:]]+-m[[:space:]]+(pytest|unittest|mypy|ruff|tox)([[:space:]]|$)'
-  [[ "$c" =~ $re ]] && return 0
-  re='(^|[[:space:];&|(])(bash|sh)[[:space:]]+[^;&|]*test[^;&|]*[.]sh([[:space:]]|$)'
-  [[ "$c" =~ $re ]] && return 0
-  return 1
-}
+# ---- is this a test/build/lint command? fl_recognised lives in lib.sh
 # not a run: echo/cat/grep/git/... merely MENTIONING a test command
 case "$CMD" in
   echo\ *|printf\ *|cat\ *|grep\ *|rg\ *|ls\ *|git\ *|man\ *|which\ *|type\ *|sed\ *|head\ *|tail\ *) exit 0 ;;
@@ -191,7 +177,7 @@ if [ "$COUNT" -ge "$MAX" ]; then
     echo "STOP the fix loop. '${NCMD}' has now failed ${COUNT} times in a row with the same error (${NLINE})."
     echo "Do not make another edit for this failure yet. Instead:"
     echo "  1. State the hypothesis you have NOT yet verified (what you believe the cause is, and what you have not actually checked)."
-    echo "  2. Run: bash scripts/mogger-rewind.sh list   and consider restoring the last good checkpoint."
+    echo "  2. Run: bash \"${CLAUDE_PLUGIN_ROOT:-.}/scripts/mogger-rewind.sh\" list   and consider restoring the last good checkpoint."
     echo "  3. Re-read the failing test itself - is it testing what you think it is?"
     echo "  4. If new failures appeared after your last edit, say so and revert that edit."
     echo "  5. If the advisor tool is on (/advisor), ask it for a second opinion now."

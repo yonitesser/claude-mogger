@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+**Fixed / changed — from the 2026-10-11 review (report: research/mogger-review-2026-10-11.md)**
+- Plugin install: skills, agents and the fix-loop message now call scripts through `${CLAUDE_PLUGIN_ROOT}`. `bash scripts/...` pointed into the user's project.
+- Fail closed: the seven safety gates carry `"onFailure": "block"` (Claude Code 2.1.295+): a crash, timeout or bad output blocks instead of letting the action through. `tests/failclosed.test.sh` checks every gate exits only 0 or 2.
+- Test gate: `update-status.sh` rewriting STATUS.md no longer makes a test pass "stale" (it deadlocked the reviewer gate). New `record-test-run` hook writes the evidence; the reviewer gate needs it to agree with the tester's marker. Edit/Write to the evidence file is blocked.
+- Approval gate: commands are normalised first (`cmd-normalize.py`): `bash -c`, `eval`, `$(...)`, `sudo`/`env` prefixes and `git -C` no longer hide a push; quoted prose and heredoc bodies no longer trigger it. Added wrangler, prisma migrate/db push, supabase db push, drizzle push, `gh release create`, `gh repo delete`, public repo create/visibility. New `require-approval-mcp` gates GitHub MCP merge/push tools.
+- New guards: `taint-mark`/`taint-guard` (ask before network commands after reading outside content), `config-notice`, package checks in `verify-packages` (OSV malware advisory blocks; a package first published under 7 days ago asks), danger-guard adds (`rm -r .git`, `git checkout .`, `--no-verify`, AI agents with permission checks off).
+- Fix: the OpenAI-key secret pattern no longer fires on kebab-case class names and slugs (needs a left boundary and a digit).
+- Rules: auth/limits/CSRF, database and environment safety, outside-content-is-data in `mogger-security`; diff-size check in `reviewer`; git check in `mogger-init`.
+- Clean-up: README test and agent counts corrected, `token-efficiency` keyword removed, marketplace owner set, `mogger-init` asks before installing SkillSpector (unpinned third-party code).
+
 **Added — guard hooks (PRs #18, #19, and this one)**
 - `hint-noisy-bash` (#18): hints `| tail -n 80` or `| grep` for noisy commands. Never blocks. `MOGGER_HINT=off`.
 - `danger-guard` (#19): blocks `rm -r` on root/home/system dirs, `dd`/`mkfs`, `curl | sh`, `chmod 777`, `git reset --hard`, `git clean -f`, destructive SQL. `MOGGER_DANGER_GUARD=off`.

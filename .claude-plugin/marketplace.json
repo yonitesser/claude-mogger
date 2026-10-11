@@ -1,7 +1,7 @@
 {
   "name": "claude-mogger",
   "owner": {
-    "name": "Jay"
+    "name": "Yoni Tesser"
   },
   "metadata": {
     "description": "Curated Claude Code enhancements with receipts. See CURATION.md for what earns a place and CONSIDERED.md for what didn't.",
@@ -18,7 +18,7 @@
         "hooks",
         "safety",
         "subagents",
-        "token-efficiency"
+        "safety"
       ]
     }
   ]

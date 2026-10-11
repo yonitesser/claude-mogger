@@ -6,6 +6,10 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/session-start.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/config-notice.sh"
           }
         ]
       }
@@ -25,11 +29,13 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/require-approval.sh"
+            "command": "bash .claude/hooks/require-approval.sh",
+            "onFailure": "block"
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/danger-guard.sh"
+            "command": "bash .claude/hooks/danger-guard.sh",
+            "onFailure": "block"
           },
           {
             "type": "command",
@@ -41,11 +47,26 @@
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/secret-guard-bash.sh"
+            "command": "bash .claude/hooks/secret-guard-bash.sh",
+            "onFailure": "block"
           },
           {
             "type": "command",
             "command": "bash .claude/hooks/verify-packages.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/taint-guard.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__.*__(merge_pull_request|enable_pr_auto_merge|delete_repository|delete_branch|push_files|create_or_update_file|delete_file)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/require-approval-mcp.sh",
+            "onFailure": "block"
           }
         ]
       },
@@ -54,7 +75,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/secret-read-guard.sh"
+            "command": "bash .claude/hooks/secret-read-guard.sh",
+            "onFailure": "block"
           }
         ]
       },
@@ -63,7 +85,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/config-guard.sh"
+            "command": "bash .claude/hooks/config-guard.sh",
+            "onFailure": "block"
           }
         ]
       },
@@ -93,11 +116,13 @@
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/protect-pipeline-files.sh"
+            "command": "bash .claude/hooks/protect-pipeline-files.sh",
+            "onFailure": "block"
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/secret-guard.sh"
+            "command": "bash .claude/hooks/secret-guard.sh",
+            "onFailure": "block"
           },
           {
             "type": "command",
@@ -167,6 +192,10 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/fix-loop-guard.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/record-test-run.sh"
           }
         ]
       },
@@ -175,6 +204,15 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/repeat-call-guard.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "WebFetch|WebSearch|mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/taint-mark.sh"
           }
         ]
       }
@@ -208,6 +246,10 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/fix-loop-guard.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/record-test-run.sh"
           }
         ]
       },

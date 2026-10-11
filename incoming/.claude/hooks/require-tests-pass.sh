@@ -43,10 +43,28 @@ if [ "$STATUS" != "pass" ]; then
   exit 2
 fi
 
+# The marker above is the tester agent's claim. A hook (record-test-run.sh) records
+# what the test command really returned; the gate needs that to say "pass" too.
+# MOGGER_EVIDENCE=off skips this (projects whose test command the hook can't see).
+EVID=".claude/state/test-evidence.json"
+if [ "${MOGGER_EVIDENCE:-on}" != "off" ]; then
+  if [ ! -f "$EVID" ]; then
+    mogger_event block "blocked review: no hook-recorded test run"; echo "BLOCKED: the tester's marker says pass, but no test run was recorded by the hook ($EVID). Run the project's test command through Bash (e.g. npm test, pytest, go test). For a custom command set MOGGER_TEST_CMD_REGEX, or MOGGER_EVIDENCE=off to skip this check." >&2
+    exit 2
+  fi
+  ESTATUS=$(json_get "$(cat "$EVID")" '.status')
+  if [ "$ESTATUS" != "pass" ]; then
+    mogger_event block "blocked review: last real test run failed"; echo "BLOCKED: the last test run seen by the hook was '${ESTATUS:-unknown}', whatever the marker says. Fix, re-run the tests, then reviewer." >&2
+    exit 2
+  fi
+  # stale check below is against the evidence file (the marker could be touched by hand)
+  MARKER="$EVID"
+fi
+
 # An affected-tests-only pass is not enough to send something to review.
 # tester runs targeted subsets during the build loop for speed, then a
 # full suite once at the end — reviewer needs the full one.
-SCOPE=$(json_get "$(cat "$MARKER")" '.scope')
+SCOPE=$(json_get "$(cat .claude/state/last_test_result.json)" '.scope')
 if [ -n "$SCOPE" ] && [ "$SCOPE" != "full" ]; then
   mogger_event block "blocked review: tests ran on a part only"; echo "BLOCKED: last test run was scope '$SCOPE', not 'full'. Affected-only runs are for the build loop; reviewer requires a full-suite pass. Re-run tester with the complete suite." >&2
   exit 2
@@ -56,7 +74,7 @@ fi
 NEWER=$(find . -type f -newer "$MARKER" \
   -not -path './.git/*' -not -path './.claude/state/*' -not -path './node_modules/*' \
   -not -path './.venv/*' -not -path './target/*' -not -path './dist/*' -not -path './build/*' \
-  -not -name 'RUNS.md' -not -name 'TASKS.md' 2>/dev/null | head -1)
+  -not -name 'RUNS.md' -not -name 'TASKS.md' -not -name 'STATUS.md' 2>/dev/null | head -1)
 if [ -n "$NEWER" ]; then
   mogger_event block "blocked review: test pass is stale"; echo "BLOCKED: '$NEWER' changed after the last test run. The pass is stale. Re-run tester." >&2
   exit 2

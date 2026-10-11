@@ -10,10 +10,16 @@
 # index/registry (private packages legitimately 404 on the public one).
 # Version specifiers/extras are stripped: requests[socks]>=2 -> requests.
 #
+# Two more checks on packages that DO exist (both fail open):
+#   * OSV (osv.dev, free): a package with a MAL-* advisory is known malware => blocked.
+#   * Brand-new package (first published < MOGGER_MIN_PKG_AGE_DAYS, default 7): the
+#     human is ASKED, because a name registered last week is how slopsquatting works.
+#
 # FAILS OPEN on anything but a clean 404: no curl, timeout, DNS failure,
 # 403/429/5xx, offline sandbox. A flaky network must never wedge a session.
 #
-# Env: MOGGER_VERIFY_PACKAGES=off disables. Registry bases (for tests/mirrors):
+# Env: MOGGER_VERIFY_PACKAGES=off disables. MOGGER_OSV=off skips the malware lookup,
+#   MOGGER_MIN_PKG_AGE_DAYS=0 skips the new-package question, MOGGER_OSV_URL for tests. Registry bases (for tests/mirrors):
 #   MOGGER_NPM_REGISTRY (https://registry.npmjs.org)
 #   MOGGER_PYPI_URL     (https://pypi.org/pypi)
 #   MOGGER_CRATES_URL   (https://crates.io/api/v1/crates)
@@ -41,6 +47,46 @@ http_code() {  # prints the HTTP status, "000" on any transport failure
     -A "claude-mogger-verify" -- "$1" 2>/dev/null || printf '000'
 }
 
+OSV_URL="${MOGGER_OSV_URL:-https://api.osv.dev/v1/query}"
+MIN_AGE="${MOGGER_MIN_PKG_AGE_DAYS:-7}"
+YOUNG=""
+
+osv_malware() {  # osv_malware <eco> <name> -> blocks on a MAL-* advisory
+  [ "${MOGGER_OSV:-on}" = "off" ] && return 0
+  local eco="$1" name="$2" oe out id
+  case "$eco" in npm) oe=npm ;; pypi) oe=PyPI ;; crates) oe=crates.io ;; go) oe=Go ;; *) return 0 ;; esac
+  case "$name" in *[!A-Za-z0-9@/._-]*) return 0 ;; esac
+  out=$(curl -s --connect-timeout 3 --max-time 4 -A "claude-mogger-verify" -H 'Content-Type: application/json' \
+        -d "{\"package\":{\"name\":\"$name\",\"ecosystem\":\"$oe\"}}" -- "$OSV_URL" 2>/dev/null) || return 0
+  id=$(printf '%s' "$out" | grep -oE '"id"[[:space:]]*:[[:space:]]*"MAL-[^"]+"' | head -1)
+  if [ -n "$id" ]; then
+    mogger_event block "blocked known malware package $name"; echo "BLOCKED: '$name' has a malware advisory on OSV (${id##*:}). Do not install it. Check the correct package name." >&2
+    exit 2
+  fi
+  return 0
+}
+
+pkg_age_days() {  # pkg_age_days <eco> <url> -> whole days since first publish, or nothing
+  command -v python3 >/dev/null 2>&1 || return 0
+  curl -s --connect-timeout 3 --max-time 4 --max-filesize 1000000 -A "claude-mogger-verify" -- "$2" 2>/dev/null \
+  | python3 -c '
+import sys, json, datetime
+eco = sys.argv[1]
+try:
+    j = json.load(sys.stdin)
+    if eco == "npm": t = j["time"]["created"]
+    elif eco == "crates": t = j["crate"]["created_at"]
+    else:
+        ts = [f["upload_time_iso_8601"] for fs in j["releases"].values() for f in fs]
+        t = min(ts)
+    d = datetime.datetime.fromisoformat(t.replace("Z", "+00:00"))
+    if d.tzinfo is None: d = d.replace(tzinfo=datetime.timezone.utc)
+    print((datetime.datetime.now(datetime.timezone.utc) - d).days)
+except Exception:
+    pass
+' "$1" 2>/dev/null
+}
+
 check() {  # check <ecosystem> <name>
   local eco="$1" name="$2" url reg code p
   if [ "$PARSE_ONLY" -eq 1 ]; then echo "$eco $name"; return 0; fi
@@ -62,10 +108,23 @@ check() {  # check <ecosystem> <name>
       done
       block "$name" "$reg" ;;
   esac
-  [ "$eco" = go ] && return 0
+  if [ "$eco" = go ]; then osv_malware go "$name"; return 0; fi
   code=$(http_code "$url")
   [ "$code" = "404" ] && block "$name" "$reg"
+  osv_malware "$eco" "$name"
+  if [ "$MIN_AGE" -gt 0 ] 2>/dev/null && [ "$code" = "200" ]; then
+    age=$(pkg_age_days "$eco" "$url")
+    case "$age" in ''|*[!0-9]*) ;; *) [ "$age" -lt "$MIN_AGE" ] && YOUNG="$YOUNG $name (${age}d)" ;; esac
+  fi
   return 0
+}
+
+finish() {  # ask once about brand-new packages, then allow
+  if [ -n "$YOUNG" ]; then
+    mogger_event warn "asked about a brand-new package"
+    printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"First published less than %s days ago:%s. Brand-new names are how fake packages get in. Approve only if you know this package."}}\n' "$MIN_AGE" "$YOUNG"
+  fi
+  exit 0
 }
 
 block() {
@@ -153,10 +212,10 @@ while IFS= read -r seg; do
 
   for n in $PKGS; do
     COUNT=$((COUNT + 1))
-    [ "$COUNT" -gt 10 ] && exit 0   # bound total lookups
+    [ "$COUNT" -gt 10 ] && finish   # bound total lookups
     check "$ECO" "$n"
   done
 done <<EOF2
 $SEGS
 EOF2
-exit 0
+finish

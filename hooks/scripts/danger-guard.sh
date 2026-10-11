@@ -2,7 +2,8 @@
 # PreToolUse hook — matches: Bash
 # Blocks shell commands that can destroy data or the machine: recursive rm of
 # root/home/system dirs, dd/mkfs on devices, curl|sh, chmod 777, git reset
-# --hard / clean -f, and destructive SQL (DROP, TRUNCATE, DELETE with no WHERE).
+# --hard / clean -f / checkout ., rm -rf .git, --no-verify, AI agents started with
+# permission checks off, and destructive SQL (DROP, TRUNCATE, DELETE with no WHERE).
 # Plain text matching, so it can be bypassed on purpose; it is a seat belt
 # against mistakes, not a sandbox. Fails open on bad input.
 # Escape hatch: MOGGER_DANGER_GUARD=off.
@@ -25,7 +26,7 @@ CLEAN=$(printf '%s' "$CMD" | tr -d "\"'\`" | sed 's/\${HOME}/$HOME/g')
 LC=$(printf '%s' "$CLEAN" | tr 'A-Z' 'a-z')
 
 # 1. rm -r on root, home, cwd, wildcards or system dirs
-BAD='^(/|/\*|~|~/|~/\*|\$HOME|\$HOME/|\$HOME/\*|\.|\./|\.\.|\.\./|\*|\./\*|\.\./\*|/(etc|usr|var|bin|sbin|lib|lib64|boot|root|home|opt|dev|proc|sys|System|Library|Users|Applications)/?|/(etc|usr|var|bin|sbin|lib|boot|root|home|opt|Users)/\*|/(home|Users)/[^/]+/?|/(home|Users)/[^/]+/\*)$'
+BAD='^(\.git/?|/|/\*|~|~/|~/\*|\$HOME|\$HOME/|\$HOME/\*|\.|\./|\.\.|\.\./|\*|\./\*|\.\./\*|/(etc|usr|var|bin|sbin|lib|lib64|boot|root|home|opt|dev|proc|sys|System|Library|Users|Applications)/?|/(etc|usr|var|bin|sbin|lib|boot|root|home|opt|Users)/\*|/(home|Users)/[^/]+/?|/(home|Users)/[^/]+/\*)$'
 while IFS= read -r seg; do
   read -ra W <<<"$seg"
   in_rm=0; rec=0; targets=()
@@ -66,6 +67,13 @@ echo "$LC" | grep -qE 'git[[:space:]]+([^;&|]*[[:space:]])?reset[[:space:]]+([^;
 if echo "$LC" | grep -qE 'git[[:space:]]+([^;&|]*[[:space:]])?clean[[:space:]]+[^;&|]*-[a-z]*f'; then
   echo "$LC" | grep -qE 'git[[:space:]]+([^;&|]*[[:space:]])?clean[[:space:]]+[^;&|]*(-[a-z]*n|--dry-run)' || block "blocked git clean -f" "git clean -f (deletes untracked files)"
 fi
+
+echo "$LC" | grep -qE 'git[[:space:]]+([^;&|]*[[:space:]])?(checkout|restore)[[:space:]]+(--[[:space:]]+)?\.([[:space:]]|$)' && block "blocked git checkout/restore ." "git checkout/restore . (throws away every uncommitted change)"
+# --no-verify skips the repo's own pre-commit and pre-push checks: do not retry a failed commit with it
+echo "$LC" | grep -qE 'git[[:space:]]+([^;&|]*[[:space:]])?(commit|push|merge|am|cherry-pick)[[:space:]]+([^;&|]*[[:space:]])?--no-verify' && block "blocked --no-verify" "--no-verify (skips the repo's own checks; fix the failing check instead)"
+
+# 5b. Another AI agent started with its safety checks off
+echo "$LC" | grep -qE '(^|[[:space:];&|/])(claude|codex|gemini|aider|cursor-agent|opencode|amp|qwen|copilot)[[:space:]]+([^;&|]*[[:space:]])?(--dangerously-skip-permissions|--dangerously-bypass-approvals-and-sandbox|--yolo|--trust-all-tools|--allow-all-tools|--allow-dangerously-skip-permissions)' && block "blocked an AI agent started with permission checks off" "starting another AI agent with its permission checks turned off"
 
 # 6. Destructive database commands
 if echo "$LC" | grep -qE '(^|[[:space:];&|])(psql|mysql|mariadb|sqlite3|sqlcmd|mongosh|duckdb|sqlplus|clickhouse-client|cockroach|redis-cli)([[:space:]]|$)'; then

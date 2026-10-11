@@ -7,7 +7,7 @@ description: Paid evals of mogger's own agents (do cheaper models match Sonnet?)
 
 Two tiers. Keep them apart when you talk to the user.
 
-- **Free tier.** `bash scripts/checks/evals-static.sh` reads agent and skill
+- **Free tier.** `bash "${CLAUDE_PLUGIN_ROOT}/scripts/checks/evals-static.sh"` reads agent and skill
   files. No API calls, no cost. It lists facts (a skill with no trigger
   phrase, two skills with near-identical descriptions, a Haiku agent with
   Write). It cannot say if a model is good enough. Run it any time.
@@ -29,14 +29,14 @@ estimate of the eval cost.
 
 ## Talk to the user
 
-1. Run `bash scripts/mogger-eval.sh estimate`. Show the number as written.
+1. Run `bash "${CLAUDE_PLUGIN_ROOT}/scripts/mogger-eval.sh" estimate`. Show the number as written.
    If the script is missing, say so and stop. Do not invent a number.
 2. Ask for a cap. Give at most two options: a recommended default (about
    2x the estimate) and one smaller. Example: "Cap it at $X (recommended)
    or $Y?" Say that the cap is the most it will ever spend, and that
    `consent --revoke` stops it.
-3. On a clear yes: `bash scripts/mogger-eval.sh consent --budget <USD>`,
-   then `bash scripts/mogger-eval.sh run --background`. Tell the user where
+3. On a clear yes: `bash "${CLAUDE_PLUGIN_ROOT}/scripts/mogger-eval.sh" consent --budget <USD>`,
+   then `bash "${CLAUDE_PLUGIN_ROOT}/scripts/mogger-eval.sh" run --background`. Tell the user where
    results will appear: `.claude/state/evals/report.md`.
 4. On no or "not now": write `{"state":"dismissed","shown_at":<epoch>}` to
    `.claude/state/evals/nudge.json` (create the folder). The nudge then
@@ -50,7 +50,7 @@ this conversation.
 
 ## Read the results
 
-`bash scripts/mogger-eval.sh status` shows a run in progress. Read
+`bash "${CLAUDE_PLUGIN_ROOT}/scripts/mogger-eval.sh" status` shows a run in progress. Read
 `.claude/state/evals/report.md` and tell the user, per agent: matches
 Sonnet, worse than Sonnet, or too close to call. Quote the numbers. If the
 report says a result is within noise, say "no change is justified".
@@ -58,7 +58,7 @@ Never say "good enough" without a report line to point at.
 
 ## Apply a recommendation
 
-`bash scripts/mogger-eval.sh apply` changes agent settings. Only do it
+`bash "${CLAUDE_PLUGIN_ROOT}/scripts/mogger-eval.sh" apply` changes agent settings. Only do it
 when the user says yes to that specific change. It must write
 project-level overrides only (the project's `.claude/agents/`). Never edit
 the plugin's own files. Show the diff first. Tell the user how to undo it

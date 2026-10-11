@@ -5,7 +5,7 @@ description: Use when asked "is this ready to ship?" or all TASKS are done. Repo
 
 # Ship-readiness checklist
 
-`bash scripts/ship-check.sh` (add `--strict` to exit 1 on any FAIL, e.g. in CI).
+`bash "${CLAUDE_PLUGIN_ROOT}/scripts/ship-check.sh"` (add `--strict` to exit 1 on any FAIL, e.g. in CI).
 
 **It NEVER pushes, merges, tags, or deploys.** It reads the repo and prints
 PASS / WARN / FAIL / SKIP with evidence. The push/deploy decision stays with

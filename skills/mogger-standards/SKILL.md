@@ -241,9 +241,9 @@ Load this only when the task builds or changes UI. Other tasks: skip it.
    decoration with no job. Motion must show a state change; keep it short.
 5. **Every state.** Build empty, loading, error and success views, not
    only the happy one (see mogger-edge-cases).
-6. **Check it.** Run `bash scripts/checks/a11y.sh`. If the app runs and
+6. **Check it.** Run `bash "${CLAUDE_PLUGIN_ROOT}/scripts/checks/a11y.sh"`. If the app runs and
    playwright and axe-core are installed, also run
-   `node scripts/a11y-browser.mjs http://localhost:3000` (phone width,
+   `node "${CLAUDE_PLUGIN_ROOT}/scripts/a11y-browser.mjs" http://localhost:3000` (phone width,
    375px). Report what you ran before you say "done".
 7. **Interaction CSS.** Put every `:hover` rule inside
    `@media (hover: hover) and (pointer: fine)`. Give each button, link and
