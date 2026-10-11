@@ -54,6 +54,7 @@ Verdict key:
 |---|---|---|
 | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | OPTIONAL | Real. Searchable design database (styles, palettes, fonts, ~22 stacks). Has a freemium upsell. Good for concrete lookups. |
 | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | OPTIONAL | Real. Opinionated anti-generic frontend direction. Complements ui-ux-pro-max (lookup vs direction), doesn't conflict. |
+| [vojtaholik/good-css](https://github.com/vojtaholik/good-css) | IDEAS TAKEN | Real, MIT, CSS-technique skill (install via npx or plugin: not bundled). Took 3 short rules (hover media query, `:active`, motion guards) into design-mogger. `outline: none` already caught by `scripts/checks/a11y.sh`. Skipped: logical properties (Tailwind 4.2 dependent), oklch, clamp tokens (taste, browser-floor), the rest of the 94 KB PRACTICES.md. |
 
 ## Different job entirely
 
