@@ -39,21 +39,7 @@ INPUT=$(cat)
 CMD=$(json_get "$INPUT" '.tool_input.command')
 [ -n "$CMD" ] || exit 0
 
-# ---- is this a test/build/lint command? (cheap, before any other work)
-fl_recognised() {
-  local c="$1" re
-  re='(^|[[:space:];&|(/])(npm|pnpm|yarn|bun)([[:space:]]+run)?[[:space:]]+(test|t|lint|build|typecheck|type-check|check|ci)([[:space:]]|$)'
-  [[ "$c" =~ $re ]] && return 0
-  re='(^|[[:space:];&|(/])(vitest|jest|mocha|ava|tap|playwright[[:space:]]+test|cypress[[:space:]]+run|tsc|eslint|biome|ruff|mypy|pyright|flake8|pylint|pytest|py[.]test|tox|nox|rspec|phpunit|golangci-lint|clippy)([[:space:]]|$)'
-  [[ "$c" =~ $re ]] && return 0
-  re='(^|[[:space:];&|(/])(go[[:space:]]+(test|build|vet)|cargo[[:space:]]+(test|build|check|clippy)|make[[:space:]]+(test|tests|check|lint|build)|dotnet[[:space:]]+(test|build)|mvn[[:space:]]+(test|verify|package)|gradle[[:space:]]+(test|build|check)|[.]/gradlew[[:space:]]+(test|build|check)|deno[[:space:]]+(test|lint|check)|bundle[[:space:]]+exec[[:space:]]+rspec)([[:space:]]|$)'
-  [[ "$c" =~ $re ]] && return 0
-  re='python[0-9.]*[[:space:]]+-m[[:space:]]+(pytest|unittest|mypy|ruff|tox)([[:space:]]|$)'
-  [[ "$c" =~ $re ]] && return 0
-  re='(^|[[:space:];&|(])(bash|sh)[[:space:]]+[^;&|]*test[^;&|]*[.]sh([[:space:]]|$)'
-  [[ "$c" =~ $re ]] && return 0
-  return 1
-}
+# ---- is this a test/build/lint command? fl_recognised lives in lib.sh
 # not a run: echo/cat/grep/git/... merely MENTIONING a test command
 case "$CMD" in
   echo\ *|printf\ *|cat\ *|grep\ *|rg\ *|ls\ *|git\ *|man\ *|which\ *|type\ *|sed\ *|head\ *|tail\ *) exit 0 ;;

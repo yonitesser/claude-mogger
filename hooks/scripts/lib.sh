@@ -63,3 +63,24 @@ mogger_event() {
   ) >/dev/null 2>&1
   return 0
 }
+
+# Is this Bash command a test/build/lint run? Shared by fix-loop-guard.sh and
+# record-test-run.sh. MOGGER_TEST_CMD_REGEX adds a project-specific pattern.
+fl_recognised() {
+  local c="$1" re
+  re='(^|[[:space:];&|(/])(npm|pnpm|yarn|bun)([[:space:]]+run)?[[:space:]]+(test|t|lint|build|typecheck|type-check|check|ci)([[:space:]]|$)'
+  [[ "$c" =~ $re ]] && return 0
+  re='(^|[[:space:];&|(/])(vitest|jest|mocha|ava|tap|playwright[[:space:]]+test|cypress[[:space:]]+run|tsc|eslint|biome|ruff|mypy|pyright|flake8|pylint|pytest|py[.]test|tox|nox|rspec|phpunit|golangci-lint|clippy)([[:space:]]|$)'
+  [[ "$c" =~ $re ]] && return 0
+  re='(^|[[:space:];&|(/])(go[[:space:]]+(test|build|vet)|cargo[[:space:]]+(test|build|check|clippy)|make[[:space:]]+(test|tests|check|lint|build)|dotnet[[:space:]]+(test|build)|mvn[[:space:]]+(test|verify|package)|gradle[[:space:]]+(test|build|check)|[.]/gradlew[[:space:]]+(test|build|check)|deno[[:space:]]+(test|lint|check)|bundle[[:space:]]+exec[[:space:]]+rspec)([[:space:]]|$)'
+  [[ "$c" =~ $re ]] && return 0
+  re='python[0-9.]*[[:space:]]+-m[[:space:]]+(pytest|unittest|mypy|ruff|tox)([[:space:]]|$)'
+  [[ "$c" =~ $re ]] && return 0
+  re='(^|[[:space:];&|(])(bash|sh)[[:space:]]+[^;&|]*test[^;&|]*[.]sh([[:space:]]|$)'
+  [[ "$c" =~ $re ]] && return 0
+  if [ -n "${MOGGER_TEST_CMD_REGEX:-}" ]; then
+    [[ "$c" =~ ${MOGGER_TEST_CMD_REGEX} ]] && return 0
+  fi
+  return 1
+}
+

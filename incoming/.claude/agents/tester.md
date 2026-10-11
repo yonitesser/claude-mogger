@@ -30,7 +30,7 @@ Process:
 3. Run lint/type-check too if configured.
 4. Capture the ACTUAL exit code of the test command. Do not infer
    pass/fail from the text output — use `$?` right after the command runs.
-5. Write `.claude/state/last_test_result.json`:
+5. Run the tests through Bash so the hook records them (a hook writes `.claude/state/test-evidence.json` from the real result; you cannot write that file, and the reviewer gate needs it). Then write `.claude/state/last_test_result.json`:
    ```json
    {"status": "pass", "exit_code": 0, "scope": "affected", "timestamp": "<ISO8601 now>", "command": "<what you ran>"}
    ```

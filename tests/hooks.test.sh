@@ -4,6 +4,7 @@
 # the exit code. 0 = allow, 2 = block. If this file doesn't pass, the
 # gates don't work, and nothing else in this kit matters.
 set -u
+export MOGGER_EVIDENCE=off
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 H="$ROOT/hooks/scripts"
 PASS=0; FAIL=0
