@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+**Added — guard hooks (PRs #18, #19, and this one)**
+- `hint-noisy-bash` (#18): hints `| tail -n 80` or `| grep` for noisy commands. Never blocks. `MOGGER_HINT=off`.
+- `danger-guard` (#19): blocks `rm -r` on root/home/system dirs, `dd`/`mkfs`, `curl | sh`, `chmod 777`, `git reset --hard`, `git clean -f`, destructive SQL. `MOGGER_DANGER_GUARD=off`.
+- `secret-read-guard`: blocks reading `.env`, ssh keys, cloud credentials and private keys, and dumping all env vars. `MOGGER_SECRET_READ=off`.
+- `config-guard`: asks before Claude edits `.claude/settings*.json`, `.claude/hooks/` or `.mcp.json`. `MOGGER_CONFIG_GUARD=off`.
+- Fix: `evals-nudge.sh` estimate wait now also stops after 2 real seconds, so a slow macOS runner no longer stretches it past the test limit.
+
 **Added — planner, reviewer, UI rules (PRs #14, #15, #16)**
 - Planner numbers each requirement `R1`, `R2`...; reviewer returns a pass / fail / unresolved table per requirement.
 - Reviewer returns failed units in one form (`UNIT`, `VERDICT`, `REASON`, `EVIDENCE`, `SCOPE`); loop step 6 sends only failed units back to the builder.
