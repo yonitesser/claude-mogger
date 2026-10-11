@@ -73,6 +73,9 @@ seq 1 400 > big.txt; seq 1 10 > small.txt
 expect 2 check-file-size.sh "$(file_json Read "$SANDBOX/big.txt")"               "blocks 400-line file"
 expect 0 check-file-size.sh "$(file_json Read "$SANDBOX/small.txt")"             "allows 10-line file"
 expect 0 check-file-size.sh "$(file_json Read "$SANDBOX/does-not-exist.txt")"    "allows missing file (fails open)"
+head -c 20000 /dev/urandom | tr '\000' '\n' > "$SANDBOX/pic.jpg"; cp "$SANDBOX/pic.jpg" "$SANDBOX/doc.PDF"
+expect 0 check-file-size.sh "$(file_json Read "$SANDBOX/pic.jpg")"                  "allows big image file"
+expect 0 check-file-size.sh "$(file_json Read "$SANDBOX/doc.PDF")"                  "allows big PDF file"
 
 echo "== check-bash-read.sh"
 expect 2 check-bash-read.sh "$(bash_cmd "cat $SANDBOX/big.txt")"                "blocks cat on big file"

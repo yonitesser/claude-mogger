@@ -7,6 +7,7 @@
 - `danger-guard` (#19): blocks `rm -r` on root/home/system dirs, `dd`/`mkfs`, `curl | sh`, `chmod 777`, `git reset --hard`, `git clean -f`, destructive SQL. `MOGGER_DANGER_GUARD=off`.
 - `secret-read-guard`: blocks reading `.env`, ssh keys, cloud credentials and private keys, and dumping all env vars. `MOGGER_SECRET_READ=off`.
 - `config-guard`: asks before Claude edits `.claude/settings*.json`, `.claude/hooks/` or `.mcp.json`. `MOGGER_CONFIG_GUARD=off`.
+- Fix: `check-file-size.sh` no longer blocks image and PDF files (png, jpg, jpeg, gif, webp, bmp, ico, heic, pdf). They are not line text.
 - Fix: `evals-nudge.sh` estimate wait now also stops after 2 real seconds, so a slow macOS runner no longer stretches it past the test limit.
 
 **Added — planner, reviewer, UI rules (PRs #14, #15, #16)**
