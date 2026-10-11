@@ -53,7 +53,7 @@ one does:
 4. **Keep the work focused.** Every agent has a `model:` assignment: Haiku
    reads files, greps the codebase, and runs tests; Sonnet builds, reviews,
    and scouts libraries; the orchestrating Lead plans and decides.
-   The four Haiku agents also set `effort: low` — a second, independent
+   The seven Haiku agents (and the Sonnet docs-writer) also set `effort: low` — a second, independent
    dial on reasoning depth, documented as a real subagent frontmatter
    field. Model aliases (`model: sonnet`) resolve to whatever's current
    automatically, so a new Sonnet release upgrades every Sonnet-tier
@@ -86,7 +86,7 @@ one does:
 ```
 .claude-plugin/         plugin.json + marketplace.json — install with two slash commands
 .mcp.json               bundles Context7 as a hosted remote MCP server — auto-registers on install
-agents/                 14 agents: planner, builder, reviewer, retro, library-scout, security-reviewer (Sonnet) · tester, explorer, bulk-reader, code-writer, fact-checker, verifier, explainer, docs-writer (Haiku)
+agents/                 14 agents: planner, builder, reviewer, retro, library-scout, security-reviewer , docs-writer (Sonnet) · tester, explorer, bulk-reader, code-writer, fact-checker, verifier, explainer (Haiku)
 hooks/hooks.json        37 hook entries: SessionStart, PreToolUse, PostToolUse, PostToolUseFailure, Stop, PreCompact
 hooks/scripts/          the actual bash — every one tested in tests/hooks.test.sh
 skills/mogger-loop     the orchestration loop + model routing (loads when you start a feature)

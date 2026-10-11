@@ -24,16 +24,12 @@ overwrites a file that already exists.
    but isn't required. Just confirm it's in the tool list and mention it's
    live, rather than re-explaining the mechanism.
 
-3. **SkillSpector — auto-install if missing.** Run `command -v skillspector`.
-   If absent: check for `uv` (`command -v uv`); if present, run
-   `uv tool install git+https://github.com/NVIDIA/skillspector.git`
-   automatically — a small, reversible CLI install, not a system change, so
-   don't ask first, just do it and report the result. If `uv` itself is
-   missing, tell the user the one command to install it
-   (`curl -LsSf https://astral.sh/uv/install.sh | sh` on macOS/Linux, docs
-   at https://docs.astral.sh/uv/ on Windows) rather than chaining a second
-   unrequested install — a language-level package manager is a bigger step
-   than one CLI on top of it.
+3. **SkillSpector, only if the user says yes.** Run `command -v skillspector`.
+   If absent, say it is optional, show the one command
+   (`uv tool install git+https://github.com/NVIDIA/skillspector.git`) and
+   ask before running it. It installs unpinned code from a third party, so
+   never run it without a yes. If `uv` is missing, say so and stop; do not
+   chain a second install.
 
 4. **Scaffold files, only if missing.** Templates live in the plugin at
    `${CLAUDE_PLUGIN_ROOT}/templates/`. For each of `CONSTRAINTS.md`,
