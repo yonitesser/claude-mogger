@@ -220,3 +220,26 @@ page not look like every other AI-built landing page") → taste-skill. They
 don't conflict — one's a reference lookup, the other's a generation
 direction — so both can stay installed at once.
 
+
+### design-mogger — a good front end, same care as the back end
+
+Load this only when the task builds or changes UI. Other tasks: skip it.
+
+1. **Designer question.** Before each UI choice ask: "Would an experienced
+   product designer pick this on purpose?" If not, fix it first.
+2. **One system, not many.** Pick one type scale, one spacing scale, one
+   small colour set. Put them in CSS variables or the theme file. No
+   one-off pixel values or random colours.
+3. **Clear hierarchy.** One main action per screen. Size and weight show
+   what matters. Not everything in a card; no card grids by default.
+4. **No slop.** No random gradients, no default-Tailwind look, no
+   decoration with no job. Motion must show a state change; keep it short.
+5. **Every state.** Build empty, loading, error and success views, not
+   only the happy one (see mogger-edge-cases).
+6. **Check it.** Run `bash scripts/checks/a11y.sh`. If the app runs and
+   playwright and axe-core are installed, also run
+   `node scripts/a11y-browser.mjs http://localhost:3000` (phone width,
+   375px). Report what you ran before you say "done".
+7. **Direction help (optional).** If taste-skill is installed, use it for
+   overall feel. For lookups (fonts, palettes) use ui-ux-pro-max. Scan
+   them first (SkillSpector rule above). Mogger does not depend on them.
