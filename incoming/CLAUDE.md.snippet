@@ -64,6 +64,10 @@ out of the weeds and able to run for a long stretch without checking in.
    `require-tests-pass.sh` rejects a `reviewer` dispatch whose recorded
    test scope isn't `full`.
 
+   If I ask you to commit: one commit per finished task, with the tests
+   passing. Small commits keep review and `mogger-rewind` easy. Never
+   commit unasked.
+
 6. **Then** → delegate to `reviewer`. If NOT READY, send only the failed
    units back to `builder`, one return form each (never the whole batch;
    passed units stay untouched):
@@ -305,6 +309,9 @@ second, with its caveat intact.
 - **Surgical changes**: touch only what the task requires. Don't "improve"
   adjacent code, don't refactor things that aren't broken, don't delete
   pre-existing dead code unless asked — mention it instead.
+- **Chesterton's Fence**: before you delete or "simplify" code, find out why
+  it is there (read the callers, `git log`, a test). If you cannot tell, keep
+  it and say so.
 - **Goal-driven execution**: turn imperative instructions into verifiable
   goals ("fix the bug" → "write a test that reproduces it, then make it
   pass"). This is what makes `planner`'s "done when" rule actually work.
