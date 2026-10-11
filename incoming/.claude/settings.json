@@ -29,6 +29,10 @@
           },
           {
             "type": "command",
+            "command": "bash .claude/hooks/danger-guard.sh"
+          },
+          {
+            "type": "command",
             "command": "bash .claude/hooks/check-bash-read.sh"
           },
           {
