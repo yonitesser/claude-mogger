@@ -169,6 +169,14 @@
             "command": "bash .claude/hooks/fix-loop-guard.sh"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/repeat-call-guard.sh"
+          }
+        ]
       }
     ],
     "Stop": [
@@ -200,6 +208,14 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/fix-loop-guard.sh"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/repeat-call-guard.sh"
           }
         ]
       }

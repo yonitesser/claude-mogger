@@ -79,6 +79,27 @@ expect 2 check-bash-read.sh "$(bash_cmd "cat $SANDBOX/big.txt")"                
 expect 0 check-bash-read.sh "$(bash_cmd "cat $SANDBOX/small.txt")"              "allows cat on small file"
 expect 0 check-bash-read.sh "$(bash_cmd "ls -la")"                              "ignores non-read commands"
 
+echo "== repeat-call-guard.sh"
+RC=$(mktemp -d); export CLAUDE_PROJECT_DIR="$RC"
+rc_call() { printf '{"hook_event_name":"%s","tool_name":"Read","tool_input":{"file_path":"%s"}}' "$1" "$2" | bash "$H/repeat-call-guard.sh" 2>/dev/null; }
+for i in 1 2 3 4; do rc_call PostToolUse /a >/dev/null; done
+case "$(rc_call PostToolUse /a)" in *additionalContext*) PASS=$((PASS+1)); echo "  ok   repeat-call-guard.sh      nudges on the 5th identical call";; *) FAIL=$((FAIL+1)); echo "  FAIL repeat-call-guard.sh      no nudge on 5th identical call";; esac
+case "$(rc_call PostToolUse /b)" in "") PASS=$((PASS+1)); echo "  ok   repeat-call-guard.sh      a different call resets the count";; *) FAIL=$((FAIL+1)); echo "  FAIL repeat-call-guard.sh      spoke after a different call";; esac
+for i in 1 2 3 4 5 6 7; do rc_call PostToolUseFailure /c >/dev/null; done
+printf '{"hook_event_name":"PostToolUseFailure","tool_name":"Read","tool_input":{"file_path":"/c"}}' | bash "$H/repeat-call-guard.sh" >/dev/null 2>&1; GOT=$?
+[ "$GOT" -eq 2 ] && { PASS=$((PASS+1)); echo "  ok   repeat-call-guard.sh      blocks the 8th identical failing call"; } || { FAIL=$((FAIL+1)); echo "  FAIL repeat-call-guard.sh      8th failing call exit $GOT"; }
+for i in 1 2 3 4 5; do MOGGER_REPEAT_GUARD=off rc_call PostToolUse /d >/dev/null; done
+case "$(MOGGER_REPEAT_GUARD=off rc_call PostToolUse /d)" in "") PASS=$((PASS+1)); echo "  ok   repeat-call-guard.sh      silent with MOGGER_REPEAT_GUARD=off";; *) FAIL=$((FAIL+1)); echo "  FAIL repeat-call-guard.sh      spoke with guard off";; esac
+unset CLAUDE_PROJECT_DIR; rm -rf "$RC"
+
+echo "== auto-format.sh lint feedback"
+if command -v ruff >/dev/null 2>&1; then
+  LD=$(mktemp -d); printf '[tool.ruff]\nline-length = 88\n' > "$LD/pyproject.toml"; printf 'import os\nx = undefined_name\n' > "$LD/bad.py"
+  OUT=$(cd "$LD" && printf '{"tool_name":"Edit","tool_input":{"file_path":"%s/bad.py"}}' "$LD" | bash "$H/auto-format.sh" 2>/dev/null)
+  case "$OUT" in *"Lint errors left"*) PASS=$((PASS+1)); echo "  ok   auto-format.sh            reports lint errors it could not fix";; *) FAIL=$((FAIL+1)); echo "  FAIL auto-format.sh            no lint report";; esac
+  rm -rf "$LD"
+fi
+
 echo "== hint-noisy-bash.sh"
 hint_out() { printf '%s' "$(bash_cmd "$1")" | bash "$H/hint-noisy-bash.sh" 2>/dev/null; }
 case "$(hint_out 'npm test')" in *additionalContext*) PASS=$((PASS+1)); echo "  ok   hint-noisy-bash.sh        hints on npm test without a pipe";; *) FAIL=$((FAIL+1)); echo "  FAIL hint-noisy-bash.sh        no hint on npm test";; esac
