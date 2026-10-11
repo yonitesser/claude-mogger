@@ -60,8 +60,19 @@ out of the weeds and able to run for a long stretch without checking in.
    `require-tests-pass.sh` rejects a `reviewer` dispatch whose recorded
    test scope isn't `full`.
 
-6. **Then** → delegate to `reviewer`. If NOT READY, send its specific
-   feedback to `builder`. If READY, mark the task done, append one entry
+6. **Then** → delegate to `reviewer`. If NOT READY, send only the failed
+   units back to `builder`, one return form each (never the whole batch;
+   passed units stay untouched):
+
+   ```
+   UNIT      <task or file>
+   VERDICT   red
+   REASON    <what failed>
+   EVIDENCE  <file:line or command output>
+   SCOPE     fix this unit only; do not touch other files or tasks
+   ```
+
+   If READY, mark the task done, append one entry
    to RUNS.md, and move on.
 
 7. **When every task in TASKS.md is checked off** → stop. Report to me what
