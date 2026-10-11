@@ -53,6 +53,16 @@
         ]
       },
       {
+        "matcher": "mcp__.*__(merge_pull_request|enable_pr_auto_merge|delete_repository|delete_branch|push_files|create_or_update_file|delete_file)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/require-approval-mcp.sh",
+            "onFailure": "block"
+          }
+        ]
+      },
+      {
         "matcher": "Read|Grep|Glob|Bash",
         "hooks": [
           {
