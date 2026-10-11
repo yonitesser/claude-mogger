@@ -76,13 +76,15 @@ evals_fingerprint() {
 
 # Runs a command with output to a file, waits at most ~2 seconds. Returns 1 on timeout.
 _evn_bounded() {
-  local out="$1" pid i=0
+  local out="$1" pid i=0 start=$SECONDS
   shift
   ( "$@" >"$out" 2>/dev/null </dev/null ) &
   pid=$!
   while kill -0 "$pid" 2>/dev/null; do
     i=$((i + 1))
-    if [ "$i" -gt 20 ]; then kill "$pid" 2>/dev/null; return 1; fi
+    # Count loops AND real seconds: on a slow runner each sleep can run long,
+    # and the loop count alone then stretches the wait well past 2 seconds.
+    if [ "$i" -gt 20 ] || [ $((SECONDS - start)) -ge 2 ]; then kill "$pid" 2>/dev/null; return 1; fi
     sleep 0.1
   done
   return 0

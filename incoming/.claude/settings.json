@@ -50,6 +50,24 @@
         ]
       },
       {
+        "matcher": "Read|Grep|Glob|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/secret-read-guard.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/config-guard.sh"
+          }
+        ]
+      },
+      {
         "matcher": "Read",
         "hooks": [
           {
