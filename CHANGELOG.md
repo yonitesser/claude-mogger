@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+**Added — planner, reviewer, UI rules (PRs #14, #15, #16)**
+- Planner numbers each requirement `R1`, `R2`...; reviewer returns a pass / fail / unresolved table per requirement.
+- Reviewer returns failed units in one form (`UNIT`, `VERDICT`, `REASON`, `EVIDENCE`, `SCOPE`); loop step 6 sends only failed units back to the builder.
+- `design-mogger`: 7 short UI-only rules in `skills/mogger-standards`. Taste Skill and `ui-ux-pro-max` are optional pointers, never required.
+
 **Changed — wording only: no savings claims**
 - Paid A/B tests show mogger costs about 13-23% more per run than plain Claude. README, skills, agent text, INTEGRATION.md, CONSIDERED.md and plugin descriptions no longer say or imply it saves money or tokens. The pitch is now: it fixes the common problems of vibe coding and stops dangerous mistakes. Haiku routing stays, described as routing. Script and file names (`savings-report.py`, `savings.jsonl`) are unchanged.
 

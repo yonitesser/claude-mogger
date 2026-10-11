@@ -64,6 +64,11 @@ one does:
    code). Optional compression proxy (headroom) for heavy tool output.
    Mogger is not a cost-saving tool. In our paid tests it costs about
    13-23% more per run than plain Claude, and passes more hard tasks.
+   Each ask becomes numbered requirements (`R1`, `R2`...) in the plan. The
+   `reviewer` returns a pass / fail / unresolved table, one row per
+   requirement. A failed unit comes back in one fixed form (`UNIT`,
+   `VERDICT`, `REASON`, `EVIDENCE`, `SCOPE`) and only the failed units go
+   back to the builder.
 5. **Remember corrections.** CONSTRAINTS.md is a permanent, append-only
    home for every "don't do that again." A `retro` agent proposes new
    entries from run history; a human approves them.
@@ -85,7 +90,7 @@ agents/                 14 agents: planner, builder, reviewer, retro, library-sc
 hooks/hooks.json        31 hook entries: SessionStart, PreToolUse, PostToolUse, Stop, PreCompact
 hooks/scripts/          the actual bash — every one tested in tests/hooks.test.sh
 skills/mogger-loop     the orchestration loop + model routing (loads when you start a feature)
-skills/mogger-standards coding principles, library rules, token discipline, SkillSpector rule
+skills/mogger-standards coding principles, library rules, token discipline, SkillSpector rule, design-mogger UI rules
 skills/mogger-init     first-run: scaffolds CONSTRAINTS/RUNS/STACK in your project
 skills/mogger-superpowers-preset  tested config for running these gates under Superpowers
 skills/ (19 in all)    the four above, plus idea, decisions, grounding, security, code-health, edge-cases, verify-run, ship-check, rewind, handoff, docs, privacy, explain, evals, app-evals
@@ -164,6 +169,7 @@ pushes or deploys.
 | Old or vulnerable packages | `dep-audit.sh` runs your own `npm audit` / `pip-audit` / `cargo audit` / `osv-scanner`, fails open offline | scan |
 | Hand-made payment code | `check-diy-payments.sh` blocks card handling and unsigned Stripe webhooks | hook |
 | Tests that prove nothing | `check-test-quality.sh` blocks empty, assertion-free and tautology tests | hook |
+| Plain, generic-looking UI | `design-mogger` rules in `skills/mogger-standards` (7 short UI-only rules). Points to the optional Taste Skill and `ui-ux-pro-max`; neither is required | skill |
 | Fix loops | `fix-loop-guard.sh` stops after 3 identical failures and points to `mogger-rewind` | hook |
 | Only the happy path works | skill `mogger-edge-cases`; planner and tester now require unhappy-path checks | skill |
 | One giant file, copy-paste | `check-structure.sh` blocks oversize files and new copy-pasted blocks | hook |
