@@ -2,10 +2,18 @@
 
 ## Unreleased
 
+**Added — guard hooks (PRs #18, #19, and this one)**
+- `hint-noisy-bash` (#18): hints `| tail -n 80` or `| grep` for noisy commands. Never blocks. `MOGGER_HINT=off`.
+- `danger-guard` (#19): blocks `rm -r` on root/home/system dirs, `dd`/`mkfs`, `curl | sh`, `chmod 777`, `git reset --hard`, `git clean -f`, destructive SQL. `MOGGER_DANGER_GUARD=off`.
+- `secret-read-guard`: blocks reading `.env`, ssh keys, cloud credentials and private keys, and dumping all env vars. `MOGGER_SECRET_READ=off`.
+- `config-guard`: asks before Claude edits `.claude/settings*.json`, `.claude/hooks/` or `.mcp.json`. `MOGGER_CONFIG_GUARD=off`.
+- Fix: `evals-nudge.sh` estimate wait now also stops after 2 real seconds, so a slow macOS runner no longer stretches it past the test limit.
+
 **Added — planner, reviewer, UI rules (PRs #14, #15, #16)**
 - Planner numbers each requirement `R1`, `R2`...; reviewer returns a pass / fail / unresolved table per requirement.
 - Reviewer returns failed units in one form (`UNIT`, `VERDICT`, `REASON`, `EVIDENCE`, `SCOPE`); loop step 6 sends only failed units back to the builder.
 - `design-mogger`: 7 short UI-only rules in `skills/mogger-standards`. Taste Skill and `ui-ux-pro-max` are optional pointers, never required.
+- `design-mogger` rule 7: three checkable CSS rules for hover, `:active` and motion (idea from vojtaholik/good-css; text only, nothing installed).
 
 **Changed — wording only: no savings claims**
 - Paid A/B tests show mogger costs about 13-23% more per run than plain Claude. README, skills, agent text, INTEGRATION.md, CONSIDERED.md and plugin descriptions no longer say or imply it saves money or tokens. The pitch is now: it fixes the common problems of vibe coding and stops dangerous mistakes. Haiku routing stays, described as routing. Script and file names (`savings-report.py`, `savings.jsonl`) are unchanged.

@@ -242,6 +242,11 @@ Load this only when the task builds or changes UI. Other tasks: skip it.
    playwright and axe-core are installed, also run
    `node scripts/a11y-browser.mjs http://localhost:3000` (phone width,
    375px). Report what you ran before you say "done".
-7. **Direction help (optional).** If taste-skill is installed, use it for
+7. **Interaction CSS.** Put every `:hover` rule inside
+   `@media (hover: hover) and (pointer: fine)`. Give each button, link and
+   card an `:active` state. A transition that moves or scales something
+   goes inside `@media (prefers-reduced-motion: no-preference)`; name its
+   properties (never `transition: all`). Idea from vojtaholik/good-css (MIT).
+8. **Direction help (optional).** If taste-skill is installed, use it for
    overall feel. For lookups (fonts, palettes) use ui-ux-pro-max. Scan
    them first (SkillSpector rule above). Mogger does not depend on them.
