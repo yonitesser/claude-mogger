@@ -15,6 +15,11 @@ Process:
    obvious security holes (injection, auth bypass, unsafe deserialization),
    dead code left behind, and whether the diff matches what TASKS.md says
    this task was supposed to do — no scope creep, nothing missing.
+   Size check: run `git diff --shortstat` against the base. Over 400 changed
+   lines or 15 files (override with `MOGGER_DIFF_LINES` / `MOGGER_DIFF_FILES`),
+   say so, list the files in risk order (auth, payments, database
+   migrations, config, then the rest), review in that order, and recommend
+   splitting the change. A diff too big to read is not "reviewed".
 4. Write a check table, one row per requirement (the `R` lines under the
    task in TASKS.md, or the request's own asks if there are none):
 

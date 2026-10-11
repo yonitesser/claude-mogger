@@ -84,7 +84,7 @@ check_line() {
   fi
 
   # --- production deploys / publishes ---
-  if echo "$CMD" | grep -qE '(vercel\s+.*--prod|netlify\s+deploy\s+.*--prod|npm\s+publish|pnpm\s+publish|yarn\s+npm\s+publish|cargo\s+publish|docker\s+push|kubectl\s+(apply|delete|rollout)|helm\s+(install|upgrade|uninstall)|terraform\s+(apply|destroy)|pulumi\s+(up|destroy)|railway\s+up|fly\s+deploy|firebase\s+deploy|serverless\s+deploy|wrangler\s+(deploy|publish|rollback)|sst\s+deploy|amplify\s+(push|publish)|prisma\s+(migrate\s+(deploy|reset)|db\s+(push|execute))|drizzle-kit\s+push|supabase\s+(db\s+(push|reset)|functions\s+deploy)|gh\s+(release\s+(create|delete)|repo\s+delete|gist\s+create)|sam\s+deploy|cdk\s+deploy|gcloud\s+.*deploy|az\s+.*deployment\s+.*create)'; then
+  if echo "$CMD" | grep -qE '(vercel\s+.*--prod|netlify\s+deploy\s+.*--prod|npm\s+publish|pnpm\s+publish|yarn\s+npm\s+publish|cargo\s+publish|docker\s+push|kubectl\s+(apply|delete|rollout)|helm\s+(install|upgrade|uninstall)|terraform\s+(apply|destroy)|pulumi\s+(up|destroy)|railway\s+up|fly\s+deploy|firebase\s+deploy|serverless\s+deploy|wrangler\s+(deploy|publish|rollback)|sst\s+deploy|amplify\s+(push|publish)|prisma\s+(migrate\s+(deploy|reset)|db\s+(push|execute))|drizzle-kit\s+push|supabase\s+(db\s+(push|reset)|functions\s+deploy)|gh\s+(release\s+(create|delete)|repo\s+(delete|create\s+[^;&|]*--public|edit\s+[^;&|]*--visibility)|gist\s+create)|sam\s+deploy|cdk\s+deploy|gcloud\s+.*deploy|az\s+.*deployment\s+.*create)'; then
     mogger_event block "blocked a deploy command"; echo "BLOCKED: production deploy/publish command. Requires human approval. Stop and report what would be deployed." >&2
     exit 2
   fi

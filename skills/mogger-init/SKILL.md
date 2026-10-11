@@ -50,6 +50,10 @@ overwrites a file that already exists.
    from config files present (`.prettierrc`, `ruff.toml`, etc.) — the
    auto-format hook reads those directly, but the record helps humans.
 
+5b. **Check git.** Run `git rev-parse --git-dir`. If the folder is not a git
+   repo, say that diffs, reviews and the checkpoint/rewind hook need git, and
+   run `git init` (cheap and reversible), then report it.
+
 6. **Check for conflicting project config.** If `.claude/settings.json`
    exists with its own hooks, list them. If any duplicate a mogger hook
    (a second formatter on PostToolUse, a second push-blocker), tell the

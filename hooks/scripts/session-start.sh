@@ -4,6 +4,7 @@
 # start. So the Lead doesn't have to be *asked* to read CONSTRAINTS.md —
 # it's already there. Enforced, not requested.
 source "$(dirname "$0")/lib.sh"
+rm -f .claude/state/tainted 2>/dev/null   # a new session starts untainted (see taint-mark.sh)
 
 # Dependency check — the other hooks need jq, or a REAL python3 (not the
 # Windows Store stub, which sits on PATH but only prints an install nag).

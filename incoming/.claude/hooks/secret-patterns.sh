@@ -22,7 +22,7 @@ aws-access-key|AKIA[0-9A-Z]{16}
 github-token|gh[pousr]_[A-Za-z0-9]{36,}
 github-fine-grained-token|github_pat_[A-Za-z0-9_]{22,}
 anthropic-key|sk-ant-[A-Za-z0-9_-]{20,}
-openai-key|sk-[A-Za-z0-9_-]{32,}
+openai-key|(^|[^A-Za-z0-9_-])sk-[A-Za-z0-9_-]{32,}
 stripe-live-key|[sr]k_live_[A-Za-z0-9]{16,}
 private-key-block|-----BEGIN ([A-Z]+ )*PRIVATE KEY-----
 slack-token|xox[abprs]-[A-Za-z0-9-]{10,}
@@ -59,6 +59,11 @@ mogger_find_secret() {
       if [ "$label" = "generic-credential" ]; then
         # a real credential literal contains a digit; "some_input_field_name" doesn't
         printf '%s\n' "$hit" | grep -qE "[\"'][^\"']*[0-9][^\"']*[\"']\$" || continue
+      fi
+      if [ "$label" = "openai-key" ]; then
+        # a real key mixes in digits; a kebab-case class name or slug ("sk-foo-bar-...") does not
+        case "$hit" in *[0-9]*) ;; *) continue ;; esac
+        hit="${hit#[!sk]}"   # drop the boundary character the pattern matched
       fi
       found="$hit"; break
     done <<EOF3

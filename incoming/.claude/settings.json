@@ -6,6 +6,10 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/session-start.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/config-notice.sh"
           }
         ]
       }
@@ -49,6 +53,10 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/verify-packages.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/taint-guard.sh"
           }
         ]
       },
@@ -196,6 +204,15 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/repeat-call-guard.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "WebFetch|WebSearch|mcp__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/taint-mark.sh"
           }
         ]
       }
