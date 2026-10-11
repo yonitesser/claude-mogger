@@ -13,6 +13,12 @@ if [ -z "$FILE_PATH" ] || [ ! -f "$FILE_PATH" ]; then
   exit 0  # nothing to check, let it through
 fi
 
+# Images and PDFs are not line text. Claude reads them as pictures/pages,
+# so the line limit does not apply.
+case "$(printf '%s' "${FILE_PATH##*.}" | tr 'A-Z' 'a-z')" in
+  png|jpg|jpeg|gif|webp|bmp|ico|heic|pdf) exit 0 ;;
+esac
+
 LINES=$(wc -l < "$FILE_PATH" 2>/dev/null || echo 0)
 
 if [ "$LINES" -gt "$THRESHOLD" ]; then
