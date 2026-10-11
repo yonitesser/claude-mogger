@@ -81,8 +81,9 @@ mexpect 0 mcp__github__create_pull_request '{"head":"feat"}' ""   "create_pull_r
 mexpect 0 mcp__github__get_file_contents '{}' ""                  "reads not gated"
 
 echo "== normaliser always exits 0 and never hangs"
+TMO=""; command -v timeout >/dev/null 2>&1 && TMO="timeout 5"   # macOS has no timeout(1)
 for in in '' '"' "'" '$(' '`' '\' 'a;;b' '(((' "$(printf 'x%.0s' $(seq 1 5000))"; do
-  printf '%s' "$in" | timeout 5 python3 "$H/cmd-normalize.py" >/dev/null 2>&1; rc=$?
+  printf '%s' "$in" | ${TMO:-} python3 "$H/cmd-normalize.py" >/dev/null 2>&1; rc=$?
   [ "$rc" = 0 ] && ok "normaliser ok on '${in:0:12}'" || bad "normaliser rc=$rc on '${in:0:12}'"
 done
 echo "approval-bypass: $PASS passed, $FAIL failed"; [ "$FAIL" = 0 ]
