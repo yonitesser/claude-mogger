@@ -97,3 +97,10 @@ stubbed to 500 the page shows a retry message". Pick from the
 submit, timeout/offline, server 500, slow response, permission denied). If a
 row genuinely does not apply, write `n/a: <reason>` on the task. Do not
 plan a task touching input/IO with only a happy-path check.
+
+## Requirements per task
+
+Under each task, list its requirements as short lines, one fact each,
+numbered `R1`, `R2`, ... Include exact values and units from the request
+(e.g. "price is stored in cents"). The reviewer checks every `R` line on
+its own, so a requirement that is not written here is not checked.

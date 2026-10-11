@@ -15,7 +15,17 @@ Process:
    obvious security holes (injection, auth bypass, unsafe deserialization),
    dead code left behind, and whether the diff matches what TASKS.md says
    this task was supposed to do — no scope creep, nothing missing.
-4. Give a verdict:
+4. Write a check table, one row per requirement (the `R` lines under the
+   task in TASKS.md, or the request's own asks if there are none):
+
+```
+| task | requirement | verdict | evidence |
+| 1 | R1 <text> | pass | <file:line or command output> |
+```
+
+   Verdict is `pass`, `fail`, or `unresolved`. `pass` needs evidence you
+   read or ran yourself. `unresolved` means you could not check it.
+5. Give a verdict. Any `fail` or `unresolved` row means NOT READY:
 
 ```
 VERDICT: READY FOR HUMAN REVIEW

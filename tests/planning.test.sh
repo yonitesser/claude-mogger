@@ -161,6 +161,9 @@ grep -q 'SPEC.md' "$ROOT/agents/planner.md" && grep -q "invent requirements" "$R
 grep -q 'DECISIONS.md' "$ROOT/skills/mogger-init/SKILL.md" && ok "mogger-init lists DECISIONS.md" || bad "mogger-init lists DECISIONS.md"
 grep -qi "cite" "$ROOT/skills/mogger-decisions/SKILL.md" && ok "decisions skill has cite-then-ask rule" || bad "cite rule"
 
+grep -q "## Requirements per task" "$ROOT/agents/planner.md" && ok "planner lists R requirements per task" || bad "planner R lines"
+grep -q "unresolved" "$ROOT/agents/reviewer.md" && grep -q "| requirement | verdict | evidence |" "$ROOT/agents/reviewer.md" && ok "reviewer writes check table" || bad "reviewer check table"
+
 echo
 echo "passed: $PASS  failed: $FAIL"
 [ "$FAIL" -eq 0 ]
