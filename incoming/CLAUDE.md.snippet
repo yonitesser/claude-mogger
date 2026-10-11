@@ -342,6 +342,8 @@ Keep replies short:
   ones.
 - When reporting test results: counts and failures only. Passing tests
   don't need to be listed.
+- Pipe noisy commands (tests, builds, `git log`) through `| tail -n 80`
+  or `| grep`, so one failing line is not buried in thousands.
 
 ### Code quality is enforced, not requested
 

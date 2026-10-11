@@ -79,6 +79,13 @@ expect 2 check-bash-read.sh "$(bash_cmd "cat $SANDBOX/big.txt")"                
 expect 0 check-bash-read.sh "$(bash_cmd "cat $SANDBOX/small.txt")"              "allows cat on small file"
 expect 0 check-bash-read.sh "$(bash_cmd "ls -la")"                              "ignores non-read commands"
 
+echo "== hint-noisy-bash.sh"
+hint_out() { printf '%s' "$(bash_cmd "$1")" | bash "$H/hint-noisy-bash.sh" 2>/dev/null; }
+case "$(hint_out 'npm test')" in *additionalContext*) PASS=$((PASS+1)); echo "  ok   hint-noisy-bash.sh        hints on npm test without a pipe";; *) FAIL=$((FAIL+1)); echo "  FAIL hint-noisy-bash.sh        no hint on npm test";; esac
+case "$(hint_out 'npm test 2>&1 | tail -n 80')" in "") PASS=$((PASS+1)); echo "  ok   hint-noisy-bash.sh        silent when piped through tail";; *) FAIL=$((FAIL+1)); echo "  FAIL hint-noisy-bash.sh        hinted on a piped command";; esac
+case "$(MOGGER_HINT=off hint_out 'npm test')" in "") PASS=$((PASS+1)); echo "  ok   hint-noisy-bash.sh        silent with MOGGER_HINT=off";; *) FAIL=$((FAIL+1)); echo "  FAIL hint-noisy-bash.sh        hinted with MOGGER_HINT=off";; esac
+expect 0 hint-noisy-bash.sh "$(bash_cmd 'npm test')"                            "never blocks (exit 0)"
+
 echo "== require-tests-pass.sh"
 mkdir -p .claude/state
 rm -f .claude/state/last_test_result.json
