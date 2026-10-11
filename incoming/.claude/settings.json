@@ -25,11 +25,13 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/require-approval.sh"
+            "command": "bash .claude/hooks/require-approval.sh",
+            "onFailure": "block"
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/danger-guard.sh"
+            "command": "bash .claude/hooks/danger-guard.sh",
+            "onFailure": "block"
           },
           {
             "type": "command",
@@ -41,7 +43,8 @@
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/secret-guard-bash.sh"
+            "command": "bash .claude/hooks/secret-guard-bash.sh",
+            "onFailure": "block"
           },
           {
             "type": "command",
@@ -54,7 +57,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/secret-read-guard.sh"
+            "command": "bash .claude/hooks/secret-read-guard.sh",
+            "onFailure": "block"
           }
         ]
       },
@@ -63,7 +67,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/config-guard.sh"
+            "command": "bash .claude/hooks/config-guard.sh",
+            "onFailure": "block"
           }
         ]
       },
@@ -93,11 +98,13 @@
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/protect-pipeline-files.sh"
+            "command": "bash .claude/hooks/protect-pipeline-files.sh",
+            "onFailure": "block"
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/secret-guard.sh"
+            "command": "bash .claude/hooks/secret-guard.sh",
+            "onFailure": "block"
           },
           {
             "type": "command",
