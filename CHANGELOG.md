@@ -10,6 +10,10 @@
 - Fix: `check-file-size.sh` no longer blocks image and PDF files (png, jpg, jpeg, gif, webp, bmp, ico, heic, pdf). They are not line text.
 - Fix: `evals-nudge.sh` estimate wait now also stops after 2 real seconds, so a slow macOS runner no longer stretches it past the test limit.
 
+**Added — two small rules (from the agent-skills review)**
+- `mogger-standards`: Chesterton's Fence. Find out why code exists before deleting or simplifying it.
+- `mogger-loop`: when asked to commit, one commit per finished task.
+
 **Added — planner, reviewer, UI rules (PRs #14, #15, #16)**
 - Planner numbers each requirement `R1`, `R2`...; reviewer returns a pass / fail / unresolved table per requirement.
 - Reviewer returns failed units in one form (`UNIT`, `VERDICT`, `REASON`, `EVIDENCE`, `SCOPE`); loop step 6 sends only failed units back to the builder.

@@ -60,6 +60,10 @@ out of the weeds and able to run for a long stretch without checking in.
    `require-tests-pass.sh` rejects a `reviewer` dispatch whose recorded
    test scope isn't `full`.
 
+   If I ask you to commit: one commit per finished task, with the tests
+   passing. Small commits keep review and `mogger-rewind` easy. Never
+   commit unasked.
+
 6. **Then** → delegate to `reviewer`. If NOT READY, send only the failed
    units back to `builder`, one return form each (never the whole batch;
    passed units stay untouched):

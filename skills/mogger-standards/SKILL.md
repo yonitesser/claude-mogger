@@ -16,6 +16,9 @@ description: Coding standards: Karpathy principles, library choice via STACK.md 
 - **Surgical changes**: touch only what the task requires. Don't "improve"
   adjacent code, don't refactor things that aren't broken, don't delete
   pre-existing dead code unless asked — mention it instead.
+- **Chesterton's Fence**: before you delete or "simplify" code, find out why
+  it is there (read the callers, `git log`, a test). If you cannot tell, keep
+  it and say so.
 - **Goal-driven execution**: turn imperative instructions into verifiable
   goals ("fix the bug" → "write a test that reproduces it, then make it
   pass"). This is what makes `planner`'s "done when" rule actually work.
