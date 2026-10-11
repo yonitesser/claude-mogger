@@ -33,8 +33,17 @@ or
 VERDICT: NOT READY — <specific, fixable reason>
 ```
 
-If NOT READY, be specific enough that the builder can act on it without
-asking you to clarify. If READY, summarize in 2-3 sentences what a human
+If NOT READY, write one return form per failed unit (task or file), so
+the builder can act without asking you to clarify. Passed units get no
+form and are not sent back:
+
+```
+UNIT      <task or file>
+VERDICT   red
+REASON    <what failed>
+EVIDENCE  <file:line or command output>
+SCOPE     fix this unit only; do not touch other files or tasks
+``` If READY, summarize in 2-3 sentences what a human
 reviewer should look at first.
 
 You do not have merge access and should not attempt any git action beyond
