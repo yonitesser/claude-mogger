@@ -14,7 +14,9 @@ declare module 'claude-code' {
       frame: number
       voice: boolean
       panel: 'none' | 'guards' | 'bar'
-      guards: { name: string; state: string; source: string; kind: string; allowed: string[] }[]
+      guards: { name: string; kind: string; state: string; source: 'file' | 'default'; options: string[] }[]
+      note: string
+      minute: number
       bar: { robot: boolean; detail: boolean }
     }
   }
