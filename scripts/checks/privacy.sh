@@ -195,7 +195,7 @@ NEED=0
 [ "$FOUND" -gt 0 ] || [ "$TRK" -gt 0 ] || [ "$COOK" -gt 0 ] && NEED=1
 
 # privacy policy
-pf=$(grep -i -E 'privacy|datenschutz' "$TMP/all" | grep -v -E 'scripts/checks/privacy[.]sh|mogger-privacy' | head -3 | tr '\n' ' ')
+pf=$(grep -i -E 'privacy|datenschutz' "$TMP/all" | grep -v -E 'scripts/checks/privacy[.]sh|mogger:privacy' | head -3 | tr '\n' ' ')
 pl=$(scan "$TMP/src" 'href=.*/privacy|to=.*/privacy|[/]privacy[-_]?policy|.[/]privacy.')
 if [ -n "$pf" ]; then
   out PASS privacy-policy "privacy policy file/page found: $pf(content and accuracy are for the owner/lawyer to review)"

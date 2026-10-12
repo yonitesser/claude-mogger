@@ -65,7 +65,7 @@ out of the weeds and able to run for a long stretch without checking in.
    test scope isn't `full`.
 
    If I ask you to commit: one commit per finished task, with the tests
-   passing. Small commits keep review and `mogger-rewind` easy. Never
+   passing. Small commits keep review and `mogger:rewind` easy. Never
    commit unasked.
 
 6. **Then** → delegate to `reviewer`. If NOT READY, send only the failed
@@ -95,11 +95,11 @@ out of the weeds and able to run for a long stretch without checking in.
 
 ### Companion steps (optional but recommended)
 
-- Vague request? Run `mogger-idea` first → SPEC.md → planner.
+- Vague request? Run `mogger:idea` first → SPEC.md → planner.
 - After tests pass on anything with a UI/server: dispatch `verifier` (smoke check) before reviewer.
-- End of each task: dispatch `explainer` for the user. Record lasting choices with `mogger-decisions`.
+- End of each task: dispatch `explainer` for the user. Record lasting choices with `mogger:decisions`.
 - Before calling the whole thing finished: `scripts/ship-check.sh` (report only).
-- Never assert a fact about the code you have not checked: see `mogger-grounding`.
+- Never assert a fact about the code you have not checked: see `mogger:grounding`.
 
 ### Reading discipline — diffs, not re-reads
 
@@ -533,7 +533,7 @@ Load this only when the task builds or changes UI. Other tasks: skip it.
 4. **No slop.** No random gradients, no default-Tailwind look, no
    decoration with no job. Motion must show a state change; keep it short.
 5. **Every state.** Build empty, loading, error and success views, not
-   only the happy one (see mogger-edge-cases).
+   only the happy one (see mogger:edge-cases).
 6. **Check it.** Run `bash "${CLAUDE_PLUGIN_ROOT}/scripts/checks/a11y.sh"`. If the app runs and
    playwright and axe-core are installed, also run
    `node "${CLAUDE_PLUGIN_ROOT}/scripts/a11y-browser.mjs" http://localhost:3000` (phone width,

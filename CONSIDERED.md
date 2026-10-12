@@ -31,7 +31,7 @@ Verdict key:
 | Spotify "Portal shunt" pattern | IN (as pattern) | The idea — block big reads at the hook level, route to a cheap model — is sound and we implemented it (`check-file-size.sh`, `bulk-reader`). Spotify's actual Portal platform is internal infra you can't install. |
 | [headroomlabs-ai/headroom](https://github.com/headroomlabs-ai/headroom) | COMPANION | Real (69k stars), Apache 2.0, seeded reproducible benchmarks, runs locally, reversible. More thorough than our bulk-reader hook. Overlaps with it — pick one. Telemetry on by default, `HEADROOM_BEACON=off`. |
 | [mksglu/context-mode](https://github.com/mksglu/context-mode) | OUT | Idea is sound; the tool is not a fit. Elastic License 2.0 (not open source). `ctx_execute` is a plain subprocess with your full permissions, not a sandbox. It stores prompts and tool output on disk for 7 days. `ctx_upgrade` builds unpinned upstream `main`. Shipped code is minified. Its 98% figure is bytes on saved samples, with no answer-quality test. We took only the idea: `hint-noisy-bash.sh` hints to trim long command output. |
-| [elementalsouls/Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter) | OUT | MIT code, CC-BY content. An offensive bug-bounty and red-team skill bundle (83 skills such as `hunt-sqli`, `hunt-ssrf`), not a tool for finding bugs in your own code. Large and sponsored; mogger stays small with no third-party dependency. We took only the idea: a race-condition row in the `mogger-edge-cases` checklist. |
+| [elementalsouls/Claude-BugHunter](https://github.com/elementalsouls/Claude-BugHunter) | OUT | MIT code, CC-BY content. An offensive bug-bounty and red-team skill bundle (83 skills such as `hunt-sqli`, `hunt-ssrf`), not a tool for finding bugs in your own code. Large and sponsored; mogger stays small with no third-party dependency. We took only the idea: a race-condition row in the `mogger:edge-cases` checklist. |
 | [karanb192/claude-code-hooks](https://github.com/karanb192/claude-code-hooks) | IDEAS TAKEN | MIT, Node only, no telemetry. 22 hooks. We took the idea of a dangerous-command blocker (`danger-guard.sh`, our own bash, with SQL and `git reset --hard` added and its known bypasses closed). Also taken: `secret-read-guard.sh` (reads of secret files) and `config-guard.sh` (asks before edits to Claude's own settings). Everything else we already do better or skip (cost hooks, Slack notify, auto-stage). |
 | [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman) | OPTIONAL | Real. Documents the cases where it *loses* money — that honesty is why it's here. Narrower than headroom. |
 | [safishamsi/graphify](https://github.com/safishamsi/graphify) | OPTIONAL | Real. Codebase knowledge graph to avoid re-reading files. Pays off on large codebases run many times a day; on small ones, plain search is as cheap. Their own docs say the 71x figure is best-case. |
@@ -105,7 +105,7 @@ may be at their actual job.
   Context7 registers automatically on plugin install, zero extra steps.
 - **SkillSpector cannot be bundled the same way** — it's a standalone CLI,
   not an MCP server, so there's no manifest field that auto-installs it at
-  plugin-install time. Closest real equivalent: `mogger-init` now detects
+  plugin-install time. Closest real equivalent: `mogger:init` now detects
   and auto-installs it via `uv tool install` on first run (a small,
   reversible CLI install), rather than just telling the user the command.
 - **Superpowers vs this kit's agents — read in full, not just described.**
@@ -136,7 +136,7 @@ rather than assumed:
   feared. One real caveat: on Windows, multiple plugins with SessionStart
   hooks produce a cosmetic `SessionStart:startup hook error`
   (obra/superpowers#369). Both hooks still execute.
-- **Verdict: COMPANION, with a tested preset** (`mogger-superpowers-preset`
+- **Verdict: COMPANION, with a tested preset** (`mogger:superpowers-preset`
   skill), not a hard dependency. Reasoning: mogger's value is hooks that
   fire regardless of what's layered on top, which is exactly what a hard
   dependency would forfeit. Vendoring means maintaining a fork of a
@@ -174,7 +174,7 @@ Kingy AI) — all consistent on the numbers that matter here.
   `effort` can be a no-op specifically on Task-tool spawns, which is
   exactly this kit's dispatch path. Official docs say it works; one real
   report says it sometimes doesn't. Shipped with a verification note in
-  `mogger-loop` telling the user to check their own cost breakdown rather
+  `mogger:loop` telling the user to check their own cost breakdown rather
   than trust the field blindly — consistent with this project's own bar
   for what gets shipped without hedging.
 - **Documented, not built: model alias auto-resolution.** `model: sonnet`

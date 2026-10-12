@@ -7,7 +7,7 @@
 # Tightened after review: reading a file NAMED payment_service.py is not
 # spending money. Only actual billing/payment CLIs are blocked.
 #
-# Each part has three states (see hooks/guards.tsv, skill mogger-config):
+# Each part has three states (see hooks/guards.tsv, skill mogger:config):
 #   MOGGER_PUSH_GUARD, MOGGER_MERGE_GUARD, MOGGER_DEPLOY_GUARD, MOGGER_MONEY_GUARD
 #   on = block (default), ask = permission prompt for the human, off = allow.
 #   Force pushes and pushes to a protected branch stay blocked in every state.

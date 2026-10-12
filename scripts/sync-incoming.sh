@@ -28,7 +28,7 @@ sed 's|bash \\"${CLAUDE_PLUGIN_ROOT}\\"/hooks/scripts/|bash .claude/hooks/|g' ho
   echo "injects it automatically when installed as a plugin; in manual installs,"
   echo "read it yourself). Every line is a hard rule."
   echo
-  for s in skills/mogger-loop/SKILL.md skills/mogger-standards/SKILL.md skills/mogger-grounding/SKILL.md; do
+  for s in skills/loop/SKILL.md skills/standards/SKILL.md skills/grounding/SKILL.md; do
     awk 'BEGIN{fm=0} /^---$/{fm++; next} fm>=2' "$s"
     echo
   done

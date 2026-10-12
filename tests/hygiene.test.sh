@@ -538,15 +538,15 @@ echo "== templates, agent, skills"
 fm() {  # fm <file> <key>
   awk -v k="$2" 'NR==1 && $0!="---"{exit} NR>1 && $0=="---"{exit} NR>1 && index($0,k":")==1{sub("^"k":[ ]*","");print;exit}' "$1"
 }
-for f in templates/DATA.md skills/mogger-privacy/SKILL.md skills/mogger-docs/SKILL.md agents/docs-writer.md scripts/a11y-browser.mjs; do
+for f in templates/DATA.md skills/privacy/SKILL.md skills/docs/SKILL.md agents/docs-writer.md scripts/a11y-browser.mjs; do
   [ -f "$ROOT/$f" ] && ok "exists: $f" || bad "exists: $f"
 done
-for f in skills/mogger-privacy/SKILL.md skills/mogger-docs/SKILL.md agents/docs-writer.md; do
+for f in skills/privacy/SKILL.md skills/docs/SKILL.md agents/docs-writer.md; do
   [ -n "$(fm "$ROOT/$f" name)" ] && ok "frontmatter name: $f" || bad "frontmatter name: $f"
   [ -n "$(fm "$ROOT/$f" description)" ] && ok "frontmatter description: $f" || bad "frontmatter description: $f"
 done
-[ "$(fm "$ROOT/skills/mogger-privacy/SKILL.md" name)" = "mogger-privacy" ] && ok "privacy skill name matches dir" || bad "privacy skill name"
-[ "$(fm "$ROOT/skills/mogger-docs/SKILL.md" name)" = "mogger-docs" ] && ok "docs skill name matches dir" || bad "docs skill name"
+[ "$(fm "$ROOT/skills/privacy/SKILL.md" name)" = "privacy" ] && ok "privacy skill name matches dir" || bad "privacy skill name"
+[ "$(fm "$ROOT/skills/docs/SKILL.md" name)" = "docs" ] && ok "docs skill name matches dir" || bad "docs skill name"
 [ "$(fm "$ROOT/agents/docs-writer.md" name)" = "docs-writer" ] && ok "docs-writer name" || bad "docs-writer name"
 [ "$(fm "$ROOT/agents/docs-writer.md" model)" = "sonnet" ] && ok "docs-writer is sonnet" || bad "docs-writer model"
 tools=$(fm "$ROOT/agents/docs-writer.md" tools)
@@ -557,13 +557,13 @@ grep -q 'docs.sh' "$ROOT/agents/docs-writer.md" && ok "docs-writer is grounded i
 grep -qi 'read-only' "$ROOT/agents/docs-writer.md" && ok "docs-writer Bash is read-only" || bad "read-only rule"
 grep -q 'OWNER TO DECIDE' "$ROOT/templates/DATA.md" && ok "DATA.md uses OWNER TO DECIDE" || bad "DATA.md OWNER TO DECIDE"
 grep -qi 'not legal advice' "$ROOT/templates/DATA.md" && ok "DATA.md says not legal advice" || bad "DATA.md legal line"
-grep -qi 'not legal advice' "$ROOT/skills/mogger-privacy/SKILL.md" && ok "privacy skill says not legal advice" || bad "skill legal line"
+grep -qi 'not legal advice' "$ROOT/skills/privacy/SKILL.md" && ok "privacy skill says not legal advice" || bad "skill legal line"
 for col in "Where collected" "Where stored" "Why" "Who receives it" "How long kept" "How deleted"; do
   grep -qF "$col" "$ROOT/templates/DATA.md" && ok "DATA.md column: $col" || bad "DATA.md column: $col"
 done
-grep -qi 'never invent' "$ROOT/skills/mogger-privacy/SKILL.md" && ok "privacy skill forbids invented retention/legal basis" || bad "never invent"
-grep -q 'privacy.sh' "$ROOT/skills/mogger-privacy/SKILL.md" && ok "privacy skill names the script" || bad "skill names script"
-grep -q 'docs-writer' "$ROOT/skills/mogger-docs/SKILL.md" && ok "docs skill dispatches docs-writer" || bad "docs skill dispatch"
+grep -qi 'never invent' "$ROOT/skills/privacy/SKILL.md" && ok "privacy skill forbids invented retention/legal basis" || bad "never invent"
+grep -q 'privacy.sh' "$ROOT/skills/privacy/SKILL.md" && ok "privacy skill names the script" || bad "skill names script"
+grep -q 'docs-writer' "$ROOT/skills/docs/SKILL.md" && ok "docs skill dispatches docs-writer" || bad "docs skill dispatch"
 grep -q 'hooks' "$ROOT/hooks/hooks.json" 2>/dev/null && ! grep -q -E 'privacy[.]sh|docs[.]sh|a11y[.]sh|lockin[.]sh' "$ROOT/hooks/hooks.json" && ok "no hooks registered for report-only checks" || bad "hooks.json references checks"
 
 echo "== manifest hygiene: hook timeouts, unique tags, scripts executable"

@@ -89,11 +89,11 @@ one does:
 agents/                 14 agents: planner, builder, reviewer, retro, library-scout, security-reviewer , docs-writer (Sonnet) · tester, explorer, bulk-reader, code-writer, fact-checker, verifier, explainer (Haiku)
 hooks/hooks.json        44 hook entries: SessionStart, PreToolUse, PostToolUse, PostToolUseFailure, Stop, PreCompact
 hooks/scripts/          the actual bash — every one tested in tests/hooks.test.sh
-skills/mogger-loop     the orchestration loop + model routing (loads when you start a feature)
-skills/mogger-standards coding principles, library rules, token discipline, SkillSpector rule, design-mogger UI rules
-skills/mogger-init     first-run: scaffolds CONSTRAINTS/RUNS/STACK in your project
-skills/mogger-config    list guards and set each to on, ask or off (`.claude/mogger.json`, list in `hooks/guards.tsv`)
-skills/mogger-superpowers-preset  tested config for running these gates under Superpowers
+skills/loop     the orchestration loop + model routing (loads when you start a feature)
+skills/standards coding principles, library rules, token discipline, SkillSpector rule, design-mogger UI rules
+skills/init     first-run: scaffolds CONSTRAINTS/RUNS/STACK in your project
+skills/config    list guards and set each to on, ask or off (`.claude/mogger.json`, list in `hooks/guards.tsv`)
+skills/superpowers-preset  tested config for running these gates under Superpowers
 skills/ (20 in all)    the four above, plus config, idea, decisions, grounding, security, code-health, edge-cases, verify-run, ship-check, rewind, handoff, docs, privacy, explain, evals, app-evals
 templates/              the three project files above, plus pricing.json for the routing estimate
 tests/*.test.sh         2,961 assertions across 26 suites (`for t in tests/*.test.sh; do bash $t; done`). If these fail, the gates don't work.
@@ -145,18 +145,18 @@ or a file you can open. Nothing is "the model promises."
 | Need | What it is | Enforced by |
 |---|---|---|
 | **A voice, not a manual** | mogger is smug, dry and clever, and never mean. The status bar and toasts pick a fresh one-liner for each moment (blocked, warned, handled, tests passed, caught saying "done" with no proof, idle) from pools of 8-10 lines each. The pick is a plain rotation, so a line never shows twice in a row, and it costs no model calls and no tokens. Claude's own replies get one 169-character line at session start (about 42 tokens) that describes the character: one fresh quip when a task ends or a guard blocks, none in warnings, errors or block reasons. The quip sits next to the facts and never replaces them. Off: `{"voice": "off"}` in `.claude/mogger.json` or `MOGGER_VOICE=off` | session text + mod |
-| **Turn guards on, ask or off** | `.claude/mogger.json` holds the switches (`{"danger-guard": "ask"}`). Three states: `on` blocks, `ask` gives you a permission prompt each time (Claude cannot approve it), `off` allows. `ask` works for `danger-guard`, `secret-read-guard`, `config-guard`, `push-guard`, `merge-guard`, `deploy-guard`, `money-guard`; the other guards are on or off. `push-guard`, `merge-guard`, `deploy-guard` and `money-guard` are on or ask in the file (no `off`; only you can allow them for good, with the env var). Force pushes and pushes to protected branches stay blocked in every state. Where no prompt can be shown (headless or SDK runs, `bypassPermissions`, `dontAsk` or `auto` mode, or `MOGGER_HEADLESS=on`), `ask` blocks instead. Skill `mogger-config` lists every guard with what ON, ASK and OFF do and flips them; going to `off` on a safety guard warns first, going to `ask` does not. `config-guard` also asks before Claude edits `.claude/mogger.json` itself (the switch file; the smoke settings in it prompt too). The `mogger-config` script is not affected. Env vars `MOGGER_*` (now also `=ask`) still work and win; a bad value keeps the default. List: `hooks/guards.tsv`. Test: `tests/ask.test.sh` | skill + script |
-| **Undo anything** | `checkpoint.sh` snapshots your work before edits (non-destructive git refs). `scripts/mogger-rewind.sh list/show/restore` — restore snapshots first, so undo is undoable. Skill: `mogger-rewind` | hook |
+| **Turn guards on, ask or off** | `.claude/mogger.json` holds the switches (`{"danger-guard": "ask"}`). Three states: `on` blocks, `ask` gives you a permission prompt each time (Claude cannot approve it), `off` allows. `ask` works for `danger-guard`, `secret-read-guard`, `config-guard`, `push-guard`, `merge-guard`, `deploy-guard`, `money-guard`; the other guards are on or off. `push-guard`, `merge-guard`, `deploy-guard` and `money-guard` are on or ask in the file (no `off`; only you can allow them for good, with the env var). Force pushes and pushes to protected branches stay blocked in every state. Where no prompt can be shown (headless or SDK runs, `bypassPermissions`, `dontAsk` or `auto` mode, or `MOGGER_HEADLESS=on`), `ask` blocks instead. Skill `mogger:config` lists every guard with what ON, ASK and OFF do and flips them; going to `off` on a safety guard warns first, going to `ask` does not. `config-guard` also asks before Claude edits `.claude/mogger.json` itself (the switch file; the smoke settings in it prompt too). The `mogger:config` script is not affected. Env vars `MOGGER_*` (now also `=ask`) still work and win; a bad value keeps the default. List: `hooks/guards.tsv`. Test: `tests/ask.test.sh` | skill + script |
+| **Undo anything** | `checkpoint.sh` snapshots your work before edits (non-destructive git refs). `scripts/mogger-rewind.sh list/show/restore` — restore snapshots first, so undo is undoable. Skill: `mogger:rewind` | hook |
 | **No leaked secrets** | `secret-guard.sh` blocks keys/tokens/`.env` writes; `secret-guard-bash.sh` blocks `git add .env` and commits with secrets staged | hook (exit 2) |
 | **No invented packages** | `verify-packages.sh` checks every `npm/pip/cargo/go` install name exists on the real registry. Fails open offline | hook (exit 2 on 404) |
 | **No made-up code references** | `check-references.sh` checks that new imports resolve to real files and declared dependencies | hook (exit 2) |
-| **No guessing** | `mogger-grounding` skill: every claim cites `file:line` or command output, unchecked things are labeled `UNVERIFIED:`. `fact-checker` agent (Haiku) returns VERIFIED / REFUTED / UNVERIFIABLE with evidence. Reviewer and builder require it | skill + agents + hook |
+| **No guessing** | `mogger:grounding` skill: every claim cites `file:line` or command output, unchecked things are labeled `UNVERIFIED:`. `fact-checker` agent (Haiku) returns VERIFIED / REFUTED / UNVERIFIABLE with evidence. Reviewer and builder require it | skill + agents + hook |
 | **Does it actually run?** | `scripts/smoke-check.sh` starts the app, polls it, scans for errors, writes `.claude/state/smoke.json`. Optional gate: `MOGGER_REQUIRE_SMOKE=on`. Agent: `verifier` | script + optional hook |
 | **Ship checklist** | `scripts/ship-check.sh` — report only, never pushes or deploys | script |
 | **Plain English** | `explainer` agent (Haiku): what changed, why, how to check, what to watch out for | agent |
 | **Live status** | `STATUS.md` regenerated on every edit and stop (when `TASKS.md` exists) | hook |
 | **Budget cap** | `MOGGER_BUDGET_USD=5` — cost computed from real transcript token counts x `templates/pricing.json`; warns at 80%, blocks at 100%. Off by default | hook |
-| **Spec first** | `mogger-idea` skill: at most 5 short questions with defaults, never asks what the repo already answers, writes `SPEC.md` with checkable "done when" | skill |
+| **Spec first** | `mogger:idea` skill: at most 5 short questions with defaults, never asks what the repo already answers, writes `SPEC.md` with checkable "done when" | skill |
 | **Remember why** | `DECISIONS.md` append-only log, active decisions injected at session start, edits to old entries blocked | hook + skill |
 
 ### Round 2 — the "last 20%" (safety, tests, upkeep)
@@ -172,9 +172,9 @@ pushes or deploys.
 | Old or vulnerable packages | `dep-audit.sh` runs your own `npm audit` / `pip-audit` / `cargo audit` / `osv-scanner`, fails open offline | scan |
 | Hand-made payment code | `check-diy-payments.sh` blocks card handling and unsigned Stripe webhooks | hook |
 | Tests that prove nothing | `check-test-quality.sh` blocks empty, assertion-free and tautology tests | hook |
-| Plain, generic-looking UI | `design-mogger` rules in `skills/mogger-standards` (7 short UI-only rules). Points to the optional Taste Skill and `ui-ux-pro-max`; neither is required | skill |
-| Fix loops | `fix-loop-guard.sh` stops after 3 identical failures and points to `mogger-rewind` | hook |
-| Only the happy path works | skill `mogger-edge-cases`; planner and tester now require unhappy-path checks | skill |
+| Plain, generic-looking UI | `design-mogger` rules in `mogger:standards` (7 short UI-only rules). Points to the optional Taste Skill and `ui-ux-pro-max`; neither is required | skill |
+| Fix loops | `fix-loop-guard.sh` stops after 3 identical failures and points to `mogger:rewind` | hook |
+| Only the happy path works | skill `mogger:edge-cases`; planner and tester now require unhappy-path checks | skill |
 | One giant file, copy-paste | `check-structure.sh` blocks oversize files and new copy-pasted blocks | hook |
 | No error handling / logs | `check-resilience.sh` blocks swallowed errors; scan for missing timeouts, N+1, no health check | hook + scan |
 | Weak database design | `database.sh`: no primary key, unindexed foreign keys, no RLS, no backup plan | scan |
@@ -198,7 +198,7 @@ anything that only helps the visible cases.
 - **Paid, consent once:** the first session shows what the evals find and the estimated cost, once. Say yes to a dollar cap and they re-run in the background when agents or skills change, always inside the cap. Nothing is ever billed without that yes.
 - `estimate` makes no model calls. `apply` only writes with `--yes`, and only under your project's `.claude/`.
 - Plugin install only. Not yet run against the live API: read a few real transcripts before trusting the first scores.
-- Building an app that calls Claude? Skill `mogger-app-evals` points you to `/claude-api build-eval` and `hillclimb`.
+- Building an app that calls Claude? Skill `mogger:app-evals` points you to `/claude-api build-eval` and `hillclimb`.
 
 The cost figure is an estimate (token counts x published rates), and
 `check-references.sh` is conservative on purpose — it would rather miss
@@ -224,7 +224,7 @@ than cry wolf. Limits of each are in the script headers.
 | `require-approval-mcp` | GitHub MCP tools | merging a PR, auto-merge, deleting (`MOGGER_MERGE_GUARD=ask` prompts you instead); `push_files` / `create_or_update_file` / `delete_file` need `MOGGER_PUSH_GUARD=ask` (or the old `MOGGER_ALLOW_PUSH=on`) and a non-protected branch |
 | `taint-mark` + `taint-guard` | WebFetch / WebSearch / MCP (post), Bash | after Claude reads outside content, asks before `curl`, `wget`, `nc`, `scp`, `ssh`, `git remote add`. A speed bump against prompt injection, not a defence. Off: `MOGGER_TAINT=off` |
 | `config-notice` | SessionStart | says once when a repo ships `.claude/settings.json`, `.claude/hooks/` or `.mcp.json`, and again when they change. Off: `MOGGER_CONFIG_NOTICE=off` |
-| `prefs-notice` | SessionStart | first load in a project only: tells Claude to say that every guard can be on, ask or off, and to ask once ("Keep the defaults" or "Review my guard choices"); on Review it loads `mogger-config`. Marker `.claude/state/prefs-shown`, so it never repeats. Silent in headless/SDK runs, with `bypassPermissions`, `dontAsk` or `auto`, and when `.claude/mogger.json` already exists. Off: `MOGGER_PREFS_PROMPT=off`. Test: `tests/prefs.test.sh` |
+| `prefs-notice` | SessionStart | first load in a project only: tells Claude to say that every guard can be on, ask or off, and to ask once ("Keep the defaults" or "Review my guard choices"); on Review it loads `mogger:config`. Marker `.claude/state/prefs-shown`, so it never repeats. Silent in headless/SDK runs, with `bypassPermissions`, `dontAsk` or `auto`, and when `.claude/mogger.json` already exists. Off: `MOGGER_PREFS_PROMPT=off`. Test: `tests/prefs.test.sh` |
 | `hint-noisy-bash` | Bash | — hints `\| tail -n 80` or `\| grep` for test, build and log commands with no pipe. Never blocks. Off: `MOGGER_HINT=off` |
 | `session-start` | SessionStart | — injects CONSTRAINTS.md, STACK.md, task status, and a one-line "least code" ladder (skip, reuse, stdlib, one-liner, new code last) into context |
 | `auto-format` | Edit/Write (post) | — runs your project's own formatter/linter on the touched file, and tells Claude about lint errors it could not fix |
@@ -248,7 +248,7 @@ These two used to be a manual step. They're not anymore:
 | Tool | How it's included | Status |
 |---|---|---|
 | [Context7](https://github.com/upstash/context7) | `.mcp.json` at the plugin root, pointed at Context7's hosted remote server | Live the moment the plugin installs. No npx, no local server, nothing to run. |
-| [SkillSpector](https://github.com/NVIDIA/SkillSpector) | `mogger-init` detects it's missing and runs `uv tool install` itself | Installed the first time you run "mogger init" (needs `uv` on the machine — if `uv` itself is missing, init tells you the one command for that instead). |
+| [SkillSpector](https://github.com/NVIDIA/SkillSpector) | `mogger:init` detects it's missing and runs `uv tool install` itself | Installed the first time you run "mogger init" (needs `uv` on the machine — if `uv` itself is missing, init tells you the one command for that instead). |
 
 ## Recommended companions (external, install separately)
 
@@ -269,7 +269,7 @@ and TDD enforcement. This kit is better at gates that can't be reasoned
 around and at not paying frontier prices for file reads. Those are
 different axes, so the answer is usually both.
 
-The `mogger-superpowers-preset` skill is the tested configuration: which
+The `mogger:superpowers-preset` skill is the tested configuration: which
 mogger agents to stop dispatching, which to keep (all the hooks, all the
 Haiku-routed agents, `library-scout`, `retro`), and the two config changes
 it needs — `MOGGER_GATE_ALL_TASKS=on` so the test gate still fires against

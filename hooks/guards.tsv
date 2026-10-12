@@ -17,7 +17,7 @@ tests-added	MOGGER_TESTS_ADDED	safety	on	on	Blocks "done" when code changed but 
 test-evidence	MOGGER_EVIDENCE	safety	on	on	Records the real result of test runs. The reviewer gate needs it.	Gates trust what an agent wrote, not what ran.	on,off	-
 test-tamper	MOGGER_CHECK_TAMPER	safety	on	on	Warns when an edit removes test assertions or adds skips.	Claude can make tests pass by weakening them. No warning.	on,off	-
 claim-check	MOGGER_CLAIM_CHECK	safety	proof	on	Blocks "done" when nothing ran after the last code edit.	Claude can say "done" with no proof.	on,off	-
-checkpoint	MOGGER_CHECKPOINT	safety	on	on	Takes an undo snapshot before the first edit of a task (use mogger-rewind to go back).	No snapshots. You cannot undo with mogger-rewind.	on,off	-
+checkpoint	MOGGER_CHECKPOINT	safety	on	on	Takes an undo snapshot before the first edit of a task (use mogger:rewind to go back).	No snapshots. You cannot undo with mogger:rewind.	on,off	-
 payments-check	MOGGER_CHECK_PAYMENTS	safety	on	on	Warns when code handles card data or money by hand instead of a payment provider.	No warning about home-made payment code.	on,off	-
 risky-code-check	MOGGER_CHECK_RISKY	safety	on	on	Warns about risky code: eval, SQL built from strings, open CORS, disabled TLS checks.	No warning on those patterns.	on,off	-
 decisions-lock	MOGGER_DECISIONS_LOCK	standard	on	on	Keeps DECISIONS.md append-only. Blocks edits to old entries.	Old decisions can be rewritten.	on,off	-

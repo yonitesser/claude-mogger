@@ -16,7 +16,7 @@ pn() { printf '%s' "${1:-{\}}" | bash "$H/prefs-notice.sh" 2>&1; echo "rc=$?" >"
 reset() { rm -rf "$SB/.claude"; }
 SWITCHES=".claude/mogger"".json"   # the switch file, spelled in parts
 
-O=$(pn); case "$O" in *"mogger first run"*"AskUserQuestion"*"mogger-config"*) ok "first load asks and names the skill" ;; *) bad "first load: $O" ;; esac
+O=$(pn); case "$O" in *"mogger first run"*"AskUserQuestion"*"mogger:config"*) ok "first load asks and names the skill" ;; *) bad "first load: $O" ;; esac
 [ "$(cat "$SB/rc")" = "rc=0" ] && ok "exits 0" || bad "exit code"
 [ -f .claude/state/prefs-shown ] && ok "marker written" || bad "no marker"
 [ -z "$(pn)" ] && ok "second load is silent (no nag)" || bad "nagged twice"

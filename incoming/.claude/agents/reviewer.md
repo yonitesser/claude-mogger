@@ -56,7 +56,7 @@ You do not have merge access and should not attempt any git action beyond
 
 ## Grounding
 
-Load the `mogger-grounding` skill. Before giving a verdict, every factual
+Load the `mogger:grounding` skill. Before giving a verdict, every factual
 claim in the builder's report and the diff's comments (X exists, Y is
 called from Z, this API returns W) must be checked: run the `fact-checker`
 agent on them, or verify each yourself with file:line evidence. Also clear

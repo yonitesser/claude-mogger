@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.11.0 — 2026-10-12
+
+- Shorter skill names. The 20 skills lost the repeated word: `/mogger:mogger-init` is now `/mogger:init`, `mogger:mogger-config` is `mogger:config`, and so on. Folders under `skills/`, the `name:` field, every reference, `evals/triggers.json` and the tests moved with them. Scripts keep their names (`scripts/mogger-config.sh`, `scripts/mogger-rewind.sh`). Anything you saved that calls the old long name needs the short one.
+- First-run prefs prompt gets one line: for long sessions, `/autocompact 400k` makes Claude Code compact earlier (undo: `/autocompact auto`). Mogger only tells you. It does not change your settings. No A/B data yet on whether this helps accuracy.
+
 ## 1.10.0 — 2026-10-12
 
 - First-run preferences prompt. New SessionStart hook `prefs-notice.sh`: on the first load of mogger in a project it tells Claude to say, in two sentences, that every guard can be on, ask or off, and to ask once with a question: "Keep the defaults" or "Review my guard choices". On Review, Claude loads the `mogger-config` skill. A marker `.claude/state/prefs-shown` makes it show once only. It never blocks: it is context text, and with no answer Claude keeps the defaults and does the task. It stays silent, and writes no marker, where nobody can answer (`CLAUDE_CODE_ENTRYPOINT` `sdk-*`, `MOGGER_HEADLESS=on`, `permission_mode` `bypassPermissions`, `dontAsk` or `auto`), so evals and CI runs are not touched. It also stays silent when `.claude/mogger.json` exists. Off: `MOGGER_PREFS_PROMPT=off`. Test: `tests/prefs.test.sh` (15 checks).

@@ -119,7 +119,7 @@ evals_nudge_text() {  # evals_nudge_text <estimate-or-empty>
     echo "Cost: run scripts/mogger-eval.sh estimate. Nothing runs unless you say yes."
   fi
   echo "Free check: scripts/checks/evals-static.sh. Hide this: MOGGER_EVALS=off"
-  echo "For Claude: tell the user in one sentence; if they say yes, load skill mogger-evals."
+  echo "For Claude: tell the user in one sentence; if they say yes, load skill mogger:evals."
 }
 
 evals_session_context() {

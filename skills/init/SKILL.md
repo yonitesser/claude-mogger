@@ -1,0 +1,106 @@
+---
+name: init
+description: First-run setup: creates CONSTRAINTS.md, RUNS.md, STACK.md and .claude/state/, checks jq/python3. Use when starting a project, or on "set up mogger".
+---
+
+# mogger init
+
+A plugin can't create files in the user's project at install time. This
+skill does that on first run. It's idempotent — re-running it never
+overwrites a file that already exists.
+
+## Steps
+
+1. **Dependency check.** `command -v jq || command -v python3` (and verify
+   python3 actually runs, not a Windows Store stub: `python3 -c '1'`). If
+   neither works, stop and tell the user: the hooks parse JSON with one of
+   these and will fail open (block nothing) without them.
+
+2. **Context7 — already active, nothing to do.** This plugin bundles
+   Context7 as a hosted remote MCP server (`.mcp.json` at the plugin root,
+   pointed at `https://mcp.context7.com/mcp`). It registered automatically
+   when the plugin installed — no local npx, no separate step. Works
+   anonymously; `CONTEXT7_API_KEY` in the environment raises rate limits
+   but isn't required. Just confirm it's in the tool list and mention it's
+   live, rather than re-explaining the mechanism.
+
+3. **SkillSpector, only if the user says yes.** Run `command -v skillspector`.
+   If absent, say it is optional, show the one command
+   (`uv tool install git+https://github.com/NVIDIA/skillspector.git`) and
+   ask before running it. It installs unpinned code from a third party, so
+   never run it without a yes. If `uv` is missing, say so and stop; do not
+   chain a second install.
+
+4. **Scaffold files, only if missing.** Templates live in the plugin at
+   `${CLAUDE_PLUGIN_ROOT}/templates/`. For each of `CONSTRAINTS.md`,
+   `RUNS.md`, `STACK.md`, `DECISIONS.md`: if the project root doesn't have it, copy the
+   template. If it does, leave it alone and say so. Also
+   `mkdir -p .claude/state` (tester writes its result marker there, and
+   the Haiku agents append to `.claude/state/savings.jsonl` there too —
+   touch that file into existence if missing so the first agent call
+   doesn't fail on a missing directory, though the log script itself
+   already does `mkdir -p`).
+
+5. **Fill STACK.md from what's visible.** Read `package.json`,
+   `pyproject.toml`, `go.mod`, `Cargo.toml`, `Gemfile`, `composer.json` —
+   whichever exist. Fill the language/version and package manager lines,
+   and any table rows you can determine from actual dependencies (the
+   HTTP client they already use, the test framework already installed).
+   Leave rows blank when you'd be guessing. Note the formatter/linter
+   from config files present (`.prettierrc`, `ruff.toml`, etc.) — the
+   auto-format hook reads those directly, but the record helps humans.
+
+5b. **Check git.** Run `git rev-parse --git-dir`. If the folder is not a git
+   repo, say that diffs, reviews and the checkpoint/rewind hook need git, and
+   run `git init` (cheap and reversible), then report it.
+
+6. **Check for conflicting project config.** If `.claude/settings.json`
+   exists with its own hooks, list them. If any duplicate a mogger hook
+   (a second formatter on PostToolUse, a second push-blocker), tell the
+   user — don't silently run two. If `CLAUDE.md` says anything that
+   contradicts the approval boundary (e.g. "auto-merge when tests pass"),
+   quote it and stop — the human resolves that, not you.
+
+7. **Report, briefly.** What was created, what was already there, which
+   dependency check passed, whether SkillSpector got installed (and how),
+   that Context7 is live, and this exact summary of what's now enforced:
+
+   - `git push`, merge while on a protected branch, PR merge, prod
+     deploys, and money CLIs are blocked until a human approves.
+   - Edits to CI/CD, Dockerfiles, Terraform, and payment code are blocked.
+   - `reviewer` cannot run without a real recorded test pass.
+   - You cannot end a turn with open tasks in TASKS.md and no blocker.
+   - Every edited file gets the project's own formatter run on it.
+   - Haiku handles reads/searches/tests; Sonnet builds/reviews; the Lead
+     orchestrates.
+   - Context7 is available for current library docs; SkillSpector is
+     installed (or the user has the one command to add it).
+   - `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/savings-report.py"` shows an *estimate* of what the
+     Haiku-routed calls would cost at the Lead's rate — self-reported by the agents, not verified,
+     and clearly labeled as such in its own output. Not required reading,
+     just available if the user is curious.
+
+   Then suggest: "Add your first correction to CONSTRAINTS.md the first
+   time I do something you have to fix twice."
+
+8. **Offer the evals (last step).** Load `mogger:evals`. Run
+   `bash "${CLAUDE_PLUGIN_ROOT}/scripts/mogger-eval.sh" estimate` (if the script is missing, say
+   the paid evals are not installed and skip). Show the estimate in plain
+   words, say it costs money and nothing runs without a yes, and ask for a
+   dollar cap. Do not run anything paid yourself. If the project uses the
+   Anthropic SDK (`anthropic` or `@anthropic-ai/sdk` in its dependencies),
+   also mention `mogger:app-evals` for the user's own app.
+
+9. **Tip (say it, do not change anything).** If the session's main model is
+   Sonnet or Haiku and the user is on the Anthropic API, mention once that
+   `/advisor opus` lets it consult a stronger model at hard moments (see
+   the advisor section in `mogger:loop`). It is experimental and
+   bills advisor tokens. The user turns it on, not you.
+
+## What this does NOT do
+
+- Doesn't touch git config, remotes, or branches.
+- Doesn't install jq, formatters, headroom, or anything beyond
+  SkillSpector. Reports what else is missing; the human installs the rest.
+- Doesn't edit an existing CLAUDE.md. If the user wants the loop
+  described there too, they can ask — the skills already cover it.

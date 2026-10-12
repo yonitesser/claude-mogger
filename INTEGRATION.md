@@ -8,7 +8,7 @@ you're in — the steps are different.
 
 If the user just wants the plugin: `/plugin marketplace add <owner>/claude-mogger`
 then `/plugin install mogger@claude-mogger`, then run the
-`mogger-init` skill. This file is not needed for that path.
+`mogger:init` skill. This file is not needed for that path.
 
 ## Step 0: which path?
 
