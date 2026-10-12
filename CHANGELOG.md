@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.9.0 — 2026-10-12
 
 - Toggle file: `.claude/mogger.json` switches guards on or off, e.g. `{"danger-guard": "off"}`. New skill `mogger-config` (and `scripts/mogger-config.sh list|set|reset`) lists every guard with what ON and OFF do, and flips them. Safety guards ask for a clear yes before they go off. The list lives in `hooks/guards.tsv`. A `MOGGER_*` env var still wins over the file; a broken file changes nothing. Test: `tests/config.test.sh`.
 - The `mogger-status` mod is now on by default: `hooks/hooks.json` loads it from the main plugin. It shows a status line (`mogger: N guards fired, M blocked`), a bar above the prompt with the last action, and a toast on each block. It only reads `.claude/state/mogger-events.log`. Needs a Claude Code with mods; older versions show nothing and mogger works as before. The bar shows the mogger chad from the banner in text; it blinks, and for 4 seconds after a guard fires its chest burst spins and its eyes glow. No model tokens. The separate `mods/mogger-status` plugin manifest is gone; its state key is now `mogger`.
