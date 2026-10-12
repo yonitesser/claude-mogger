@@ -272,5 +272,8 @@
         ]
       }
     ]
-  }
+  },
+  "modules": [
+    "../mods/mogger-status/hooks/register.tsx"
+  ]
 }

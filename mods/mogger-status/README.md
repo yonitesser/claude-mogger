@@ -1,4 +1,4 @@
-# mogger-status (optional Claude Code mod)
+# mogger-status (Claude Code mod, on by default)
 
 Shows that mogger is running and helping. It adds three things to the Claude Code screen:
 
@@ -24,21 +24,16 @@ The mod reads that file with `$.fs` every 2 seconds. It does not read hook resul
 
 ## Enable
 
-Mods need a Claude Code version that supports them (see the
-[mods blog post](https://claude.com/blog/claude-code-mods)). This mod is opt-in: installing mogger
-does not turn it on.
+On by default. This mod is loaded by the main mogger plugin (`hooks/hooks.json`, `modules`). You
+need a Claude Code version that supports mods (see the
+[mods blog post](https://claude.com/blog/claude-code-mods)). On older versions nothing shows and
+mogger works as before.
 
-Try it for one session:
-
-```
-claude --plugin-dir /path/to/claude-mogger/mods/mogger-status
-```
-
-Check it first:
+Check it:
 
 ```
-claude plugin validate mods/mogger-status
-claude plugin test mods/mogger-status
+claude plugin validate .
+claude plugin test .
 ```
 
 ## Safety

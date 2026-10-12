@@ -4,9 +4,9 @@ import type { EngineInterface, Register } from 'claude-code'
 import type { MoggerSummary } from '../types'
 import { LOG_PATH, ageText, newBlocks, newestTs, parseLog, statusText, summarize } from './log'
 
-const summaryAtom = atom({ plugin: 'mogger-status', key: 'summary' } as const, null as MoggerSummary | null)
-const isHidden = atom({ plugin: 'mogger-status', key: 'isHidden' } as const, false)
-const sinceAtom = atom({ plugin: 'mogger-status', key: 'since' } as const, 0)
+const summaryAtom = atom({ plugin: 'mogger', key: 'summary' } as const, null as MoggerSummary | null)
+const isHidden = atom({ plugin: 'mogger', key: 'isHidden' } as const, false)
+const sinceAtom = atom({ plugin: 'mogger', key: 'since' } as const, 0)
 
 const QUIET_MS = 60_000
 const POLL_MS = 2000
