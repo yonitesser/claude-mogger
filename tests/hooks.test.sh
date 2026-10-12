@@ -210,6 +210,10 @@ expect 0 scope-guard.sh "$(file_json Edit src/api/users.ts)"                    
 expect 2 scope-guard.sh "$(file_json Edit src/web/users.ts)"                    "blocks file outside declared directory prefix"
 printf '# T\n\n- [ ] 2. no scope declared — done when: y\n' > TASKS.md
 expect 0 scope-guard.sh "$(file_json Edit src/anything.ts)"                     "fails open when task declares no files:"
+printf '# T\n\n- [ ] 1. a — files: src/a.ts — done when: x\n- [ ] 2. b — files: src/b.ts — done when: y\n' > TASKS.md
+expect 2 scope-guard.sh "$(file_json Edit src/b.ts)"                            "second open task's file blocked by default"
+MOGGER_SCOPE_PARALLEL=on expect 0 scope-guard.sh "$(file_json Edit src/b.ts)"   "MOGGER_SCOPE_PARALLEL=on allows second open task's file"
+MOGGER_SCOPE_PARALLEL=on expect 2 scope-guard.sh "$(file_json Edit src/c.ts)"   "parallel mode still blocks undeclared file"
 printf '# T\n\n- [x] 1. all done — files: src/a.ts — done when: x\n' > TASKS.md
 expect 0 scope-guard.sh "$(file_json Edit src/anything.ts)"                     "fails open when no unchecked tasks remain"
 rm -f TASKS.md
