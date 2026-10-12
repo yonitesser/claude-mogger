@@ -143,6 +143,7 @@ or a file you can open. Nothing is "the model promises."
 
 | Need | What it is | Enforced by |
 |---|---|---|
+| **Turn guards on or off** | `.claude/mogger.json` holds the switches (`{"danger-guard": "off"}`). Skill `mogger-config` lists every guard with what ON and OFF do and flips them; safety guards warn first. Env vars `MOGGER_*` still work and win. List: `hooks/guards.tsv` | skill + script |
 | **Undo anything** | `checkpoint.sh` snapshots your work before edits (non-destructive git refs). `scripts/mogger-rewind.sh list/show/restore` — restore snapshots first, so undo is undoable. Skill: `mogger-rewind` | hook |
 | **No leaked secrets** | `secret-guard.sh` blocks keys/tokens/`.env` writes; `secret-guard-bash.sh` blocks `git add .env` and commits with secrets staged | hook (exit 2) |
 | **No invented packages** | `verify-packages.sh` checks every `npm/pip/cargo/go` install name exists on the real registry. Fails open offline | hook (exit 2 on 404) |

@@ -84,3 +84,35 @@ fl_recognised() {
   return 1
 }
 
+
+# Toggles from .claude/mogger.json: {"danger-guard": "off", ...}. Names and the
+# MOGGER_* variable each one maps to are in hooks/guards.tsv. A variable that
+# is already set wins over the file. Fail-open: a missing, bad or unreadable
+# file changes nothing. Runs when a hook sources this file.
+_mogger_load_config() {
+  local f="${CLAUDE_PROJECT_DIR:-.}/.claude/mogger.json" cat pairs name val n e kind onv rest
+  cat="$(dirname "${BASH_SOURCE[0]}")/../guards.tsv"
+  [ -f "$f" ] && [ -f "$cat" ] || return 0
+  if command -v jq >/dev/null 2>&1; then
+    pairs=$(jq -r 'to_entries[] | select(.value|type=="string") | "\(.key)\t\(.value)"' "$f" 2>/dev/null) || return 0
+  elif command -v python3 >/dev/null 2>&1; then
+    pairs=$(python3 -I -c 'import json,sys
+for k,v in json.load(open(sys.argv[1])).items():
+    if isinstance(v,str): print(k+"\t"+v)' "$f" 2>/dev/null) || return 0
+  else
+    return 0
+  fi
+  while IFS=$'\t' read -r name val; do
+    [ -n "$name" ] || continue
+    while IFS=$'\t' read -r n e kind onv rest; do
+      [ "$n" = "$name" ] || continue
+      [ -z "${!e+x}" ] || continue
+      case "$val" in
+        off) export "$e=off" ;;
+        on) export "$e=$onv" ;;
+      esac
+    done < <(grep -v '^#' "$cat")
+  done <<<"$pairs"
+  return 0
+}
+_mogger_load_config

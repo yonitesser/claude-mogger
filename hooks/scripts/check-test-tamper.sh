@@ -12,9 +12,9 @@
 # and non-tests => silent.
 # Escape hatch: MOGGER_CHECK_TAMPER=off.
 
+source "$(dirname "$0")/lib.sh"
 [ "${MOGGER_CHECK_TAMPER:-on}" = "off" ] && exit 0
 MOGGER_TQ_SOURCE_ONLY=1 source "$(dirname "$0")/check-test-quality.sh" 2>/dev/null
-source "$(dirname "$0")/lib.sh"
 
 INPUT=$(cat)
 FP=$(json_get "$INPUT" '.tool_input.file_path')

@@ -198,6 +198,24 @@
     "Change the footer text to say 2026."
    ]
   },
+  "mogger-config": {
+     "should": [
+        "Turn off the danger guard.",
+        "What mogger guards are on?",
+        "Disable the file size block.",
+        "Enable the smoke gate.",
+        "Show me the mogger toggles.",
+        "Switch off the hint hook."
+     ],
+     "should_not": [
+        "Turn off the lights in the demo scene of my game.",
+        "What is a guard clause in Python?",
+        "Disable the submit button while the form loads.",
+        "How do I enable dark mode in my editor?",
+        "Explain what a git hook is.",
+        "Turn off the Claude Code status line."
+     ]
+  },
   "mogger-rewind": {
    "should": [
     "Undo that.",

@@ -6,9 +6,9 @@
 #  - log every code/test edit to .claude/state/edits.log (stop-tests-added.sh
 #    reads it at the end of the turn)
 # Always exits 0; fails open on anything odd. Escape hatch: MOGGER_TRACK_EDITS=off
+source "$(dirname "$0")/lib.sh"
 [ "${MOGGER_TRACK_EDITS:-on}" = "off" ] && exit 0
 MOGGER_TQ_SOURCE_ONLY=1 source "$(dirname "$0")/check-test-quality.sh" 2>/dev/null
-source "$(dirname "$0")/lib.sh"
 
 INPUT=$(cat)
 FP=$(json_get "$INPUT" '.tool_input.file_path')
