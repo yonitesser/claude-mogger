@@ -583,6 +583,10 @@ PY
 nx=$(for f in "$ROOT"/hooks/scripts/*.sh "$ROOT"/scripts/*.sh "$ROOT"/scripts/checks/*.sh; do [ -x "$f" ] || echo "$f"; done)
 [ -z "$nx" ] && ok "all shell scripts are executable" || { bad "scripts not executable: $nx"; }
 
+for k in $(grep -oE "plugin: 'mogger', key: '[a-zA-Z]+'" "$ROOT/mods/mogger-status/hooks/register.tsx" | grep -oE "'[a-zA-Z]+'$" | tr -d "'"); do
+  grep -qE "^[[:space:]]+$k:" "$ROOT/mods/mogger-status/types/index.d.ts" && ok "mod state key declared in types: $k" || bad "mod state key not declared in types: $k"
+done
+
 echo
 echo "passed: $PASS  failed: $FAIL"
 [ "$FAIL" -eq 0 ]

@@ -28,6 +28,7 @@ hint-noisy-bash	MOGGER_HINT	standard	on	on	Hints to pipe test and build output t
 config-notice	MOGGER_CONFIG_NOTICE	standard	on	on	Tells you once when a repo ships Claude settings, hooks or .mcp.json.	No notice when a repo ships config that runs commands.
 handoff-note	MOGGER_HANDOFF	standard	on	on	Writes a handoff note before context is compacted.	No handoff note on compaction.
 track-edits	MOGGER_TRACK_EDITS	standard	on	on	Records edits and a test baseline. test-tamper and tests-added need this.	No edit log. test-tamper and tests-added lose their data.
+voice	MOGGER_VOICE	standard	on	on	mogger talks in its own dry voice: a few fixed lines ("Not on my watch.", "Mogged.") and a livelier status bar. Warnings and errors stay exact.	Plain voice. Same checks, same messages, no catchphrases.
 smoke-gate	MOGGER_REQUIRE_SMOKE	optin	on	off	Blocks "done" on UI or server tasks until the app has been started and checked.	Claude may say "done" without starting the app.
 gate-all-tasks	MOGGER_GATE_ALL_TASKS	optin	on	off	Test and smoke gates apply to every task, not only when a TASKS.md exists.	Gates apply only on tracked tasks.
 scope-parallel	MOGGER_SCOPE_PARALLEL	optin	on	off	Scope guard allows files from every open task. Use for parallel tasks.	Scope guard allows only the current task's files.

@@ -30,9 +30,22 @@ export function chadRows(mood: ChadMood, frame: number): ChadRow[] {
   ]
 }
 
-export function headline(mood: ChadMood, fired: number, blocked: number): string {
+// voice=true: the chad's own lines (mogger's voice, see the "voice" toggle).
+// voice=false: the plain wording. Same facts either way.
+export function headline(mood: ChadMood, fired: number, blocked: number, voice = false): string {
+  if (voice) {
+    if (mood === 'block') return 'not on my watch'
+    if (mood === 'warn') return 'eyes on this'
+    if (mood === 'ok') return 'handled'
+    return fired === 0 ? 'mogger: watching. always.' : `mogger: watching. ${blocked} stopped, ${fired - blocked} noted`
+  }
   if (mood === 'block') return 'mogger just stopped something'
   if (mood === 'warn') return 'mogger flagged something'
   if (mood === 'ok') return 'mogger is on it'
   return fired === 0 ? 'mogger is watching' : `mogger is watching: ${fired} checks, ${blocked} blocked`
+}
+
+// toast text for a new block
+export function toastText(msg: string, voice = false): string {
+  return voice ? `Not on my watch: ${msg}` : `mogger ${msg}`
 }

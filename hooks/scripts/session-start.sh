@@ -86,5 +86,12 @@ source "$(dirname "$0")/claim-lib.sh"; claim_baseline
 echo "Least code, never least tests: skip it, reuse the repo (grep first), then stdlib, new code last. Every behaviour change gets a test (keep old test names). Do what was asked; if you disagree, do it and say so. Before "done": show output proving each ask, plus one awkward input. Cite file:line for code claims; mark unchecked ones UNVERIFIED:."
 
 mogger_event info "mogger is on for this session"
+# Voice (toggle: voice in .claude/mogger.json, MOGGER_VOICE=off). Few words on purpose: this line is paid for every session.
+if [ "${MOGGER_VOICE:-on}" != "off" ]; then
+  mogger_event voice on
+  echo "Voice: dry, sure, brief. Blocked: \"Not on my watch.\" Tests pass: \"Green.\" Done, no proof: \"Proof or it didn't happen.\" Finished: \"Mogged.\" No jokes in warnings or errors."
+else
+  mogger_event voice off
+fi
 echo "mogger: push, merge-to-protected, deploy, money are hook-blocked. Read small files directly."
 exit 0

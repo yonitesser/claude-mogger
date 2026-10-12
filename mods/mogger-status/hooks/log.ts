@@ -52,3 +52,13 @@ export function ageText(nowMs: number, ts: number): string {
   if (s < 3600) return `${Math.floor(s / 60)}m ago`
   return `${Math.floor(s / 3600)}h ago`
 }
+
+// Session start logs "voice on" or "voice off" (hooks/scripts/session-start.sh).
+// The newest one wins. No line yet: voice is on, the default.
+export function voiceOn(events: MoggerEvent[]): boolean {
+  for (let i = events.length - 1; i >= 0; i--) {
+    const e = events[i] as MoggerEvent
+    if (e.kind === 'voice') return e.msg !== 'off'
+  }
+  return true
+}
