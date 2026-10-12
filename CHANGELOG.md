@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.8.0 — 2026-10-12
+
 **Fixed / changed — from the 2026-10-11 review (report: research/mogger-review-2026-10-11.md)**
 - Plugin install: skills, agents and the fix-loop message now call scripts through `${CLAUDE_PLUGIN_ROOT}`. `bash scripts/...` pointed into the user's project.
 - Fail closed: the seven safety gates carry `"onFailure": "block"` (Claude Code 2.1.295+): a crash, timeout or bad output blocks instead of letting the action through. `tests/failclosed.test.sh` checks every gate exits only 0 or 2.
