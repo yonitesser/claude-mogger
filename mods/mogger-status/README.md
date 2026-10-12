@@ -9,7 +9,7 @@ Shows that mogger is running and helping. It adds three things to the Claude Cod
 
 ## Voice
 
-By default the headline and toasts speak in mogger's voice ("not on my watch", "mogger: watching. always."). Same facts, other words. Session start logs `voice on` or `voice off` in the event log, and the mod follows the newest one. To turn it off: `{"voice": "off"}` in `.claude/mogger.json`, or `MOGGER_VOICE=off`.
+By default the headline and toasts add a smug one-liner per moment ("Not on my watch.", "Green. Obviously.", "Proof or it did not happen."). Each moment has a pool of 8-10 lines (`QUIPS` in `hooks/chad.ts`). The pick is a rotation by event count: no model calls, no repeat back to back. The facts stay in the text next to the quip. Session start logs `voice on` or `voice off` in the event log, and the mod follows the newest one. To turn it off: `{"voice": "off"}` in `.claude/mogger.json`, or `MOGGER_VOICE=off`.
 
 ## How it works
 

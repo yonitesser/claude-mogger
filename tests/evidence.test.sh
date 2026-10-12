@@ -18,6 +18,11 @@ echo "== recorder"
 post "npm test"; [ "$(ev)" = pass ] && ok "npm test exit 0 -> pass" || bad "pass not recorded"
 fail "pytest -q" 1; [ "$(ev)" = fail ] && ok "pytest exit 1 -> fail" || bad "fail not recorded"
 post "npm test | tail" "2 failed, 3 passed"; [ "$(ev)" = fail ] && ok "piped run with '2 failed' -> fail" || bad "piped failure missed"
+# the status-bar mod's "pass" moment: logged on a pass only
+rm -f .claude/state/mogger-events.log; post "npm test"
+grep -q "$(printf 'ok\ttests passed')" .claude/state/mogger-events.log && ok "a passing run logs 'tests passed'" || bad "pass event missing"
+rm -f .claude/state/mogger-events.log; fail "pytest -q" 1
+[ -f .claude/state/mogger-events.log ] && bad "failing run logged a pass" || ok "a failing run logs no pass event"
 post "npm test"; rm .claude/state/test-evidence.json
 post "npm run lint"; [ -f .claude/state/test-evidence.json ] && bad "lint wrote evidence" || ok "lint alone is not recorded"
 post "echo npm test"; [ -f .claude/state/test-evidence.json ] && bad "echo wrote evidence" || ok "echo is not a run"

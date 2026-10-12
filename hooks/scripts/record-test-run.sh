@@ -63,4 +63,5 @@ CMDJ=$(printf '%s' "$CMD" | tr '\n\t\r' '   ' | cut -c1-200 | sed 's/\\/\\\\/g; 
 printf '{"status":"%s","exit_code":"%s","command":"%s","timestamp":"%s","recorded_by":"record-test-run.sh"}\n' \
   "$STATUS" "$CODE" "$CMDJ" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$DIR/test-evidence.json.$$" 2>/dev/null \
   && mv "$DIR/test-evidence.json.$$" "$DIR/test-evidence.json" 2>/dev/null
+[ "$STATUS" = pass ] && mogger_event ok "tests passed"   # the status bar mod's "pass" moment
 exit 0

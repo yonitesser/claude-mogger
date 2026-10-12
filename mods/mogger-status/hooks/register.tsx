@@ -40,7 +40,7 @@ async function refresh($: EngineInterface): Promise<void> {
   await update($, voiceAtom, () => voice)
   if (seenTs >= 0) {
     for (const b of newBlocks(events, seenTs)) {
-      $.ui.toast(toastText(b.msg, voice))
+      $.ui.toast(toastText(b.msg, voice, b.ts))
     }
   }
   seenTs = newestTs(events)
@@ -88,6 +88,7 @@ export const register: Register = on => {
     const voice = await read($, voiceAtom)
     const mood = moodOf(last?.kind, last ? now - last.ts * 1000 : Infinity)
     const rows = chadRows(mood, frame)
+    const seed = mood === 'idle' ? Math.floor((await read($, sinceAtom)) / 1000) : s.fired
 
     return (
       <Box>
@@ -100,7 +101,7 @@ export const register: Register = on => {
         </Box>
         <Box flexDirection="column">
           <Text bold color={ORANGE}>
-            {headline(mood, s.fired, s.blocked, voice)}
+            {headline(mood, s.fired, s.blocked, voice, last ?? undefined, seed)}
           </Text>
           <Text dimColor={isQuiet} color={isQuiet ? undefined : color}>
             {line}{' '}
