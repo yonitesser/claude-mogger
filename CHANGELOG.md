@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Voice: mogger has its own dry, short voice. `session-start.sh` adds one line (171 characters, about 43 tokens, once per session) with four fixed lines: "Not on my watch." (blocked), "Green." (tests pass), "Proof or it didn't happen." (done with no proof), "Mogged." (finished). Block reasons, warnings and errors are not changed and stay exact. The `mogger-status` mod uses the voice in its headline and toasts ("not on my watch", "mogger: watching. always."). It costs a little more context, not less; there are no extra model calls. Off: `{"voice": "off"}` in `.claude/mogger.json` (new `voice` row in `hooks/guards.tsv`, shown by `mogger-config`) or `MOGGER_VOICE=off`. The session-start ceiling in `tests/context-budget.test.sh` rises from 1800 to 1980 characters for this line. Tests: `tests/config.test.sh`, `mods/mogger-status/hooks/*.test.ts`.
+
 ## 1.9.0 — 2026-10-12
 
 - Toggle file: `.claude/mogger.json` switches guards on or off, e.g. `{"danger-guard": "off"}`. New skill `mogger-config` (and `scripts/mogger-config.sh list|set|reset`) lists every guard with what ON and OFF do, and flips them. Safety guards ask for a clear yes before they go off. The list lives in `hooks/guards.tsv`. A `MOGGER_*` env var still wins over the file; a broken file changes nothing. Test: `tests/config.test.sh`.

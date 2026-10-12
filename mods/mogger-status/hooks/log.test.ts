@@ -1,6 +1,6 @@
 import { expect, test } from 'claude-code/testing'
 
-import { ageText, newBlocks, newestTs, parseLog, statusText, summarize } from './log'
+import { ageText, newBlocks, newestTs, parseLog, statusText, summarize, voiceOn } from './log'
 
 const LOG = [
   '1700000000\tinfo\tmogger is on for this session',
@@ -43,4 +43,10 @@ test('newBlocks returns only newer blocks', async () => {
 test('ageText is short', async () => {
   expect(ageText(1700000030 * 1000, 1700000000)).toBe('30s ago')
   expect(ageText(1700000300 * 1000, 1700000000)).toBe('5m ago')
+})
+
+test('voiceOn: on by default, newest voice line wins', async () => {
+  expect(voiceOn(parseLog(LOG))).toBe(true)
+  expect(voiceOn(parseLog(LOG + '1700000050\tvoice\toff\n'))).toBe(false)
+  expect(voiceOn(parseLog(LOG + '1700000050\tvoice\toff\n1700000060\tvoice\ton\n'))).toBe(true)
 })

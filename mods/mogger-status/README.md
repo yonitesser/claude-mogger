@@ -7,6 +7,10 @@ Shows that mogger is running and helping. It adds three things to the Claude Cod
 - **Bar above the prompt:** the last thing mogger did, for example `Last: blocked a secret in config.js (12s ago)`. It turns dim after 60 seconds of quiet. It has a Hide button. It is not drawn when there is no log yet.
 - **Toast:** a short pop-up each time mogger blocks something new.
 
+## Voice
+
+By default the headline and toasts speak in mogger's voice ("not on my watch", "mogger: watching. always."). Same facts, other words. Session start logs `voice on` or `voice off` in the event log, and the mod follows the newest one. To turn it off: `{"voice": "off"}` in `.claude/mogger.json`, or `MOGGER_VOICE=off`.
+
 ## How it works
 
 Each mogger guard hook calls `mogger_event` (in `hooks/scripts/lib.sh`). That adds one line to
