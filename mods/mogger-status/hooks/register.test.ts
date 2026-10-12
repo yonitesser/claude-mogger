@@ -14,7 +14,7 @@ test('band shows the last event when the log has lines', async ($, on) => {
   on('fs.read', async () => ({ value: LOG }) as never)
   await $.session.start({ cwd: '/tmp', surface: 'terminal', isInteractive: true } as never)
   const ui = await $.ui.mount({
-    plugin: 'mogger-status',
+    plugin: 'mogger',
     surface: 'terminal',
     component: 'AbovePrompt',
     props: { hasSurvey: false, isWorking: false } as never,
@@ -37,7 +37,7 @@ test('band yields to the engine when there is no log', async ($, on) => {
   let isDrawn = true
   try {
     await $.ui.mount({
-      plugin: 'mogger-status',
+      plugin: 'mogger',
       surface: 'terminal',
       component: 'AbovePrompt',
       props: { hasSurvey: false, isWorking: false } as never,

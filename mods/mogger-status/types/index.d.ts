@@ -7,10 +7,11 @@ export type MoggerSummary = {
 
 declare module 'claude-code' {
   interface PluginState {
-    'mogger-status': {
+    'mogger': {
       summary: MoggerSummary | null
       isHidden: boolean
       since: number
+      frame: number
     }
   }
 }
