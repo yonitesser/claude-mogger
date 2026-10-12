@@ -3,9 +3,10 @@
 # Blocks direct reads of big files. Tells Claude to use the bulk-reader
 # subagent (Haiku) instead. Targeted reads (small files) pass through.
 
-THRESHOLD=350  # lines. Change this number to tune it.
+THRESHOLD="${MOGGER_READ_LINES:-350}"  # lines. Off: MOGGER_READ_GUARD=off. Tune: MOGGER_READ_LINES.
 
 source "$(dirname "$0")/lib.sh"
+[ "${MOGGER_READ_GUARD:-on}" = "off" ] && exit 0
 INPUT=$(cat)
 FILE_PATH=$(json_get "$INPUT" '.tool_input.file_path')
 

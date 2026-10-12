@@ -14,6 +14,8 @@
 #   - no unchecked tasks
 #   - the current task has no "files:" field
 #   - MOGGER_SCOPE_GUARD=off
+# Parallel tasks: MOGGER_SCOPE_PARALLEL=on allows files from ANY unchecked
+# task that declares files:, not only the first one.
 source "$(dirname "$0")/lib.sh"
 
 [ "${MOGGER_SCOPE_GUARD:-on}" = "off" ] && exit 0
@@ -23,12 +25,16 @@ FILE=$(json_get "$INPUT" '.tool_input.file_path')
 [ -z "$FILE" ] && exit 0
 [ -f TASKS.md ] || exit 0
 
-# First unchecked task line
+# First unchecked task line (all unchecked lines when running tasks in parallel)
 TASK_LINE=$(grep -m1 '^\s*- \[ \]' TASKS.md 2>/dev/null)
 [ -z "$TASK_LINE" ] && exit 0
 
 # Extract the files: field — everything between "files:" and the next " — " or EOL
-SCOPE=$(printf '%s' "$TASK_LINE" | sed -n 's/.*files:[[:space:]]*\([^—]*\).*/\1/p')
+if [ "${MOGGER_SCOPE_PARALLEL:-off}" = "on" ]; then
+  SCOPE=$(grep '^\s*- \[ \]' TASKS.md | sed -n 's/.*files:[[:space:]]*\([^—]*\).*/\1/p' | paste -sd, -)
+else
+  SCOPE=$(printf '%s' "$TASK_LINE" | sed -n 's/.*files:[[:space:]]*\([^—]*\).*/\1/p')
+fi
 [ -z "$SCOPE" ] && exit 0   # task declares no scope — nothing to enforce
 
 # Always-allowed paths: the kit's own bookkeeping and test scaffolding

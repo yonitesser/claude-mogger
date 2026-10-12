@@ -3,9 +3,10 @@
 # Catches attempts to dodge the Read hook by using cat/head/tail/less/more
 # on a big file from the shell instead.
 
-THRESHOLD=350
+THRESHOLD="${MOGGER_READ_LINES:-350}"  # Off: MOGGER_READ_GUARD=off
 
 source "$(dirname "$0")/lib.sh"
+[ "${MOGGER_READ_GUARD:-on}" = "off" ] && exit 0
 INPUT=$(cat)
 CMD=$(json_get "$INPUT" '.tool_input.command')
 

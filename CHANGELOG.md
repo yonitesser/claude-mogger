@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Hooks that watch subagent spawns now match `Task|Agent` (Claude Code renamed the tool to Agent in 2.1.63; the docs only promise the old name works in settings, not in hook matchers).
+- `MOGGER_READ_GUARD=off` and `MOGGER_READ_LINES` for the big-file read hooks.
+- `MOGGER_SCOPE_PARALLEL=on`: scope-guard allows files from every open task.
+- Icon and banner images shrunk (1.8 MB to 0.26 MB).
+
 ## 1.8.0 — 2026-10-12
 
 **Fixed / changed — from the 2026-10-11 review (report: research/mogger-review-2026-10-11.md)**
