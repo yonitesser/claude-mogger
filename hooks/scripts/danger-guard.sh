@@ -6,16 +6,23 @@
 # permission checks off, and destructive SQL (DROP, TRUNCATE, DELETE with no WHERE).
 # Plain text matching, so it can be bypassed on purpose; it is a seat belt
 # against mistakes, not a sandbox. Fails open on bad input.
-# Escape hatch: MOGGER_DANGER_GUARD=off.
+# States (MOGGER_DANGER_GUARD): on = block (default), ask = permission prompt for
+# the human, off = allow. Where no prompt can be shown, ask blocks.
 
 source "$(dirname "$0")/lib.sh"
-[ "${MOGGER_DANGER_GUARD:-on}" = "off" ] && exit 0
+STATE=$(mogger_state MOGGER_DANGER_GUARD on)
+[ "$STATE" = "off" ] && exit 0
 
 INPUT=$(cat)
 CMD=$(json_get "$INPUT" '.tool_input.command')
 [ -z "$CMD" ] && exit 0
 
 block() {  # block <short event text> <what was found>
+  if [ "$STATE" = ask ] && mogger_can_ask "$INPUT"; then
+    mogger_event warn "asked before: $1"
+    mogger_ask_json "Mogger: $2. This can destroy data or the machine. Approve only if you want it to run."
+    exit 0
+  fi
   mogger_event block "$1"
   echo "BLOCKED: $2. This can destroy data or the machine. Ask the human to run it, or to set MOGGER_DANGER_GUARD=off." >&2
   exit 2

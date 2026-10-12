@@ -6,11 +6,13 @@
 # Also blocks dumping every environment variable and echoing secret-named ones.
 # Text matching, so it can be bypassed on purpose; a seat belt, not a sandbox.
 # Allowed: .env.example/.sample/.template/.dist, public keys (*.pub), ls/chmod.
-# Escape hatch: MOGGER_SECRET_READ=off.
+# States (MOGGER_SECRET_READ): on = block (default), ask = permission prompt for
+# the human, off = allow. Where no prompt can be shown, ask blocks.
 
 source "$(dirname "$0")/lib.sh"
 set -f   # no filename expansion while splitting words
-[ "${MOGGER_SECRET_READ:-on}" = "off" ] && exit 0
+STATE=$(mogger_state MOGGER_SECRET_READ on)
+[ "$STATE" = "off" ] && exit 0
 
 INPUT=$(cat)
 
@@ -26,6 +28,11 @@ is_sens() {  # is_sens <path-like text>
 }
 
 block() {  # block <what>
+  if [ "$STATE" = ask ] && mogger_can_ask "$INPUT"; then
+    mogger_event warn "asked before a read of a secret file"
+    mogger_ask_json "Mogger: reading $1 would copy a secret into the chat. Approve only if you want Claude to see it."
+    exit 0
+  fi
   mogger_event block "blocked a read of a secret file"
   echo "BLOCKED: reading '$1' would copy a secret into the chat. Ask the human to check it, or to paste only the part you need. (Human override: MOGGER_SECRET_READ=off.)" >&2
   exit 2

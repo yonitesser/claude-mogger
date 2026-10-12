@@ -13,7 +13,7 @@ unset MOGGER_DANGER_GUARD MOGGER_HINT
 DANGER='{"tool_name":"Bash","tool_input":{"command":"git reset --hard"}}'
 
 # every catalog row: env var is really read by a hook, kind and texts present
-while IFS=$'\t' read -r n e kind onv dflt on_t off_t; do
+while IFS=$'\t' read -r n e kind onv dflt on_t off_t states ask_t; do
   grep -q "$e" "$H"/*.sh || bad "$n: $e not read by any hook"
   case "$kind" in safety|standard|optin) ;; *) bad "$n: bad kind" ;; esac
   [ -n "$on_t" ] && [ -n "$off_t" ] || bad "$n: missing ON/OFF text"

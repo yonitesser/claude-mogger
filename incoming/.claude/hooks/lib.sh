@@ -85,12 +85,13 @@ fl_recognised() {
 }
 
 
-# Toggles from .claude/mogger.json: {"danger-guard": "off", ...}. Names and the
-# MOGGER_* variable each one maps to are in hooks/guards.tsv. A variable that
-# is already set wins over the file. Fail-open: a missing, bad or unreadable
-# file changes nothing. Runs when a hook sources this file.
+# Toggles from .claude/mogger.json: {"danger-guard": "off", "push-guard": "ask", ...}.
+# Names, the MOGGER_* variable each one maps to and the states it allows
+# (on, ask, off) are in hooks/guards.tsv. A variable that is already set wins
+# over the file. A missing, bad, unreadable or not-allowed value changes nothing,
+# so the guard keeps its default. Runs when a hook sources this file.
 _mogger_load_config() {
-  local f="${CLAUDE_PROJECT_DIR:-.}/.claude/mogger.json" cat pairs name val n e kind onv rest
+  local f="${CLAUDE_PROJECT_DIR:-.}/.claude/mogger.json" cat pairs name val n e kind onv dflt on_t off_t states rest
   cat="$(dirname "${BASH_SOURCE[0]}")/../guards.tsv"
   [ -f "$f" ] && [ -f "$cat" ] || return 0
   if command -v jq >/dev/null 2>&1; then
@@ -104,11 +105,13 @@ for k,v in json.load(open(sys.argv[1])).items():
   fi
   while IFS=$'\t' read -r name val; do
     [ -n "$name" ] || continue
-    while IFS=$'\t' read -r n e kind onv rest; do
+    while IFS=$'\t' read -r n e kind onv dflt on_t off_t states rest; do
       [ "$n" = "$name" ] || continue
       [ -z "${!e+x}" ] || continue
+      case ",${states:-on,off}," in *",$val,"*) ;; *) continue ;; esac
       case "$val" in
         off) export "$e=off" ;;
+        ask) export "$e=ask" ;;
         on) export "$e=$onv" ;;
       esac
     done < <(grep -v '^#' "$cat")
@@ -116,3 +119,39 @@ for k,v in json.load(open(sys.argv[1])).items():
   return 0
 }
 _mogger_load_config
+
+# --- the third state: "ask" -------------------------------------------------
+# A guard that can ask has three states: on (block), ask (the human gets a
+# permission prompt and decides), off (allow). The agent cannot answer the
+# prompt itself. Where no prompt can be shown, ask falls back to block.
+
+# mogger_state <ENV_VAR> <default> -> prints on | ask | off.
+# Anything else (a typo, "maybe") gives the default.
+mogger_state() {
+  case "${!1:-}" in
+    off) echo off ;;
+    ask) echo ask ;;
+    on) echo on ;;
+    *) echo "$2" ;;
+  esac
+}
+
+# mogger_can_ask <hook input json>: can a human answer a prompt here?
+# No when permission checks are off or automatic (bypassPermissions, dontAsk,
+# auto), in headless/SDK runs, or when MOGGER_HEADLESS=on says so. A prompt
+# the harness cannot show is auto-allowed or auto-denied; either way the human
+# did not decide, so the hook blocks instead.
+mogger_can_ask() {
+  [ "${MOGGER_HEADLESS:-off}" = "on" ] && return 1
+  case "${CLAUDE_CODE_ENTRYPOINT:-}" in sdk-*) return 1 ;; esac
+  case "$(json_get "$1" '.permission_mode')" in bypassPermissions|dontAsk|auto) return 1 ;; esac
+  return 0
+}
+
+# mogger_ask_json <reason>: the permission "ask" answer for a PreToolUse hook.
+# Quotes, backslashes and control characters are dropped from the reason.
+mogger_ask_json() {
+  local r
+  r=$(printf '%s' "$1" | tr -d '"\\' | tr '\n\t\r' '   ')
+  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"%s"}}\n' "$r"
+}
