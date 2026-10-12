@@ -158,8 +158,8 @@ unset CLAUDE_PROJECT_DIR
 echo "== packaging"
 expect "precompact-save.sh syntax" bash -n "$H/precompact-save.sh"
 expect "handoff-context.sh syntax" bash -n "$H/handoff-context.sh"
-expect "handoff skill has name" has "$ROOT/skills/mogger-handoff/SKILL.md" "name: mogger-handoff"
-expect "handoff skill demands UNVERIFIED label" has "$ROOT/skills/mogger-handoff/SKILL.md" "UNVERIFIED:"
+expect "handoff skill has name" has "$ROOT/skills/handoff/SKILL.md" "name: handoff"
+expect "handoff skill demands UNVERIFIED label" has "$ROOT/skills/handoff/SKILL.md" "UNVERIFIED:"
 expect "HANDOFF template has sections" bash -c "grep -q '## Next steps' '$ROOT/templates/HANDOFF.md' && grep -q '## Gotchas' '$ROOT/templates/HANDOFF.md' && grep -q '## How to run and test' '$ROOT/templates/HANDOFF.md'"
 
 echo "== deploy.sh"

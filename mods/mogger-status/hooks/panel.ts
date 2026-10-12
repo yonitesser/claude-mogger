@@ -19,7 +19,7 @@ export function parseGuards(text: string): GuardRow[] {
 // The next state a press sets, or null when the button must not offer a press:
 //  - an env var wins over the file, so a press would change nothing;
 //  - a safety guard never goes `off` from a button (that needs the warning and the
-//    explicit yes in the mogger-config skill), so it only moves between on and ask.
+//    explicit yes in the mogger:config skill), so it only moves between on and ask.
 export function nextState(g: GuardRow): string | null {
   if (g.source === 'env') return null
   const order = ['on', 'ask', 'off'].filter(s => g.allowed.includes(s) && !(g.kind === 'safety' && s === 'off'))

@@ -371,13 +371,13 @@ expect "0" "$rc" "real plugin repo: exit 0"
 [ $((t1 - t0)) -lt 10 ] && ok "real plugin repo: under 10 seconds ($((t1 - t0))s)" || bad "real plugin repo: too slow ($((t1 - t0))s)"
 badfmt=$(awk -F'|' 'NF < 3 || $1 !~ /^(PASS|WARN|FAIL|SKIP)$/ { n++ } END { print n + 0 }' "$SANDBOX/self.out")
 expect "0" "$badfmt" "real plugin repo: every line is LEVEL|check-id|message"
-[ -f "$ROOT/skills/mogger-evals/SKILL.md" ] && ok "skill mogger-evals exists" || bad "skill mogger-evals exists"
-[ -f "$ROOT/skills/mogger-app-evals/SKILL.md" ] && ok "skill mogger-app-evals exists" || bad "skill mogger-app-evals exists"
+[ -f "$ROOT/skills/evals/SKILL.md" ] && ok "skill mogger:evals exists" || bad "skill mogger:evals exists"
+[ -f "$ROOT/skills/app-evals/SKILL.md" ] && ok "skill mogger:app-evals exists" || bad "skill mogger:app-evals exists"
 sk=$(grep -E 'evals-(trigger|frontmatter|name-match)\|skills/mogger-(app-)?evals' "$SANDBOX/self.out" || true)
 expect_empty "$sk" "new evals skills pass the free check (trigger, frontmatter, name)"
-expect_has "$(cat "$ROOT/skills/mogger-evals/SKILL.md")" "consent --budget" "mogger-evals skill documents consent --budget"
-expect_has "$(cat "$ROOT/skills/mogger-app-evals/SKILL.md")" "/claude-api build-eval" "mogger-app-evals names build-eval"
-expect_has "$(cat "$ROOT/skills/mogger-init/SKILL.md")" "mogger-evals" "mogger-init offers the evals"
+expect_has "$(cat "$ROOT/skills/evals/SKILL.md")" "consent --budget" "mogger:evals skill documents consent --budget"
+expect_has "$(cat "$ROOT/skills/app-evals/SKILL.md")" "/claude-api build-eval" "mogger:app-evals names build-eval"
+expect_has "$(cat "$ROOT/skills/init/SKILL.md")" "mogger:evals" "mogger:init offers the evals"
 
 echo
 echo "evals-ux: $PASS passed, $FAIL failed"

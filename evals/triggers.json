@@ -1,6 +1,6 @@
 {
  "skills": {
-  "mogger-code-health": {
+  "code-health": {
    "should": [
     "My app is getting big and app.py is now 900 lines. Before I add the next feature, what should I watch for?",
     "I am about to change the database schema to add an orders table. Any rules I should follow?",
@@ -18,7 +18,7 @@
     "What time zone does the server log use?"
    ]
   },
-  "mogger-decisions": {
+  "decisions": {
    "should": [
     "Should we use Postgres or SQLite for this project? Pick one and record why.",
     "We just rejected Redux for state. Log that so nobody proposes it again.",
@@ -36,7 +36,7 @@
     "List the files in the src directory."
    ]
   },
-  "mogger-docs": {
+  "docs": {
    "should": [
     "Write the README for this project from what is really in the code.",
     "We added new env vars, please update .env.example.",
@@ -54,7 +54,7 @@
     "Delete the unused import in main.py."
    ]
   },
-  "mogger-edge-cases": {
+  "edge-cases": {
    "should": [
     "Add a signup form with an email field.",
     "It breaks when I submit an empty form. Make it robust.",
@@ -72,7 +72,7 @@
     "Change the button colour to blue."
    ]
   },
-  "mogger-explain": {
+  "explain": {
    "should": [
     "Explain that.",
     "What did you change?",
@@ -90,7 +90,7 @@
     "Explain what a monad is."
    ]
   },
-  "mogger-grounding": {
+  "grounding": {
    "should": [
     "Which library version does this project use for requests? Only say what you can prove.",
     "Before you write the end-of-task report, check every claim you plan to make against the code.",
@@ -108,7 +108,7 @@
     "Convert this list to a set."
    ]
   },
-  "mogger-handoff": {
+  "handoff": {
    "should": [
     "Context is almost full. Write a handoff note for the next session.",
     "I am done for today. Leave notes so I can pick this up tomorrow.",
@@ -126,7 +126,7 @@
     "Write a cover letter for a job application."
    ]
   },
-  "mogger-idea": {
+  "idea": {
    "should": [
     "mogger idea: a habit tracker for teenagers.",
     "Build me an app that helps my sister track her freelance invoices.",
@@ -144,7 +144,7 @@
     "Explain what a spec document is."
    ]
   },
-  "mogger-init": {
+  "init": {
    "should": [
     "Set up mogger in this project.",
     "init mogger",
@@ -162,7 +162,7 @@
     "Set up a pre-commit hook for prettier."
    ]
   },
-  "mogger-loop": {
+  "loop": {
    "should": [
     "Add a password-reset feature to this app.",
     "Fix the bug where the cart total is wrong after removing an item.",
@@ -180,7 +180,7 @@
     "Give me three names for a cat."
    ]
   },
-  "mogger-privacy": {
+  "privacy": {
    "should": [
     "Run the privacy inventory before we share this with real users.",
     "What user data do we keep?",
@@ -198,7 +198,7 @@
     "Change the footer text to say 2026."
    ]
   },
-  "mogger-config": {
+  "config": {
      "should": [
         "Turn off the danger guard.",
         "What mogger guards are on?",
@@ -216,7 +216,7 @@
         "Turn off the Claude Code status line."
      ]
   },
-  "mogger-rewind": {
+  "rewind": {
    "should": [
     "Undo that.",
     "Rewind to before you edited the config file.",
@@ -234,7 +234,7 @@
     "Revert this one line to use single quotes."
    ]
   },
-  "mogger-security": {
+  "security": {
    "should": [
     "Write an API route that lets a user update their profile.",
     "Add login with email and password.",
@@ -252,7 +252,7 @@
     "What is the difference between let and const?"
    ]
   },
-  "mogger-ship-check": {
+  "ship-check": {
    "should": [
     "Is this ready to ship?",
     "All the tasks are done. Run the ship-readiness checklist.",
@@ -270,7 +270,7 @@
     "Bump the patch version."
    ]
   },
-  "mogger-standards": {
+  "standards": {
    "should": [
     "Review this pull request for code quality before merge.",
     "I am about to add a new dependency for date parsing. What is the process?",
@@ -288,7 +288,7 @@
     "Show the git branch name."
    ]
   },
-  "mogger-superpowers-preset": {
+  "superpowers-preset": {
    "should": [
     "I have both mogger and Superpowers installed. How should I combine them?",
     "Should I use Superpowers instead of mogger's own agents?",
@@ -306,7 +306,7 @@
     "Explain what a Claude Code plugin is."
    ]
   },
-  "mogger-verify-run": {
+  "verify-run": {
    "should": [
     "The tests pass. Does the app actually start and respond?",
     "Confirm the server runs before you call this task done.",
@@ -324,7 +324,7 @@
     "Add a health-check endpoint to the server code."
    ]
   },
-  "mogger-evals": {
+  "evals": {
    "should": [
     "Are the cheap Haiku agents actually good enough, or should some run on Sonnet?",
     "Set up mogger evals with a small budget.",
@@ -342,7 +342,7 @@
     "Explain what a benchmark is in general terms."
    ]
   },
-  "mogger-app-evals": {
+  "app-evals": {
    "should": [
     "My app calls the Anthropic SDK. Help me build an eval for my prompts.",
     "Is Haiku enough for my app's classification calls?",

@@ -143,13 +143,13 @@ echo "== files and frontmatter"
 fm() {  # fm <file> <key>: value of key inside first frontmatter block
   awk -v k="$2" 'NR==1 && $0!="---"{exit} NR>1 && $0=="---"{exit} NR>1 && index($0,k":")==1{sub("^"k":[ ]*","");print;exit}' "$1"
 }
-for f in skills/mogger-idea/SKILL.md skills/mogger-decisions/SKILL.md agents/planner.md; do
+for f in skills/idea/SKILL.md skills/decisions/SKILL.md agents/planner.md; do
   [ -f "$ROOT/$f" ] && ok "exists: $f" || bad "exists: $f"
   [ -n "$(fm "$ROOT/$f" name)" ] && ok "frontmatter name: $f" || bad "frontmatter name: $f"
   [ -n "$(fm "$ROOT/$f" description)" ] && ok "frontmatter description: $f" || bad "frontmatter description: $f"
 done
-expect_out "mogger-idea" "$(fm "$ROOT/skills/mogger-idea/SKILL.md" name)" "mogger-idea name matches dir"
-expect_out "mogger-decisions" "$(fm "$ROOT/skills/mogger-decisions/SKILL.md" name)" "mogger-decisions name matches dir"
+expect_out "idea" "$(fm "$ROOT/skills/idea/SKILL.md" name)" "mogger:idea name matches dir"
+expect_out "decisions" "$(fm "$ROOT/skills/decisions/SKILL.md" name)" "mogger:decisions name matches dir"
 for f in templates/SPEC.md templates/DECISIONS.md hooks/scripts/decisions-context.sh hooks/scripts/protect-decisions.sh; do
   [ -f "$ROOT/$f" ] && ok "exists: $f" || bad "exists: $f"
 done
@@ -158,8 +158,8 @@ for sec in "## Goal" "## Users" "## Must have" "## Won't do (this round)" "## Da
 done
 grep -q 'UNVERIFIED:' "$ROOT/templates/SPEC.md" && ok "SPEC template shows UNVERIFIED: label" || bad "SPEC UNVERIFIED label"
 grep -q 'SPEC.md' "$ROOT/agents/planner.md" && grep -q "invent requirements" "$ROOT/agents/planner.md" && ok "planner has SPEC.md section" || bad "planner SPEC section"
-grep -q 'DECISIONS.md' "$ROOT/skills/mogger-init/SKILL.md" && ok "mogger-init lists DECISIONS.md" || bad "mogger-init lists DECISIONS.md"
-grep -qi "cite" "$ROOT/skills/mogger-decisions/SKILL.md" && ok "decisions skill has cite-then-ask rule" || bad "cite rule"
+grep -q 'DECISIONS.md' "$ROOT/skills/init/SKILL.md" && ok "mogger:init lists DECISIONS.md" || bad "mogger:init lists DECISIONS.md"
+grep -qi "cite" "$ROOT/skills/decisions/SKILL.md" && ok "decisions skill has cite-then-ask rule" || bad "cite rule"
 
 grep -q "## Requirements per task" "$ROOT/agents/planner.md" && ok "planner lists R requirements per task" || bad "planner R lines"
 grep -q "unresolved" "$ROOT/agents/reviewer.md" && grep -q "| requirement | verdict | evidence |" "$ROOT/agents/reviewer.md" && ok "reviewer writes check table" || bad "reviewer check table"

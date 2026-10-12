@@ -44,7 +44,7 @@ what was scoped.
 
 ## Grounding
 
-Load the `mogger-grounding` skill. Before you call or import any symbol
+Load the `mogger:grounding` skill. Before you call or import any symbol
 (function, method, flag, config key, endpoint, env var, library API),
 verify it exists: grep/read it in the codebase, or fetch docs via Context7
 for library APIs. Do not write it from memory. Anything you could not

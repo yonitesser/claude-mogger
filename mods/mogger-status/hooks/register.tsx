@@ -53,7 +53,7 @@ async function refresh($: EngineInterface): Promise<void> {
   $.ui.status(statusText(s))
 }
 
-// Guard buttons run the same script the mogger-config skill uses; the mod adds no logic of its own.
+// Guard buttons run the same script the mogger:config skill uses; the mod adds no logic of its own.
 async function loadGuards($: EngineInterface): Promise<void> {
   try {
     const r = await $.process.run(['bash', `${$.plugin.root}/scripts/mogger-config.sh`, 'list'])
@@ -180,7 +180,7 @@ export const register: Register = on => {
         )}
         {panel === 'guards' && (
           <Box flexDirection="column">
-            <Text dimColor>Press a guard to change it (on, ask, off). Safety guards never go off here: use /mogger:mogger-config.</Text>
+            <Text dimColor>Press a guard to change it (on, ask, off). Safety guards never go off here: use /mogger:config.</Text>
             <Box flexWrap="wrap">
               {guards.map(g => {
                 const to = nextState(g)

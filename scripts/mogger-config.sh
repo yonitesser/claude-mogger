@@ -12,7 +12,7 @@ set -u
 ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
 CAT="$ROOT/hooks/guards.tsv"; [ -f "$CAT" ] || CAT="$ROOT/.claude/guards.tsv"
 CFG="${CLAUDE_PROJECT_DIR:-.}/.claude/mogger.json"
-command -v jq >/dev/null 2>&1 || { echo "mogger-config needs jq" >&2; exit 2; }
+command -v jq >/dev/null 2>&1 || { echo "mogger:config needs jq" >&2; exit 2; }
 [ -f "$CAT" ] || { echo "guard list not found: $CAT" >&2; exit 2; }
 rows() { grep -v '^#' "$CAT"; }
 row() { rows | awk -F'\t' -v n="$1" '$1==n'; }

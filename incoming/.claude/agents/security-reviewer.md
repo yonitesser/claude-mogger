@@ -78,6 +78,6 @@ infrastructure config, secrets already in git history).
 
 ## Grounding
 
-Load the `mogger-grounding` skill. No finding without file:line evidence
+Load the `mogger:grounding` skill. No finding without file:line evidence
 from a file you read this session; anything you infer rather than read is
 labelled `UNVERIFIED:`.

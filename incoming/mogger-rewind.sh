@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# mogger-rewind — list / inspect / restore the automatic checkpoints taken by
+# mogger:rewind — list / inspect / restore the automatic checkpoints taken by
 # hooks/scripts/checkpoint.sh (refs/mogger/checkpoints/*).
 #
 #   mogger-rewind.sh list                 newest first: id, date, label
@@ -20,7 +20,7 @@ else
   source "$HERE/.claude/hooks/checkpoint-lib.sh"         # manual-install layout (incoming/)
 fi
 
-die() { echo "mogger-rewind: $*" >&2; exit 1; }
+die() { echo "mogger:rewind: $*" >&2; exit 1; }
 
 git rev-parse --git-dir >/dev/null 2>&1 || die "not inside a git repository — nothing to rewind."
 cd "$(git rev-parse --show-toplevel)" || die "cannot enter repo root"

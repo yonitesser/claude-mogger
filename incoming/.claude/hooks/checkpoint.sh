@@ -4,7 +4,7 @@
 # non-destructive git snapshot of the working tree (tracked + untracked, not
 # ignored) under refs/mogger/checkpoints/<timestamp>. It never touches the
 # working tree, index, or any branch. Restore with scripts/mogger-rewind.sh
-# (see the mogger-rewind skill).
+# (see the mogger:rewind skill).
 #
 # Dedupe: one checkpoint per MOGGER_CHECKPOINT_INTERVAL seconds (default 300),
 # OR immediately when the first open task in TASKS.md changes. Identical trees

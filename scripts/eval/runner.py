@@ -13,7 +13,7 @@ What this relies on (checked against the docs, see mogger-eval.sh header):
   type "tool_use", name, input. A skill invocation is name == "Skill" with
   input.skill (tool list of Claude Code itself; the docs also say "Agent or Skill
   tool call" for parent_tool_use_id). The exact skill-name spelling
-  ("mogger:mogger-explain" vs "mogger-explain") is NOT documented, so both are
+  ("mogger:explain" vs "mogger:explain") is NOT documented, so both are
   accepted by matching the part after the last ":".
 
 Article rule 7 ("leftover state must not leak"): every trial gets a brand new temp

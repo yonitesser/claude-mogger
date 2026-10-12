@@ -108,7 +108,7 @@ MOGGER_PUSH_GUARD=ask run require-approval-mcp.sh "$MCPP"; [ $RC -eq 0 ] && is_a
 MOGGER_PUSH_GUARD=ask run require-approval-mcp.sh '{"tool_name":"mcp__github__push_files","tool_input":{"branch":"main"}}'; [ $RC -eq 2 ] && ok "mcp push_files ask: protected branch blocked" || bad "mcp protected"
 MOGGER_PUSH_GUARD=ask MOGGER_HEADLESS=on run require-approval-mcp.sh "$MCPP"; [ $RC -eq 2 ] && ok "mcp ask headless: blocks" || bad "mcp headless"
 
-# --- mogger-config script
+# --- mogger:config script
 bash "$C" set push-guard ask >/dev/null 2>&1; [ $? -eq 0 ] && ok "set ... ask works, no --confirm needed" || bad "set ask"
 jq -e '."push-guard"=="ask"' "$SB/.claude/mogger.json" >/dev/null && ok "ask saved to .claude/mogger.json" || bad "ask not saved"
 run require-approval.sh "$PUSH"; [ $RC -eq 0 ] && is_ask && ok "file ask reaches the hook" || bad "file ask reach"
