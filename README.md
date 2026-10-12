@@ -235,7 +235,7 @@ your own. Scope enforcement can be turned off with
 
 ## See that mogger is running
 
-Mogger shows a status line (`mogger: N guards fired, M blocked`), a bar above the prompt with the last thing it did, and a toast when it blocks something. On by default (needs a Claude Code version with mods). It only reads `.claude/state/mogger-events.log` and writes nothing. Source: `mods/mogger-status/`.
+Mogger shows a status line (`mogger: N guards fired, M blocked`), a bar above the prompt with the last thing it did, and a toast when it blocks something. On by default (needs a Claude Code version with mods). The mogger chad from the banner sits in the bar and reacts when a guard fires. It only reads `.claude/state/mogger-events.log` and writes nothing. Source: `mods/mogger-status/`.
 
 ## Bundled — no separate install
 

@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- The `mogger-status` mod is now on by default: `hooks/hooks.json` loads it from the main plugin. It shows a status line (`mogger: N guards fired, M blocked`), a bar above the prompt with the last action, and a toast on each block. It only reads `.claude/state/mogger-events.log`. Needs a Claude Code with mods; older versions show nothing and mogger works as before. The separate `mods/mogger-status` plugin manifest is gone; its state key is now `mogger`.
+- The `mogger-status` mod is now on by default: `hooks/hooks.json` loads it from the main plugin. It shows a status line (`mogger: N guards fired, M blocked`), a bar above the prompt with the last action, and a toast on each block. It only reads `.claude/state/mogger-events.log`. Needs a Claude Code with mods; older versions show nothing and mogger works as before. The bar shows the mogger chad from the banner in text; it blinks, and for 4 seconds after a guard fires its chest burst spins and its eyes glow. No model tokens. The separate `mods/mogger-status` plugin manifest is gone; its state key is now `mogger`.
 - Hooks that watch subagent spawns now match `Task|Agent` (Claude Code renamed the tool to Agent in 2.1.63; the docs only promise the old name works in settings, not in hook matchers).
 - `MOGGER_READ_GUARD=off` and `MOGGER_READ_LINES` for the big-file read hooks.
 - `MOGGER_SCOPE_PARALLEL=on`: scope-guard allows files from every open task.

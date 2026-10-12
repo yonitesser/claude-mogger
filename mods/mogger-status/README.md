@@ -3,6 +3,7 @@
 Shows that mogger is running and helping. It adds three things to the Claude Code screen:
 
 - **Status line:** `mogger: N guards fired, M blocked` (counted since the session started).
+- **Mogger chad:** the robot from the banner (orange eyes, orange chest burst), drawn in 3 rows of text at the left of the bar. It stands still and blinks every 6 seconds. When a guard fires, for 4 seconds its chest burst spins and its eyes glow (red on a block, yellow on a warning). Then it stops. It only redraws while it moves.
 - **Bar above the prompt:** the last thing mogger did, for example `Last: blocked a secret in config.js (12s ago)`. It turns dim after 60 seconds of quiet. It has a Hide button. It is not drawn when there is no log yet.
 - **Toast:** a short pop-up each time mogger blocks something new.
 

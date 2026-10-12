@@ -11,6 +11,7 @@ declare module 'claude-code' {
       summary: MoggerSummary | null
       isHidden: boolean
       since: number
+      frame: number
     }
   }
 }
