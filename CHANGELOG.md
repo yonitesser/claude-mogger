@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Plugin audit. Every hook now has a `timeout` (15 to 30 seconds; the Claude Code default is 600), so a stuck script cannot freeze a session. Test: `tests/hygiene.test.sh`.
+- Fix: the big-file Read guard blocked a ranged read (`offset`/`limit`) of a big file, and sent Claude to a subagent for a few lines. A `Read` with `limit` of 350 or less, and `head`/`tail -n N` with N of 350 or less, now pass. Tests: `tests/hooks.test.sh`.
+- Fix: `claude plugin validate --strict` failed on master because the mod state key `mogger.voice` was not declared in `mods/mogger-status/types/index.d.ts` (one line added; a test now checks every state key is declared).
+- Marketplace entry: duplicate `safety` tag removed. `plugin.json` gets `documentationUrl` and `supportUrl` for the directory listing. Fifteen scripts that lacked the executable bit now have it (a test checks all).
 - Voice: mogger has its own dry, short voice. `session-start.sh` adds one line (171 characters, about 43 tokens, once per session) with four fixed lines: "Not on my watch." (blocked), "Green." (tests pass), "Proof or it didn't happen." (done with no proof), "Mogged." (finished). Block reasons, warnings and errors are not changed and stay exact. The `mogger-status` mod uses the voice in its headline and toasts ("not on my watch", "mogger: watching. always."). It costs a little more context, not less; there are no extra model calls. Off: `{"voice": "off"}` in `.claude/mogger.json` (new `voice` row in `hooks/guards.tsv`, shown by `mogger-config`) or `MOGGER_VOICE=off`. The session-start ceiling in `tests/context-budget.test.sh` rises from 1800 to 1980 characters for this line. Tests: `tests/config.test.sh`, `mods/mogger-status/hooks/*.test.ts`.
 
 ## 1.9.0 — 2026-10-12

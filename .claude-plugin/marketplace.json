@@ -18,7 +18,8 @@
         "hooks",
         "safety",
         "subagents",
-        "safety"
+        "approval-gate",
+        "tdd"
       ]
     }
   ]
