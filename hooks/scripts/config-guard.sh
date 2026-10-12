@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # PreToolUse hook — matches: Edit|Write|MultiEdit|Bash
 # Asks the human before Claude changes the files that control Claude itself:
-# .claude/settings.json, .claude/settings.local.json, anything in .claude/hooks/,
-# and .mcp.json. A model that can edit its own guard rails can switch them off.
+# .claude/settings.json, .claude/settings.local.json, .claude/mogger.json (the
+# guard switches; smoke settings live there too and also ask), anything in
+# .claude/hooks/, and .mcp.json. A model that can edit its own guard rails can switch them off.
 # Uses permissionDecision "ask": the human sees a normal permission prompt and
 # can approve a change they asked for. Where no prompt can be shown (headless,
 # bypass or auto mode) it blocks instead, so Claude cannot approve for itself.
@@ -14,7 +15,7 @@ set -f   # no filename expansion while splitting words
 [ "$(mogger_state MOGGER_CONFIG_GUARD ask)" = "off" ] && exit 0
 
 INPUT=$(cat)
-CFG='(^|/)\.claude/(settings(\.local)?\.json|hooks/.+)$|(^|/)\.mcp\.json$'
+CFG='(^|/)\.claude/(settings(\.local)?\.json|mogger\.json|hooks/.+)$|(^|/)\.mcp\.json$'
 
 ask() {  # ask <basename>
   if ! mogger_can_ask "$INPUT"; then
