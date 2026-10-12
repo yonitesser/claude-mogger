@@ -12,6 +12,11 @@
             "type": "command",
             "command": "bash .claude/hooks/config-notice.sh",
             "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/prefs-notice.sh",
+            "timeout": 15
           }
         ]
       }

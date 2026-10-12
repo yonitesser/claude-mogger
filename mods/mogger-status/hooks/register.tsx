@@ -91,12 +91,16 @@ export const register: Register = on => {
     const seed = mood === 'idle' ? Math.floor((await read($, sinceAtom)) / 1000) : s.fired
 
     return (
-      <Box>
+      <Box alignItems="center">
         <Box flexDirection="column" marginRight={2}>
           {rows.map((r, i) => (
-            <Text key={`c${i}`} color={r.color}>
-              {r.text}
-            </Text>
+            <Box key={`c${i}`}>
+              {r.map((s, j) => (
+                <Text key={`c${i}-${j}`} color={s.color} backgroundColor={s.bg}>
+                  {s.text}
+                </Text>
+              ))}
+            </Box>
           ))}
         </Box>
         <Box flexDirection="column">

@@ -21,6 +21,8 @@ test('band shows the last event when the log has lines', async ($, on) => {
   })
   const text = await ui.find({ type: 'Text', text: /formatted app.ts/ })
   expect(text).toBeDefined()
+  // the robot is drawn too: half-block cells in the chad's colours
+  expect(await ui.find({ type: 'Text', text: /[▀▄█]/ })).toBeDefined()
   await ui.unmount()
 })
 
