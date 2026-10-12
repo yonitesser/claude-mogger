@@ -58,9 +58,9 @@ printf '{"smoke-gate":"on"}' > "$SB/.claude/mogger.json"
 
 # voice: a short line at session start, a log event for the mod, exact block text
 unset MOGGER_VOICE; rm -f "$SB/.claude/mogger.json" "$SB/.claude/state/mogger-events.log"
-V=$(cd "$SB" && bash "$H/session-start.sh" 2>/dev/null)
-echo "$V" | grep -q '^Voice: .*Not on my watch' && ok "voice on by default: session line printed" || bad "voice line missing"
-echo "$V" | grep -q 'No jokes in warnings or errors' && ok "voice line keeps warnings exact" || bad "voice exactness rule missing"
+V=$(cd "$SB" && bash "$H/session-start.sh" 2>/dev/null); V_ON=$(echo "$V" | grep '^Voice:')
+echo "$V" | grep -q '^Voice: smug' && ok "voice on by default: session line printed" || bad "voice line missing"
+echo "$V" | grep -q 'No quips in warnings, errors or block reasons' && ok "voice line keeps warnings exact" || bad "voice exactness rule missing"
 grep -q "$(printf 'voice\ton')" "$SB/.claude/state/mogger-events.log" && ok "voice on is logged for the mod" || bad "voice on not logged"
 printf '{"voice":"off"}' > "$SB/.claude/mogger.json"; rm -f "$SB/.claude/state/mogger-events.log"
 V=$(cd "$SB" && bash "$H/session-start.sh" 2>/dev/null)
@@ -70,6 +70,8 @@ rm -f "$SB/.claude/mogger.json"
 V=$(cd "$SB" && MOGGER_VOICE=off bash "$H/session-start.sh" 2>/dev/null)
 echo "$V" | grep -q '^Voice:' && bad "env off ignored" || ok "MOGGER_VOICE=off turns the voice off"
 bash "$C" list | grep -q '^voice | on (default) | standard' && ok "voice listed as a standard toggle" || bad "voice not listed"
+# voice line stays tiny: under 200 characters
+[ "$(echo "$V_ON" | wc -c)" -lt 200 ] && ok "voice line under 200 chars" || bad "voice line too long"
 ERR=$(echo "$DANGER" | bash "$H/danger-guard.sh" 2>&1 >/dev/null)
 echo "$ERR" | grep -q '^BLOCKED: ' && ! echo "$ERR" | grep -qi 'watch\|mogged' && ok "block reasons carry no catchphrase" || bad "block text changed"
 

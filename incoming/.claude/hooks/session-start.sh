@@ -89,7 +89,7 @@ mogger_event info "mogger is on for this session"
 # Voice (toggle: voice in .claude/mogger.json, MOGGER_VOICE=off). Few words on purpose: this line is paid for every session.
 if [ "${MOGGER_VOICE:-on}" != "off" ]; then
   mogger_event voice on
-  echo "Voice: dry, sure, brief. Blocked: \"Not on my watch.\" Tests pass: \"Green.\" Done, no proof: \"Proof or it didn't happen.\" Finished: \"Mogged.\" No jokes in warnings or errors."
+  echo "Voice: smug, dry, clever, never mean. One fresh quip when a task ends or a guard blocks; never repeat one. No quips in warnings, errors or block reasons; clarity first."
 else
   mogger_event voice off
 fi
