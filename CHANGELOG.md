@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.9.1 — 2026-10-12
 
 - Plugin audit. Every hook now has a `timeout` (15 to 30 seconds; the Claude Code default is 600), so a stuck script cannot freeze a session. Test: `tests/hygiene.test.sh`.
 - Fix: the big-file Read guard blocked a ranged read (`offset`/`limit`) of a big file, and sent Claude to a subagent for a few lines. A `Read` with `limit` of 350 or less, and `head`/`tail -n N` with N of 350 or less, now pass. Tests: `tests/hooks.test.sh`.
