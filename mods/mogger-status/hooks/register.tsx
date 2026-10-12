@@ -2,8 +2,8 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register } from 'claude-code'
 
 import type { MoggerSummary } from '../types'
-import { ORANGE, TICK_MS, chadRows, headline, moodOf, toastText } from './chad'
-import { DEFAULT_BAR, nextState, parseGuards, readBar } from './panel'
+import { ORANGE, TICK_MS, chadRows, chadSvg, headline, moodOf, toastText } from './chad'
+import { DEFAULT_BAR, isPickable, parseCatalog, parseConfig, readBar, rowOf, withPick } from './panel'
 import type { BarOptions, GuardRow } from './panel'
 import { LOG_PATH, ageText, newBlocks, newestTs, parseLog, statusText, summarize, voiceOn } from './log'
 
@@ -14,15 +14,22 @@ const sinceAtom = atom({ plugin: 'mogger', key: 'since' } as const, 0)
 const voiceAtom = atom({ plugin: 'mogger', key: 'voice' } as const, true)
 const panelAtom = atom({ plugin: 'mogger', key: 'panel' } as const, 'none' as 'none' | 'guards' | 'bar')
 const guardsAtom = atom({ plugin: 'mogger', key: 'guards' } as const, [] as GuardRow[])
+const noteAtom = atom({ plugin: 'mogger', key: 'note' } as const, '')
 const barAtom = atom({ plugin: 'mogger', key: 'bar' } as const, DEFAULT_BAR as BarOptions)
 const frameAtom = atom({ plugin: 'mogger', key: 'frame' } as const, 0)
+const minuteAtom = atom({ plugin: 'mogger', key: 'minute' } as const, 0)
 
 const QUIET_MS = 60_000
 const POLL_MS = 2000
+const CONFIG_PATH = '.claude/mogger.json'
 
 // newest event time already seen (seconds); -1 until the first read, so
 // old blocks from earlier sessions never toast.
 let seenTs = -1
+// Only the terminal draws the robot as text (half blocks); the desktop app, the editor and the phone
+// get a picture. A picture does not need to blink, so those surfaces redraw less, and a button press
+// is not lost to a redraw in the middle of the click.
+let isTerminal = true
 
 async function refresh($: EngineInterface): Promise<void> {
   let text = ''
@@ -31,7 +38,7 @@ async function refresh($: EngineInterface): Promise<void> {
   } catch {
     // no log yet: show nothing
     $.ui.status(undefined)
-    await update($, summaryAtom, () => null)
+    if ((await read($, summaryAtom)) !== null) await update($, summaryAtom, () => null)
     return
   }
   const events = parseLog(text)
@@ -42,44 +49,76 @@ async function refresh($: EngineInterface): Promise<void> {
   }
   const s = summarize(events, since)
   const voice = voiceOn(events)
-  await update($, voiceAtom, () => voice)
+  if (voice !== (await read($, voiceAtom))) await update($, voiceAtom, () => voice)
   if (seenTs >= 0) {
     for (const b of newBlocks(events, seenTs)) {
       $.ui.toast(toastText(b.msg, voice, b.ts))
     }
   }
   seenTs = newestTs(events)
-  await update($, summaryAtom, () => s)
+  // write only a changed summary: a redraw every poll could land between a button's press and release
+  if (JSON.stringify(s) !== JSON.stringify(await read($, summaryAtom))) await update($, summaryAtom, () => s)
+  const minute = Math.floor((await $.clock.now()) / 60_000)
+  if (minute !== (await read($, minuteAtom))) await update($, minuteAtom, () => minute) // keeps "(5m ago)" fresh
   $.ui.status(statusText(s))
 }
 
-// Guard buttons run the same script the mogger:config skill uses; the mod adds no logic of its own.
-async function loadGuards($: EngineInterface): Promise<void> {
+// The guard panel reads the catalog and the switch file itself, and writes the same file the mogger:config
+// script writes. No command is run, so it needs no jq and no shell.
+async function readConfig($: EngineInterface): Promise<string | null> {
   try {
-    const r = await $.process.run(['bash', `${$.plugin.root}/scripts/mogger-config.sh`, 'list'])
-    await update($, guardsAtom, () => (r.exitCode === 0 ? parseGuards(r.stdout) : []))
+    return await $.fs.read(CONFIG_PATH)
   } catch {
-    await update($, guardsAtom, () => [])
+    return null
   }
 }
 
-async function setGuard($: EngineInterface, g: GuardRow, to: string): Promise<void> {
+async function loadGuards($: EngineInterface): Promise<void> {
   try {
-    const r = await $.process.run(['bash', `${$.plugin.root}/scripts/mogger-config.sh`, 'set', g.name, to])
-    if (r.exitCode !== 0) $.ui.toast(`mogger: could not set ${g.name} to ${to}`)
-  } catch {
-    $.ui.toast(`mogger: could not set ${g.name} to ${to}`)
+    const defs = parseCatalog(await $.fs.read(`${$.plugin.root}/hooks/guards.tsv`))
+    const cfg = parseConfig(await readConfig($))
+    if (cfg === null) {
+      await update($, noteAtom, () => 'The switch file .claude/mogger.json is not valid JSON. Fix it by hand, then open Guards again.')
+      await update($, guardsAtom, () => [])
+      return
+    }
+    await update($, guardsAtom, () => defs.map(d => rowOf(d, cfg)).filter(isPickable))
+    await update($, noteAtom, () => (defs.length === 0 ? 'The guard list is empty.' : ''))
+  } catch (err) {
+    await update($, guardsAtom, () => [])
+    await update($, noteAtom, () => `Could not read the guard list: ${err instanceof Error ? err.message : String(err)}`)
+  }
+}
+
+async function setGuard($: EngineInterface, name: string, to: string): Promise<void> {
+  try {
+    const d = parseCatalog(await $.fs.read(`${$.plugin.root}/hooks/guards.tsv`)).find(x => x.name === name)
+    if (d === undefined) throw new Error(`unknown guard ${name}`)
+    const r = withPick(await readConfig($), d, to)
+    if (!r.ok) {
+      $.ui.toast(`mogger: ${r.reason}`)
+    } else {
+      await $.fs.write(CONFIG_PATH, r.text)
+      $.ui.toast(`mogger: ${name} is now ${to}`)
+    }
+  } catch (err) {
+    $.ui.toast(`mogger: could not set ${name}: ${err instanceof Error ? err.message : String(err)}`)
   }
   await loadGuards($)
 }
 
 async function setBar($: EngineInterface, next: BarOptions): Promise<void> {
   await update($, barAtom, () => next)
-  await $.store.set('mogger.bar', next)
+  try {
+    await $.store.set('mogger.bar', next)
+  } catch {
+    // not stored: the choice holds for this session only
+  }
 }
 
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
+    isTerminal = e.surface === null || e.surface === 'terminal'
     try {
       const saved = await $.store.get('mogger.bar')
       await update($, barAtom, () => readBar(saved))
@@ -94,7 +133,7 @@ export const register: Register = on => {
       const s = await read($, summaryAtom)
       const mood = moodOf(s?.last?.kind, s?.last ? now - s.last.ts * 1000 : Infinity)
       const frame = Math.floor(now / TICK_MS)
-      const want = mood === 'idle' ? (frame % 24 === 0 ? 24 : 1) : frame
+      const want = mood === 'idle' ? (isTerminal && frame % 24 === 0 ? 24 : 1) : frame
       if (want !== (await read($, frameAtom))) await update($, frameAtom, () => want)
     })
     return next(e)
@@ -111,6 +150,11 @@ export const register: Register = on => {
       return next(e)
     }
     const { Box, Button, Text } = $.ui.resolve(e)
+    // Svg is drawn on the remote surfaces (desktop, editor, phone) and Select on all but the phone;
+    // the terminal's table has no Svg and the phone's no Select
+    const table = $.ui.resolve(e) as unknown as Record<string, any>
+    const Svg = e.surface === 'terminal' ? undefined : table.Svg
+    const Select = e.surface === 'mobile' ? undefined : table.Select
     const now = await $.clock.now()
     const last = s.last
     const isQuiet = last === null || now - last.ts * 1000 > QUIET_MS
@@ -129,27 +173,48 @@ export const register: Register = on => {
     const bar = await read($, barAtom)
     const panel = await read($, panelAtom)
     const guards = await read($, guardsAtom)
-    const openPanel = async (to: 'guards' | 'bar') => {
-      const now = await read($, panelAtom)
-      if (now === to) return update($, panelAtom, () => 'none' as const)
+    const note = await read($, noteAtom)
+    const toggle = async (to: 'guards' | 'bar') => {
+      const open = await read($, panelAtom)
+      if (open === to) return update($, panelAtom, () => 'none' as const)
       if (to === 'guards') await loadGuards($)
       return update($, panelAtom, () => to)
     }
+    const onOff = [{ value: 'on' }, { value: 'off' }]
+    // a dropdown where the surface has one; the phone has none, so a button that flips the value
+    const pick = (key: string, label: string, options: { value: string }[], value: string, onPick: (v: string) => unknown) =>
+      Select ? (
+        <Box key={`pick-${key}`} marginRight={2}>
+          <Select key={`sel-${key}`} label={`${label}:`} options={options} value={value} onSelect={(v: string) => onPick(v)} />
+        </Box>
+      ) : (
+        <Box key={`pick-${key}`} marginRight={2}>
+          <Button
+            key={`btn-${key}`}
+            label={`${label}: ${value}`}
+            onPress={() => onPick(options[(options.findIndex(o => o.value === value) + 1) % options.length]?.value ?? value)}
+          />
+        </Box>
+      )
 
     return (
       <Box flexDirection="column">
         <Box alignItems="center">
           {bar.robot && (
             <Box flexDirection="column" marginRight={2}>
-              {rows.map((r, i) => (
-                <Box key={`c${i}`}>
-                  {r.map((s, j) => (
-                    <Text key={`c${i}-${j}`} color={s.color} backgroundColor={s.bg}>
-                      {s.text}
-                    </Text>
-                  ))}
-                </Box>
-              ))}
+              {Svg ? (
+                <Svg source={chadSvg(mood, frame)} alt="mogger, a robot with orange eyes" />
+              ) : (
+                rows.map((r, i) => (
+                  <Box key={`c${i}`}>
+                    {r.map((seg, j) => (
+                      <Text key={`c${i}-${j}`} color={seg.color} backgroundColor={seg.bg}>
+                        {seg.text}
+                      </Text>
+                    ))}
+                  </Box>
+                ))
+              )}
             </Box>
           )}
           <Box flexDirection="column">
@@ -162,34 +227,37 @@ export const register: Register = on => {
               </Text>
             )}
             <Box>
-              <Button key="guards" label="Guards" onPress={() => openPanel('guards')} />
+              <Button key="guards" label={`⚙ Guards ${panel === 'guards' ? '▴' : '▾'}`} variant="primary" onPress={() => toggle('guards')} />
               <Text> </Text>
-              <Button key="bar" label="Bar" onPress={() => openPanel('bar')} />
+              <Button key="bar" label={`◐ Display ${panel === 'bar' ? '▴' : '▾'}`} variant="primary" onPress={() => toggle('bar')} />
               <Text> </Text>
-              <Button key="hide" label="Hide" onPress={() => update($, isHidden, () => true)} />
+              <Button key="hide" label="✕ Hide" onPress={() => update($, isHidden, () => true)} />
             </Box>
           </Box>
         </Box>
         {panel === 'bar' && (
-          <Box>
-            <Text dimColor>Show: </Text>
-            <Button key="opt-robot" label={`robot ${bar.robot ? 'on' : 'off'}`} onPress={() => setBar($, { ...bar, robot: !bar.robot })} />
-            <Text> </Text>
-            <Button key="opt-detail" label={`detail line ${bar.detail ? 'on' : 'off'}`} onPress={() => setBar($, { ...bar, detail: !bar.detail })} />
+          <Box flexDirection="column" marginTop={1}>
+            <Text dimColor>What this bar shows (kept for next time):</Text>
+            <Box flexWrap="wrap">
+              {pick('robot', 'Robot', onOff, bar.robot ? 'on' : 'off', v => setBar($, { ...bar, robot: v === 'on' }))}
+              {pick('detail', 'Detail line', onOff, bar.detail ? 'on' : 'off', v => setBar($, { ...bar, detail: v === 'on' }))}
+            </Box>
           </Box>
         )}
         {panel === 'guards' && (
-          <Box flexDirection="column">
-            <Text dimColor>Press a guard to change it (on, ask, off). Safety guards never go off here: use /mogger:config.</Text>
+          <Box flexDirection="column" marginTop={1}>
+            <Text dimColor>Pick on (block), ask (you decide each time) or off (allow) for each guard. Safety guards can only be on or ask here; to turn one off use /mogger:config. A MOGGER_* variable that is set still wins.</Text>
+            {note !== '' && <Text color="red">{note}</Text>}
             <Box flexWrap="wrap">
-              {guards.map(g => {
-                const to = nextState(g)
-                return to === null ? null : (
-                  <Box key={`g-${g.name}`} marginRight={1}>
-                    <Button key={g.name} label={`${g.name}: ${g.state}`} onPress={() => setGuard($, g, to)} />
-                  </Box>
-                )
-              })}
+              {guards.map(g =>
+                pick(
+                  g.name,
+                  g.name,
+                  g.options.map(value => ({ value })),
+                  g.state,
+                  v => setGuard($, g.name, v),
+                ),
+              )}
             </Box>
           </Box>
         )}

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.11.1 — 2026-10-12
+
+- `mogger-status` fixes from live use on the desktop app. (1) The robot looked broken: half-block text rows get a line gap there. On the desktop, editor and phone it is now one picture (`Svg`); the terminal keeps the text rows. (2) The Guards button showed no toggles: it ran `mogger-config.sh list`, which needs `jq`, and showed nothing when that failed. The panel now reads `hooks/guards.tsv` and the switch file itself (no command, no `jq`), shows one dropdown per guard (on, ask, off; safety guards only on or ask), writes the same file, and says why when it cannot read. A test checks the panel's states against the script's `list` for all 36 guards. (3) Clicks were lost: the bar redrew every 2 seconds and on every blink, which can land between press and release. It now redraws only when something changed (once a minute for the age text), and the desktop robot does not blink. (4) `Bar` is now `Display`, opens with "What this bar shows", with Robot and Detail line dropdowns. Buttons carry an arrow and the main two use the primary style. The mod API has no cursor setting, so the pointer cannot change over a button; that is not fixable from a mod. Tests: `mods/mogger-status/hooks/*.test.ts` (31).
+
 ## 1.11.0 — 2026-10-12
 
 - Shorter skill names. The 20 skills lost the repeated word: `/mogger:mogger-init` is now `/mogger:init`, `mogger:mogger-config` is `mogger:config`, and so on. Folders under `skills/`, the `name:` field, every reference, `evals/triggers.json` and the tests moved with them. Scripts keep their names (`scripts/mogger-config.sh`, `scripts/mogger-rewind.sh`). Anything you saved that calls the old long name needs the short one.

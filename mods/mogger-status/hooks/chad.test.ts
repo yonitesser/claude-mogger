@@ -1,6 +1,6 @@
 import { expect, test } from 'claude-code/testing'
 
-import { QUIPS, chadRows, headline, momentOf, moodOf, quip, toastText } from './chad'
+import { QUIPS, chadRows, chadSvg, headline, momentOf, moodOf, quip, toastText } from './chad'
 import type { Moment } from './chad'
 
 test('chad moves only after a guard fires', () => {
@@ -75,4 +75,15 @@ test('moments: tests passed and false done get their own pools', () => {
 
 test('a quip never replaces or garbles a block reason', () => {
   for (const q of QUIPS.block) expect(q.length < 40).toBe(true)
+})
+
+test('chadSvg draws the same pixels as the text rows, as one picture', () => {
+  const svg = chadSvg('idle', 1)
+  expect(svg.startsWith('<svg')).toBe(true)
+  expect(svg).toContain('viewBox="0 0 15 12"')
+  expect(svg).toContain('#ff7a1a')
+  expect(svg).not.toContain('#555555')
+  expect(chadSvg('idle', 24)).toContain('#555555') // the blink
+  expect(chadSvg('block', 1)).toContain('fill="red"')
+  expect(chadSvg('idle', 1, 10)).toContain('width="150"')
 })

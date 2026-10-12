@@ -1,9 +1,11 @@
 // The mogger chad: a robot (pale head, glowing orange eyes, black armour, orange
 // asterisk on the chest) drawn as pixel art in 6 rows of text. Each text row holds two
 // pixel rows, stacked with half blocks (fg = top pixel, bg = bottom pixel), so the
-// picture is 15 x 12 pixels. Pure helpers: no timers, no engine calls.
+// picture is 15 x 12 pixels. That is for the terminal; the desktop app, the editor and the phone
+// draw each text row with a line gap, so half blocks do not tile there and `chadSvg` draws the
+// same pixels as one picture. Pure helpers: no timers, no engine calls.
 // The band above the prompt may be taller than this (see `maxRows` in the engine
-// types: up to half the terminal in fullscreen); 5 rows is a design choice.
+// types: up to half the terminal in fullscreen); 6 rows is a design choice.
 export type ChadMood = 'idle' | 'block' | 'warn' | 'ok'
 export type ChadSeg = { text: string; color?: string; bg?: string }
 export type ChadRow = ChadSeg[]
@@ -85,6 +87,19 @@ export function chadRows(mood: ChadMood, frame: number): ChadRow[] {
     rows.push(row)
   }
   return rows
+}
+
+// The same picture as one SVG, for the surfaces named above. `px` is the size of one pixel in CSS pixels.
+export function chadSvg(mood: ChadMood, frame: number, px = 6): string {
+  const grid = chadPixels(mood, frame)
+  const w = (grid[0] as (string | null)[]).length
+  const rects: string[] = []
+  grid.forEach((row, y) =>
+    row.forEach((fill, x) => {
+      if (fill !== null) rects.push(`<rect x="${x}" y="${y}" width="1" height="1" fill="${fill}"/>`)
+    }),
+  )
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${grid.length}" width="${w * px}" height="${grid.length * px}" shape-rendering="crispEdges">${rects.join('')}</svg>`
 }
 
 // Voice: pools of smug one-liners per moment. The pick is a plain rotation
