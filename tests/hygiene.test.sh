@@ -566,6 +566,27 @@ grep -q 'privacy.sh' "$ROOT/skills/mogger-privacy/SKILL.md" && ok "privacy skill
 grep -q 'docs-writer' "$ROOT/skills/mogger-docs/SKILL.md" && ok "docs skill dispatches docs-writer" || bad "docs skill dispatch"
 grep -q 'hooks' "$ROOT/hooks/hooks.json" 2>/dev/null && ! grep -q -E 'privacy[.]sh|docs[.]sh|a11y[.]sh|lockin[.]sh' "$ROOT/hooks/hooks.json" && ok "no hooks registered for report-only checks" || bad "hooks.json references checks"
 
+echo "== manifest hygiene: hook timeouts, unique tags, scripts executable"
+python3 - "$ROOT" <<'PY' && ok "every hook has a timeout of 1-60s" || bad "every hook has a timeout of 1-60s"
+import json, sys
+d = json.load(open(sys.argv[1] + "/hooks/hooks.json"))
+bad = [h["command"] for g in d["hooks"].values() for x in g for h in x["hooks"]
+       if not isinstance(h.get("timeout"), int) or not 1 <= h["timeout"] <= 60]
+sys.exit(1 if bad else 0)
+PY
+python3 - "$ROOT" <<'PY' && ok "marketplace tags are unique" || bad "marketplace tags are unique"
+import json, sys
+for p in json.load(open(sys.argv[1] + "/.claude-plugin/marketplace.json"))["plugins"]:
+    t = p.get("tags", [])
+    sys.exit(0 if len(t) == len(set(t)) else 1)
+PY
+nx=$(for f in "$ROOT"/hooks/scripts/*.sh "$ROOT"/scripts/*.sh "$ROOT"/scripts/checks/*.sh; do [ -x "$f" ] || echo "$f"; done)
+[ -z "$nx" ] && ok "all shell scripts are executable" || { bad "scripts not executable: $nx"; }
+
+for k in $(grep -oE "plugin: 'mogger', key: '[a-zA-Z]+'" "$ROOT/mods/mogger-status/hooks/register.tsx" | grep -oE "'[a-zA-Z]+'$" | tr -d "'"); do
+  grep -qE "^[[:space:]]+$k:" "$ROOT/mods/mogger-status/types/index.d.ts" && ok "mod state key declared in types: $k" || bad "mod state key not declared in types: $k"
+done
+
 echo
 echo "passed: $PASS  failed: $FAIL"
 [ "$FAIL" -eq 0 ]

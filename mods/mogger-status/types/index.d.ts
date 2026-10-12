@@ -12,6 +12,7 @@ declare module 'claude-code' {
       isHidden: boolean
       since: number
       frame: number
+      voice: boolean
     }
   }
 }
