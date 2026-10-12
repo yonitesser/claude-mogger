@@ -21,6 +21,8 @@
     "mcp"
   ],
   "icon": ".claude-plugin/icon.png",
+  "documentationUrl": "https://github.com/yonitesser/claude-mogger#readme",
+  "supportUrl": "https://github.com/yonitesser/claude-mogger/issues",
   "privacyPolicyUrl": "https://github.com/yonitesser/claude-mogger/blob/master/PRIVACY.md",
   "types": "./mods/mogger-status/types/index.d.ts"
 }

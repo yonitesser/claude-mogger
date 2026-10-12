@@ -20,6 +20,10 @@ case "$(printf '%s' "${FILE_PATH##*.}" | tr 'A-Z' 'a-z')" in
   png|jpg|jpeg|gif|webp|bmp|ico|heic|pdf) exit 0 ;;
 esac
 
+# A bounded read (limit set and within the threshold) cannot flood context.
+LIMIT=$(json_get "$INPUT" '.tool_input.limit')
+case "$LIMIT" in ''|*[!0-9]*) ;; *) [ "$LIMIT" -le "$THRESHOLD" ] && exit 0 ;; esac
+
 LINES=$(wc -l < "$FILE_PATH" 2>/dev/null || echo 0)
 
 if [ "$LINES" -gt "$THRESHOLD" ]; then

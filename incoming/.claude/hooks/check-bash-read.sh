@@ -15,6 +15,10 @@ if ! echo "$CMD" | grep -qE '^\s*(cat|head|tail|less|more)\s'; then
   exit 0
 fi
 
+# head/tail with a small line count is a bounded read: let it through.
+N=$(echo "$CMD" | sed -nE 's/^[[:space:]]*(head|tail)[[:space:]]+(-n[[:space:]]*|-)([0-9]+)[[:space:]].*/\3/p')
+[ -n "$N" ] && [ "$N" -le "$THRESHOLD" ] && exit 0
+
 # Pull the last whitespace-separated token as the likely file path
 FILE_PATH=$(echo "$CMD" | awk '{print $NF}')
 

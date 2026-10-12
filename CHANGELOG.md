@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Plugin audit. Every hook now has a `timeout` (15 to 30 seconds; the Claude Code default is 600), so a stuck script cannot freeze a session. Test: `tests/hygiene.test.sh`.
+- Fix: the big-file Read guard blocked a ranged read (`offset`/`limit`) of a big file, and sent Claude to a subagent for a few lines. A `Read` with `limit` of 350 or less, and `head`/`tail -n N` with N of 350 or less, now pass. Tests: `tests/hooks.test.sh`.
+- Marketplace entry: duplicate `safety` tag removed. `plugin.json` gets `documentationUrl` and `supportUrl` for the directory listing. Fifteen scripts that lacked the executable bit now have it (a test checks all).
+
 ## 1.9.0 — 2026-10-12
 
 - Toggle file: `.claude/mogger.json` switches guards on or off, e.g. `{"danger-guard": "off"}`. New skill `mogger-config` (and `scripts/mogger-config.sh list|set|reset`) lists every guard with what ON and OFF do, and flips them. Safety guards ask for a clear yes before they go off. The list lives in `hooks/guards.tsv`. A `MOGGER_*` env var still wins over the file; a broken file changes nothing. Test: `tests/config.test.sh`.

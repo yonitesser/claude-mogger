@@ -78,9 +78,15 @@ head -c 20000 /dev/urandom | tr '\000' '\n' > "$SANDBOX/pic.jpg"; cp "$SANDBOX/p
 expect 0 check-file-size.sh "$(file_json Read "$SANDBOX/pic.jpg")"                  "allows big image file"
 expect 0 check-file-size.sh "$(file_json Read "$SANDBOX/doc.PDF")"                  "allows big PDF file"
 
+expect 0 check-file-size.sh "{\"tool_name\":\"Read\",\"tool_input\":{\"file_path\":\"$SANDBOX/big.txt\",\"offset\":10,\"limit\":100}}" "allows ranged read of big file (limit 100)"
+expect 2 check-file-size.sh "{\"tool_name\":\"Read\",\"tool_input\":{\"file_path\":\"$SANDBOX/big.txt\",\"limit\":2000}}" "blocks read of big file with limit over threshold"
+
 echo "== check-bash-read.sh"
 expect 2 check-bash-read.sh "$(bash_cmd "cat $SANDBOX/big.txt")"                "blocks cat on big file"
 expect 0 check-bash-read.sh "$(bash_cmd "cat $SANDBOX/small.txt")"              "allows cat on small file"
+expect 0 check-bash-read.sh "$(bash_cmd "head -n 50 $SANDBOX/big.txt")"          "allows head -n 50 on big file"
+expect 0 check-bash-read.sh "$(bash_cmd "tail -20 $SANDBOX/big.txt")"            "allows tail -20 on big file"
+expect 2 check-bash-read.sh "$(bash_cmd "head -n 900 $SANDBOX/big.txt")"         "blocks head -n 900 on big file"
 expect 0 check-bash-read.sh "$(bash_cmd "ls -la")"                              "ignores non-read commands"
 
 echo "== repeat-call-guard.sh"

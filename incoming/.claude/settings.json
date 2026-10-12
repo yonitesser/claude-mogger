@@ -5,11 +5,13 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/session-start.sh"
+            "command": "bash .claude/hooks/session-start.sh",
+            "timeout": 15
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/config-notice.sh"
+            "command": "bash .claude/hooks/config-notice.sh",
+            "timeout": 15
           }
         ]
       }
@@ -20,7 +22,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/cost-cap.sh"
+            "command": "bash .claude/hooks/cost-cap.sh",
+            "timeout": 15
           }
         ]
       },
@@ -30,33 +33,40 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/require-approval.sh",
-            "onFailure": "block"
+            "onFailure": "block",
+            "timeout": 15
           },
           {
             "type": "command",
             "command": "bash .claude/hooks/danger-guard.sh",
-            "onFailure": "block"
+            "onFailure": "block",
+            "timeout": 15
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/check-bash-read.sh"
+            "command": "bash .claude/hooks/check-bash-read.sh",
+            "timeout": 15
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/hint-noisy-bash.sh"
+            "command": "bash .claude/hooks/hint-noisy-bash.sh",
+            "timeout": 15
           },
           {
             "type": "command",
             "command": "bash .claude/hooks/secret-guard-bash.sh",
-            "onFailure": "block"
+            "onFailure": "block",
+            "timeout": 15
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/verify-packages.sh"
+            "command": "bash .claude/hooks/verify-packages.sh",
+            "timeout": 30
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/taint-guard.sh"
+            "command": "bash .claude/hooks/taint-guard.sh",
+            "timeout": 15
           }
         ]
       },
@@ -66,7 +76,8 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/require-approval-mcp.sh",
-            "onFailure": "block"
+            "onFailure": "block",
+            "timeout": 15
           }
         ]
       },
@@ -76,7 +87,8 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/secret-read-guard.sh",
-            "onFailure": "block"
+            "onFailure": "block",
+            "timeout": 15
           }
         ]
       },
@@ -86,7 +98,8 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/config-guard.sh",
-            "onFailure": "block"
+            "onFailure": "block",
+            "timeout": 15
           }
         ]
       },
@@ -95,7 +108,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/check-file-size.sh"
+            "command": "bash .claude/hooks/check-file-size.sh",
+            "timeout": 15
           }
         ]
       },
@@ -104,29 +118,35 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/checkpoint.sh"
+            "command": "bash .claude/hooks/checkpoint.sh",
+            "timeout": 20
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/track-edits.sh"
+            "command": "bash .claude/hooks/track-edits.sh",
+            "timeout": 15
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/scope-guard.sh"
+            "command": "bash .claude/hooks/scope-guard.sh",
+            "timeout": 15
           },
           {
             "type": "command",
             "command": "bash .claude/hooks/protect-pipeline-files.sh",
-            "onFailure": "block"
+            "onFailure": "block",
+            "timeout": 15
           },
           {
             "type": "command",
             "command": "bash .claude/hooks/secret-guard.sh",
-            "onFailure": "block"
+            "onFailure": "block",
+            "timeout": 15
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/protect-decisions.sh"
+            "command": "bash .claude/hooks/protect-decisions.sh",
+            "timeout": 15
           }
         ]
       },
@@ -135,11 +155,13 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/require-tests-pass.sh"
+            "command": "bash .claude/hooks/require-tests-pass.sh",
+            "timeout": 15
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/require-smoke-pass.sh"
+            "command": "bash .claude/hooks/require-smoke-pass.sh",
+            "timeout": 15
           }
         ]
       }
@@ -150,39 +172,48 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/auto-format.sh"
+            "command": "bash .claude/hooks/auto-format.sh",
+            "timeout": 30
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/check-references.sh"
+            "command": "bash .claude/hooks/check-references.sh",
+            "timeout": 15
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/update-status.sh"
+            "command": "bash .claude/hooks/update-status.sh",
+            "timeout": 20
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/check-test-quality.sh"
+            "command": "bash .claude/hooks/check-test-quality.sh",
+            "timeout": 30
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/check-test-tamper.sh"
+            "command": "bash .claude/hooks/check-test-tamper.sh",
+            "timeout": 15
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/check-risky-code.sh"
+            "command": "bash .claude/hooks/check-risky-code.sh",
+            "timeout": 15
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/check-diy-payments.sh"
+            "command": "bash .claude/hooks/check-diy-payments.sh",
+            "timeout": 15
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/check-structure.sh"
+            "command": "bash .claude/hooks/check-structure.sh",
+            "timeout": 20
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/check-resilience.sh"
+            "command": "bash .claude/hooks/check-resilience.sh",
+            "timeout": 20
           }
         ]
       },
@@ -191,11 +222,13 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/fix-loop-guard.sh"
+            "command": "bash .claude/hooks/fix-loop-guard.sh",
+            "timeout": 15
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/record-test-run.sh"
+            "command": "bash .claude/hooks/record-test-run.sh",
+            "timeout": 15
           }
         ]
       },
@@ -203,7 +236,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/repeat-call-guard.sh"
+            "command": "bash .claude/hooks/repeat-call-guard.sh",
+            "timeout": 15
           }
         ]
       },
@@ -212,7 +246,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/taint-mark.sh"
+            "command": "bash .claude/hooks/taint-mark.sh",
+            "timeout": 15
           }
         ]
       }
@@ -222,19 +257,23 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/stop-done-means-done.sh"
+            "command": "bash .claude/hooks/stop-done-means-done.sh",
+            "timeout": 30
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/stop-tests-added.sh"
+            "command": "bash .claude/hooks/stop-tests-added.sh",
+            "timeout": 30
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/stop-claim-check.sh"
+            "command": "bash .claude/hooks/stop-claim-check.sh",
+            "timeout": 30
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/update-status.sh"
+            "command": "bash .claude/hooks/update-status.sh",
+            "timeout": 20
           }
         ]
       }
@@ -245,11 +284,13 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/fix-loop-guard.sh"
+            "command": "bash .claude/hooks/fix-loop-guard.sh",
+            "timeout": 15
           },
           {
             "type": "command",
-            "command": "bash .claude/hooks/record-test-run.sh"
+            "command": "bash .claude/hooks/record-test-run.sh",
+            "timeout": 15
           }
         ]
       },
@@ -257,7 +298,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/repeat-call-guard.sh"
+            "command": "bash .claude/hooks/repeat-call-guard.sh",
+            "timeout": 15
           }
         ]
       }
@@ -267,7 +309,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/precompact-save.sh"
+            "command": "bash .claude/hooks/precompact-save.sh",
+            "timeout": 30
           }
         ]
       }
