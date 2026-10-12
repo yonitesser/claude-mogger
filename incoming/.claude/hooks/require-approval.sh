@@ -7,15 +7,40 @@
 # Tightened after review: reading a file NAMED payment_service.py is not
 # spending money. Only actual billing/payment CLIs are blocked.
 #
+# Each part has three states (see hooks/guards.tsv, skill mogger-config):
+#   MOGGER_PUSH_GUARD, MOGGER_MERGE_GUARD, MOGGER_DEPLOY_GUARD, MOGGER_MONEY_GUARD
+#   on = block (default), ask = permission prompt for the human, off = allow.
+#   Force pushes and pushes to a protected branch stay blocked in every state.
 # Opt-out for repos whose own workflow owns releases:
-#   MOGGER_ALLOW_PUSH=on  — allows plain pushes of feature branches.
-#   Force pushes and pushes to a protected branch stay blocked regardless.
+#   MOGGER_ALLOW_PUSH=on  — same as MOGGER_PUSH_GUARD=off: plain pushes of feature branches.
 #   Set it per-repo in .claude/settings.local.json: {"env": {"MOGGER_ALLOW_PUSH": "on"}}
 source "$(dirname "$0")/lib.sh"
 
 INPUT=$(cat)
 CMD=$(json_get "$INPUT" '.tool_input.command')
 [ -z "$CMD" ] && exit 0
+
+# --- states: on = block, ask = the human gets a permission prompt, off = allow.
+# MOGGER_ALLOW_PUSH=on is the old name for MOGGER_PUSH_GUARD=off. merge-guard
+# has no off. Where no prompt can be shown, ask blocks.
+PUSH=$(mogger_state MOGGER_PUSH_GUARD on)
+[ "${MOGGER_ALLOW_PUSH:-off}" = "on" ] && [ "$PUSH" = on ] && PUSH=off
+MERGE=$(mogger_state MOGGER_MERGE_GUARD on); [ "$MERGE" = off ] && MERGE=on
+DEPLOY=$(mogger_state MOGGER_DEPLOY_GUARD on)
+MONEY=$(mogger_state MOGGER_MONEY_GUARD on)
+ASKS=""
+
+# gate <state> <event> <block message> <ask reason>
+gate() {
+  case "$1" in
+    off) return 0 ;;
+    ask)
+      if mogger_can_ask "$INPUT"; then ASKS="${ASKS:-$4}"; return 0; fi
+      mogger_event block "$2"; echo "BLOCKED: $3 (Ask mode is on, but this session cannot show a prompt, so it is blocked.)" >&2
+      exit 2 ;;
+    *) mogger_event block "$2"; echo "BLOCKED: $3" >&2; exit 2 ;;
+  esac
+}
 
 # Look at what actually runs, not the raw text: unwrap bash -c / eval / $(...),
 # drop sudo/env/git -C prefixes, and ignore quoted prose (a commit message that
@@ -30,7 +55,7 @@ check_line() {
   local CMD="$1"
   # --- git push ---
   if echo "$CMD" | grep -qE '(^|[;&|]\s*|\s)git\s+push(\s|$)'; then
-    if [ "${MOGGER_ALLOW_PUSH:-off}" != "on" ]; then
+    if [ "$PUSH" = on ]; then
       mogger_event block "blocked git push"; echo "BLOCKED: git push requires human approval. Say the branch is ready and stop. Do not retry with --force or another remote." >&2
       exit 2
     fi
@@ -66,33 +91,30 @@ check_line() {
         exit 2
       fi
     fi
+    gate "$PUSH" "blocked git push" "git push requires human approval. Say the branch is ready and stop." "Mogger: git push. Approve only if you want this branch pushed."
   fi
 
   # --- git merge: only when on a protected branch (merging main INTO a feature branch is fine) ---
   if echo "$CMD" | grep -qE '(^|[;&|]\s*|\s)git\s+merge(\s|$)'; then
     BR=$(git_branch)
     if [ -z "$BR" ] || is_protected_branch "$BR"; then
-      mogger_event block "blocked git merge on a protected branch"; echo "BLOCKED: merging while on '${BR:-unknown}' requires human approval. Report the branch is ready for review instead." >&2
-      exit 2
+      gate "$MERGE" "blocked git merge on a protected branch" "merging while on '${BR:-unknown}' requires human approval. Report the branch is ready for review instead." "Mogger: git merge while on ${BR:-an unknown branch}. Approve only if you want this merge."
     fi
   fi
 
   # --- PR merge ---
   if echo "$CMD" | grep -qE 'gh\s+pr\s+merge'; then
-    mogger_event block "blocked a PR merge"; echo "BLOCKED: merging a PR requires human approval. Open/update the PR and stop." >&2
-    exit 2
+    gate "$MERGE" "blocked a PR merge" "merging a PR requires human approval. Open/update the PR and stop." "Mogger: merge a pull request. Approve only if you want it merged."
   fi
 
   # --- production deploys / publishes ---
   if echo "$CMD" | grep -qE '(vercel\s+.*--prod|netlify\s+deploy\s+.*--prod|npm\s+publish|pnpm\s+publish|yarn\s+npm\s+publish|cargo\s+publish|docker\s+push|kubectl\s+(apply|delete|rollout)|helm\s+(install|upgrade|uninstall)|terraform\s+(apply|destroy)|pulumi\s+(up|destroy)|railway\s+up|fly\s+deploy|firebase\s+deploy|serverless\s+deploy|wrangler\s+(deploy|publish|rollback)|sst\s+deploy|amplify\s+(push|publish)|prisma\s+(migrate\s+(deploy|reset)|db\s+(push|execute))|drizzle-kit\s+push|supabase\s+(db\s+(push|reset)|functions\s+deploy)|gh\s+(release\s+(create|delete)|repo\s+(delete|create\s+[^;&|]*--public|edit\s+[^;&|]*--visibility)|gist\s+create)|sam\s+deploy|cdk\s+deploy|gcloud\s+.*deploy|az\s+.*deployment\s+.*create)'; then
-    mogger_event block "blocked a deploy command"; echo "BLOCKED: production deploy/publish command. Requires human approval. Stop and report what would be deployed." >&2
-    exit 2
+    gate "$DEPLOY" "blocked a deploy command" "production deploy/publish command. Requires human approval. Stop and report what would be deployed." "Mogger: a deploy or publish command. Approve only if you want it to go out."
   fi
 
   # --- money: actual CLIs that move or configure spend, not file names ---
   if echo "$CMD" | grep -qE '(^|[;&|]\s*|\s)(stripe\s+(charges|payment_intents|invoices|subscriptions|refunds|payouts|customers)\s+(create|update|delete|cancel|capture|confirm|pay|void)|aws\s+(ce|budgets|billing|cur|pricing)\s|gcloud\s+billing|az\s+(consumption|billing|costmanagement)|paypal\s|braintree\s|twilio\s+.*(buy|purchase))'; then
-    mogger_event block "blocked a money command"; echo "BLOCKED: this command moves or configures money. Requires human approval regardless of amount. Stop and describe what it would do." >&2
-    exit 2
+    gate "$MONEY" "blocked a money command" "this command moves or configures money. Requires human approval regardless of amount. Stop and describe what it would do." "Mogger: a command that moves or configures money. Approve only if you want it to run."
   fi
   return 0
 }
@@ -101,4 +123,8 @@ while IFS= read -r LINE; do
   [ -n "$LINE" ] && check_line "$LINE"
 done <<< "$NORM"
 
+if [ -n "$ASKS" ]; then
+  mogger_event warn "asked before a risky command"
+  mogger_ask_json "$ASKS"
+fi
 exit 0

@@ -4,20 +4,26 @@
 # .claude/settings.json, .claude/settings.local.json, anything in .claude/hooks/,
 # and .mcp.json. A model that can edit its own guard rails can switch them off.
 # Uses permissionDecision "ask": the human sees a normal permission prompt and
-# can approve a change they asked for. Never blocks outright.
+# can approve a change they asked for. Where no prompt can be shown (headless,
+# bypass or auto mode) it blocks instead, so Claude cannot approve for itself.
 # Text matching only; a seat belt, not a sandbox.
-# Escape hatch: MOGGER_CONFIG_GUARD=off.
+# States (MOGGER_CONFIG_GUARD): ask (default), off = allow.
 
 source "$(dirname "$0")/lib.sh"
 set -f   # no filename expansion while splitting words
-[ "${MOGGER_CONFIG_GUARD:-on}" = "off" ] && exit 0
+[ "$(mogger_state MOGGER_CONFIG_GUARD ask)" = "off" ] && exit 0
 
 INPUT=$(cat)
 CFG='(^|/)\.claude/(settings(\.local)?\.json|hooks/.+)$|(^|/)\.mcp\.json$'
 
 ask() {  # ask <basename>
+  if ! mogger_can_ask "$INPUT"; then
+    mogger_event block "blocked a change to $1 (no prompt available)"
+    echo "BLOCKED: $1 controls Claude and its guard rails, and this session cannot show a prompt. Ask the human to make the change." >&2
+    exit 2
+  fi
   mogger_event warn "asked before a change to $1"
-  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"%s controls Claude and its guard rails. Approve only if you asked for this change."}}\n' "$1"
+  mogger_ask_json "$1 controls Claude and its guard rails. Approve only if you asked for this change."
   exit 0
 }
 
