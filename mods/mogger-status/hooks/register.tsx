@@ -2,13 +2,14 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register } from 'claude-code'
 
 import type { MoggerSummary } from '../types'
-import { ORANGE, TICK_MS, chadRows, headline, moodOf } from './chad'
-import { LOG_PATH, ageText, newBlocks, newestTs, parseLog, statusText, summarize } from './log'
+import { ORANGE, TICK_MS, chadRows, headline, moodOf, toastText } from './chad'
+import { LOG_PATH, ageText, newBlocks, newestTs, parseLog, statusText, summarize, voiceOn } from './log'
 
 const summaryAtom = atom({ plugin: 'mogger', key: 'summary' } as const, null as MoggerSummary | null)
 const isHidden = atom({ plugin: 'mogger', key: 'isHidden' } as const, false)
 const sinceAtom = atom({ plugin: 'mogger', key: 'since' } as const, 0)
 
+const voiceAtom = atom({ plugin: 'mogger', key: 'voice' } as const, true)
 const frameAtom = atom({ plugin: 'mogger', key: 'frame' } as const, 0)
 
 const QUIET_MS = 60_000
@@ -35,9 +36,11 @@ async function refresh($: EngineInterface): Promise<void> {
     await update($, sinceAtom, () => since)
   }
   const s = summarize(events, since)
+  const voice = voiceOn(events)
+  await update($, voiceAtom, () => voice)
   if (seenTs >= 0) {
     for (const b of newBlocks(events, seenTs)) {
-      $.ui.toast(`mogger ${b.msg}`)
+      $.ui.toast(toastText(b.msg, voice))
     }
   }
   seenTs = newestTs(events)
@@ -82,6 +85,7 @@ export const register: Register = on => {
         : `${statusText(s)}. Last: ${last.msg} (${ageText(now, last.ts)})`
 
     const frame = await read($, frameAtom)
+    const voice = await read($, voiceAtom)
     const mood = moodOf(last?.kind, last ? now - last.ts * 1000 : Infinity)
     const rows = chadRows(mood, frame)
 
@@ -96,7 +100,7 @@ export const register: Register = on => {
         </Box>
         <Box flexDirection="column">
           <Text bold color={ORANGE}>
-            {headline(mood, s.fired, s.blocked)}
+            {headline(mood, s.fired, s.blocked, voice)}
           </Text>
           <Text dimColor={isQuiet} color={isQuiet ? undefined : color}>
             {line}{' '}
