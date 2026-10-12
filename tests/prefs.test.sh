@@ -17,6 +17,7 @@ reset() { rm -rf "$SB/.claude"; }
 SWITCHES=".claude/mogger"".json"   # the switch file, spelled in parts
 
 O=$(pn); case "$O" in *"mogger first run"*"AskUserQuestion"*"mogger:config"*) ok "first load asks and names the skill" ;; *) bad "first load: $O" ;; esac
+reset; O=$(pn); case "$O" in *"/autocompact 400k"*"/autocompact auto"*) ok "prompt mentions autocompact tip and undo" ;; *) bad "no autocompact tip" ;; esac
 [ "$(cat "$SB/rc")" = "rc=0" ] && ok "exits 0" || bad "exit code"
 [ -f .claude/state/prefs-shown ] && ok "marker written" || bad "no marker"
 [ -z "$(pn)" ] && ok "second load is silent (no nag)" || bad "nagged twice"
