@@ -4,6 +4,7 @@ Shows that mogger is running and helping. It adds three things to the Claude Cod
 
 - **Status line:** `mogger: N guards fired, M blocked` (counted since the session started).
 - **Mogger chad:** a robot (pale head, glowing orange eyes, black armour, orange asterisk on the chest), drawn as pixel art in 6 rows of text at the left of the bar. Each text row holds two pixel rows (half blocks with a foreground and a background colour), so the picture is 15 x 12 pixels. The engine does not cap the bar at 3 rows: it may take up to half the terminal in fullscreen (the whole height otherwise), and a taller tree scrolls. It stands still and blinks every 6 seconds. When a guard fires, for 4 seconds its chest asterisk flips between plus and x and its eyes glow (red on a block, yellow on a warning). Then it stops. It only redraws while it moves.
+- **Buttons (under the text in the bar):** `Guards` opens a list of chips, one per guard you can change (`danger-guard: on`, `hint-noisy-bash: on`). A press moves the guard on, ask, off, in that order, through the states that guard allows. It runs `scripts/mogger-config.sh set <guard> <state>`, the same script as the `mogger-config` skill, so the switch file in `.claude/` stays the single source of truth. Safety guards never go `off` from a button (that needs the warning and the explicit yes in `/mogger:mogger-config`); they only move between on and ask. A guard that an env var sets is not shown, since a press would change nothing. `Bar` switches the robot and the detail line off or on; the choice is kept across sessions (`$.store`, key `mogger.bar`). `Hide` hides the bar as before.
 - **Bar above the prompt:** the last thing mogger did, for example `Last: blocked a secret in config.js (12s ago)`. It turns dim after 60 seconds of quiet. It has a Hide button. It is not drawn when there is no log yet.
 - **Toast:** a short pop-up each time mogger blocks something new.
 
@@ -44,6 +45,7 @@ claude plugin test .
 ## Safety
 
 Mods are not sandboxed. A mod runs code inside your Claude Code session with the same access as
-Claude Code itself. Read `hooks/register.tsx` and `hooks/log.ts` before you enable it. This one only
-reads `.claude/state/mogger-events.log`, and shows text. It does not write files, run commands or use
-the network.
+Claude Code itself. Read `hooks/register.tsx`, `hooks/panel.ts` and `hooks/log.ts` before you enable it. It reads
+`.claude/state/mogger-events.log` and shows text. The only command it runs is `scripts/mogger-config.sh`
+from this plugin (`list`, and `set <guard> on|ask|off` when you press a guard button; never `--confirm`).
+The only thing it stores is the two bar switches. It does not use the network.

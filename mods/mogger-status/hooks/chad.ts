@@ -23,14 +23,14 @@ export function moodOf(kind: string | undefined, ageMs: number): ChadMood {
   return kind === 'block' ? 'block' : kind === 'warn' ? 'warn' : 'ok'
 }
 
-// 15 wide, 12 tall. H head, S head shade, E eye, K armour, G neck, P chest plate,
-// O orange trim, B asterisk pixel (drawn from PLUS or CROSS below), . empty
+// 15 wide, 12 tall. H head, S head shade, E eye (set in a dark visor), K armour, G neck,
+// P chest plate, O orange trim (headphones, armour), B asterisk pixel (drawn from PLUS or CROSS below), . empty
 const PIXELS = [
+  '....SHHKHHS....',
+  '...KHHHKHHHK...',
+  '..OKKEEKEEKKO..',
+  '...KSHHHHHSK...',
   '....SHHHHHS....',
-  '...KHHHHHHHK...',
-  '...KHEEHEEHK...',
-  '....HHHSHHH....',
-  '....SHSSSHS....',
   '.....SHHHS.....',
   '......KGK......',
   'KKKKPPPPPPPKKKK',
