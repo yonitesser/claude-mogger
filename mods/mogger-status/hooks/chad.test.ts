@@ -11,11 +11,35 @@ test('chad moves only after a guard fires', () => {
   expect(chadRows('block', 1)).not.toEqual(chadRows('block', 2))
 })
 
+const textOf = (rows: ReturnType<typeof chadRows>): string[] => rows.map(r => r.map(s => s.text).join(''))
+const eyeColors = (rows: ReturnType<typeof chadRows>): (string | undefined)[] => (rows[0] ?? []).map(s => s.color)
+
+test('chad is a robot: 6 rows, 15 cells wide, no hat, orange eyes and chest', () => {
+  const rows = chadRows('idle', 1)
+  expect(rows.length).toBe(6)
+  for (const t of textOf(rows)) expect([...t].length).toBe(15)
+  // the top row is the head only: empty cells to the sides
+  expect(textOf(rows)[0]?.startsWith('   ')).toBe(true)
+  expect(JSON.stringify(rows)).toContain('#ff7a1a')
+})
+
 test('chad blinks when idle and glows red on a block', () => {
-  expect(chadRows('idle', 24)[1]?.text).toContain('─')
-  expect(chadRows('idle', 1)[1]?.text).toContain('◉')
-  expect(chadRows('block', 1)[1]?.color).toBe('red')
+  expect(JSON.stringify(chadRows('idle', 24))).not.toBe(JSON.stringify(chadRows('idle', 1)))
+  expect(JSON.stringify(chadRows('idle', 24))).toContain('#555555')
+  expect(JSON.stringify(chadRows('idle', 1))).not.toContain('#555555')
+  expect(JSON.stringify(chadRows('block', 1))).toContain('"red"')
+  expect(JSON.stringify(chadRows('warn', 1))).toContain('"yellow"')
   expect(headline('block', 3, 1)).toContain('stopped')
+})
+
+test('every segment is a half or full block, or a space, and neighbours merge', () => {
+  for (const r of chadRows('block', 3)) {
+    for (const s of r) expect(/^[ ▀▄█]+$/.test(s.text)).toBe(true)
+    for (let i = 1; i < r.length; i++) {
+      expect(r[i - 1]?.color === r[i]?.color && r[i - 1]?.bg === r[i]?.bg).toBe(false)
+    }
+  }
+  expect(eyeColors(chadRows('idle', 1)).length > 0).toBe(true)
 })
 
 test('voice changes the words, not the facts', () => {
