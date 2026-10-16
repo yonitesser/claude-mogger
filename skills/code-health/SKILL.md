@@ -35,7 +35,11 @@ acting on it.
 7. **Database design.** Every table has a primary key; every foreign key
    column has an index (Postgres does not add one); rules like "email is
    unique" and NOT NULL live in the schema, not only in app code; schema
-   changes go through migrations; Supabase tables enable row level security.
+   changes go through migrations that have a down/rollback step; Supabase
+   tables enable row level security. Money is integer cents or DECIMAL,
+   never float. Timestamps are stored in UTC (`timestamptz`) and converted
+   only for display. User-created records get a soft delete (`deleted_at`)
+   unless the law says erase.
 8. **Backups.** Have a written backup plan and test a restore. Hosted
    databases often back up automatically; confirm it and write it down.
 9. **Cap anything that costs money.** No paid API call inside an unbounded
