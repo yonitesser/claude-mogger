@@ -10,7 +10,7 @@
 # Supabase migrations (SQL under supabase/).
 #
 # Check ids: db-primary-key, db-fk-index, db-migrations, db-unique, db-rls,
-#            db-backup
+#            db-backup, db-money-float
 # (db-rls is the DB-DESIGN view only; security.sh owns the exposure verdict.)
 set -u
 ROOT="${1:-.}"
@@ -327,6 +327,13 @@ else
   else echo "WARN|db-backup|no backup plan documented: no backup/pg_dump/snapshot/point-in-time mention in docs, scripts or CI. Hosted databases may back up automatically; confirm and write it down (and test a restore)" >> "$FIND"; fi
 fi
 
+# ------------------------------------------------------------ money as float
+# (heuristic by column name) price/amount/total... typed float/double/real
+cat "$TMP/sql.list" "$TMP/prisma.list" "$TMP/py.list" "$TMP/ts.list" 2>/dev/null | sort -u | tr '\n' '\0' | xargs -0 grep -H -n -i -E \
+  '(^|[^[:alnum:]_])[[:alnum:]_]*(price|amount|total|balance|cost|fee|salary|revenue)[[:alnum:]_]*[?"`[:space:]:=(]+.*(float|double|real)' 2>/dev/null \
+  | head -"$CAP" \
+  | awk -F: '{ f=$1; l=$2; printf "WARN|db-money-float|%s:%s: money-like column typed float/double/real (heuristic by name): floats round wrong (0.1+0.2), store integer cents or DECIMAL\n", f, l }' >> "$FIND"
+
 # ------------------------------------------------------------ report
 if [ "$NSCHEMA" -eq 0 ]; then
   echo "SKIP|db-primary-key|no SQL, Prisma, Django/SQLAlchemy, TypeORM or Drizzle schema files found"
@@ -337,6 +344,7 @@ else
   group db-fk-index "every foreign key found is indexed"
   group db-unique "no email/username column without a unique constraint found (heuristic)"
 fi
+group db-money-float "no money-like column typed float/double/real found (heuristic)"
 group db-migrations "migrations present"
 if [ "$ISSUPA" -eq 1 ]; then group db-rls "every Supabase table found has row level security enabled"
 else echo "SKIP|db-rls|not a Supabase project (no supabase/ dir or @supabase dependency)"; fi

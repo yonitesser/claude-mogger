@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.11.2 — 2026-10-16
+
+- Five short rules for apps that handle real money and real users, from a "before a paying customer" checklist. I checked each against the repo first; none existed. `code-health` rule 7 now says: migrations have a down/rollback step; money is integer cents or DECIMAL, never float; timestamps are UTC (`timestamptz`); user-created records get a soft delete (`deleted_at`). `edge-cases` duplicate-submit row now says: payments and webhooks use an idempotency key, and each webhook event id is stored so repeats are skipped.
+- New check id `db-money-float` in `scripts/checks/database.sh`: WARN when a column named like price, amount, total, balance, cost, fee, salary or revenue is typed float/double/real (SQL, Prisma, Django/SQLAlchemy, TypeORM, Drizzle). Heuristic by name. 4 new checks in `tests/code-health.test.sh`.
+- Counts: 26 suites, 2,965 assertions, 44 hook entries.
+
 ## 1.11.1 — 2026-10-12
 
 - `mogger-status` fixes from live use on the desktop app. (1) The robot looked broken: half-block text rows get a line gap there. On the desktop, editor and phone it is now one picture (`Svg`); the terminal keeps the text rows. (2) The Guards button showed no toggles: it ran `mogger-config.sh list`, which needs `jq`, and showed nothing when that failed. The panel now reads `hooks/guards.tsv` and the switch file itself (no command, no `jq`), shows one dropdown per guard (on, ask, off; safety guards only on or ask), writes the same file, and says why when it cannot read. A test checks the panel's states against the script's `list` for all 36 guards. (3) Clicks were lost: the bar redrew every 2 seconds and on every blink, which can land between press and release. It now redraws only when something changed (once a minute for the age text), and the desktop robot does not blink. (4) `Bar` is now `Display`, opens with "What this bar shows", with Robot and Detail line dropdowns. Buttons carry an arrow and the main two use the primary style. The mod API has no cursor setting, so the pointer cannot change over a button; that is not fixable from a mod. Tests: `mods/mogger-status/hooks/*.test.ts` (31).
