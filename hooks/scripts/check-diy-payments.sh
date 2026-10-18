@@ -18,7 +18,7 @@
 #
 # Fails OPEN when jq/python3 are missing or the file is unreadable.
 # Escape hatch: MOGGER_CHECK_PAYMENTS=off
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 
 [ "${MOGGER_CHECK_PAYMENTS:-on}" = "off" ] && exit 0
 

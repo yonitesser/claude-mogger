@@ -15,11 +15,12 @@
 # Escape hatches: MOGGER_CHECK_STRUCTURE=off, or raise MOGGER_MAX_FILE_LINES.
 # Fails open when jq/python3 (json_get) are unavailable.
 
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 [ "${MOGGER_CHECK_STRUCTURE:-on}" = "off" ] && exit 0
 
 INPUT=$(cat)
-FILE_PATH=$(json_get "$INPUT" '.tool_input.file_path')
+json_fields "$INPUT" .tool_input.file_path .tool_name .tool_input.new_string .tool_input.old_string .tool_input.content   # one jq call
+FILE_PATH="${JF[0]}"
 [ -z "$FILE_PATH" ] && exit 0
 [ -f "$FILE_PATH" ] || exit 0
 
@@ -140,14 +141,14 @@ END {
 EOF
 
 # New text: Edit -> new_string (old_string as baseline); Write -> whole file (git HEAD as baseline)
-TOOL=$(json_get "$INPUT" '.tool_name')
-NEWS=$(json_get "$INPUT" '.tool_input.new_string')
+TOOL="${JF[1]}"
+NEWS="${JF[2]}"
 : > "$TMP/new"; : > "$TMP/old"
 if [ -n "$NEWS" ]; then
   printf '%s\n' "$NEWS" > "$TMP/new"
-  OLDS=$(json_get "$INPUT" '.tool_input.old_string')
+  OLDS="${JF[3]}"
   [ -n "$OLDS" ] && printf '%s\n' "$OLDS" > "$TMP/old"
-elif [ "$TOOL" = "Write" ] || [ -n "$(json_get "$INPUT" '.tool_input.content')" ]; then
+elif [ "$TOOL" = "Write" ] || [ -n "${JF[4]}" ]; then
   cp "$FILE_PATH" "$TMP/new"
   DIR=$(dirname "$FILE_PATH"); BASE=$(basename "$FILE_PATH")
   (cd "$DIR" 2>/dev/null && git show "HEAD:./$BASE" 2>/dev/null) > "$TMP/old" 2>/dev/null

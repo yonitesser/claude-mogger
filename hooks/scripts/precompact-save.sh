@@ -18,8 +18,8 @@
 # are missing, garbage stdin is ignored. No python, so it is fast.
 # Escape hatch: MOGGER_HANDOFF=off disables it. Output file is git-ignored
 # territory (.claude/state/); it is not committed by this hook.
-source "$(dirname "$0")/lib.sh" 2>/dev/null
-HOOKDIR="$(cd "$(dirname "$0")" 2>/dev/null && pwd)"
+source "${0%/*}/lib.sh" 2>/dev/null
+HOOKDIR="$(cd "${0%/*}" 2>/dev/null && pwd)"
 
 INPUT=""
 [ -t 0 ] || INPUT=$(cat 2>/dev/null)

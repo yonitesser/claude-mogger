@@ -12,8 +12,8 @@
 #
 # ALWAYS exits 0 — a snapshot problem must never block work. Fails open
 # outside git repos. Escape hatch: MOGGER_CHECKPOINT=off.
-source "$(dirname "$0")/lib.sh"
-source "$(dirname "$0")/checkpoint-lib.sh"
+source "${0%/*}/lib.sh"
+source "${0%/*}/checkpoint-lib.sh"
 
 run() {
   [ "${MOGGER_CHECKPOINT:-on}" = "off" ] && return 0

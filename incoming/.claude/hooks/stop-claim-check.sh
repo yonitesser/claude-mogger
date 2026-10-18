@@ -12,7 +12,7 @@
 # so it costs nothing when the model already ran something. always also sends the requirement check
 # after every claim (MEASURED: +62% cost per run on the hard set, no pass-rate gain, so not the default).
 # off disables it.
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 
 MODE="${MOGGER_CLAIM_CHECK:-proof}"   # proof (default) | always | off
 [ "$MODE" = "off" ] && exit 0
@@ -21,7 +21,7 @@ INPUT=$(cat)
 TP=$(json_get "$INPUT" '.transcript_path')
 command -v python3 >/dev/null 2>&1 && python3 -c '1' >/dev/null 2>&1 || exit 0
 
-source "$(dirname "$0")/claim-lib.sh"
+source "${0%/*}/claim-lib.sh"
 FP=$(fingerprint)
 OLD=$(cat "$FPF" 2>/dev/null)
 mkdir -p .claude/state 2>/dev/null; printf '%s' "$FP" > "$FPF" 2>/dev/null

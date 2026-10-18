@@ -3,7 +3,7 @@
 # Whatever this prints to stdout is added to Claude's context at session
 # start. So the Lead doesn't have to be *asked* to read CONSTRAINTS.md —
 # it's already there. Enforced, not requested.
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 # A new session starts untainted (see taint-mark.sh). A compact or resume keeps the same conversation,
 # and the same untrusted text, so the taint stays.
 IFS= read -r -t 1 -d '' SS_INPUT 2>/dev/null
@@ -46,7 +46,7 @@ fi
 
 # Active decisions (DECISIONS.md) — so settled choices are not re-argued
 if [ -f DECISIONS.md ]; then
-  source "$(dirname "$0")/decisions-context.sh"
+  source "${0%/*}/decisions-context.sh"
   DEC=$(decisions_context DECISIONS.md)
   if [ -n "$DEC" ]; then
     echo "## Active decisions (DECISIONS.md — cite before proposing anything that contradicts one)"
@@ -56,8 +56,8 @@ if [ -f DECISIONS.md ]; then
 fi
 
 # Handoff saved before the last compaction (facts only, see precompact-save.sh)
-if [ -f "$(dirname "$0")/handoff-context.sh" ]; then
-  source "$(dirname "$0")/handoff-context.sh"
+if [ -f "${0%/*}/handoff-context.sh" ]; then
+  source "${0%/*}/handoff-context.sh"
   HND=$(handoff_context)
   if [ -n "$HND" ]; then
     echo "## Handoff (saved automatically before context was compacted)"
@@ -79,13 +79,13 @@ except Exception:
 fi
 
 # One-time evals nudge + consented background auto-run (see evals-nudge.sh)
-if [ -f "$(dirname "$0")/evals-nudge.sh" ]; then
-  source "$(dirname "$0")/evals-nudge.sh"
+if [ -f "${0%/*}/evals-nudge.sh" ]; then
+  source "${0%/*}/evals-nudge.sh"
   EV=$(evals_session_context 2>/dev/null)
   [ -n "$EV" ] && printf '%s\n\n' "$EV"
 fi
 
-source "$(dirname "$0")/claim-lib.sh"; claim_baseline
+source "${0%/*}/claim-lib.sh"; claim_baseline
 echo "Least code, never least tests: skip it, reuse the repo (grep first), then stdlib, new code last. Every behaviour change gets a test (keep old test names). Do what was asked; if you disagree, do it and say so. Before \"done\": show output proving each ask, plus one awkward input. Cite file:line for code claims; mark unchecked ones UNVERIFIED:."
 
 mogger_event info "mogger is on for this session"

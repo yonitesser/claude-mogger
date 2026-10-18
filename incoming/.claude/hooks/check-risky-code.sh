@@ -17,7 +17,7 @@
 #
 # Fails OPEN: no jq/python3, unreadable/huge file, anything unexpected -> exit 0.
 # Escape hatch: MOGGER_CHECK_RISKY=off
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 
 [ "${MOGGER_CHECK_RISKY:-on}" = "off" ] && exit 0
 

@@ -29,7 +29,7 @@
 # Escape hatches: MOGGER_FIX_LOOP_GUARD=off, MOGGER_MAX_FIX_ATTEMPTS=N,
 # MOGGER_FIXLOOP_TTL=seconds (default 7200; older state is ignored).
 # Fails OPEN on missing jq/python3, garbage input, unwritable state.
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 
 [ "${MOGGER_FIX_LOOP_GUARD:-on}" = "off" ] && exit 0
 

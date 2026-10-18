@@ -9,13 +9,14 @@
 #
 # Fails OPEN when jq/python3 are missing (json_get returns empty).
 # Escape hatch: MOGGER_SECRET_GUARD=off (e.g. a test fixture full of fake keys).
-source "$(dirname "$0")/lib.sh"
-source "$(dirname "$0")/secret-patterns.sh"
+source "${0%/*}/lib.sh"
+source "${0%/*}/secret-patterns.sh"
 
 [ "${MOGGER_SECRET_GUARD:-on}" = "off" ] && exit 0
 
 INPUT=$(cat)
-FILE=$(json_get "$INPUT" '.tool_input.file_path')
+json_fields "$INPUT" .tool_input.file_path .tool_input.content .tool_input.new_string
+FILE="${JF[0]}"
 [ -z "$FILE" ] && exit 0
 
 BASE="${FILE##*/}"
@@ -26,9 +27,9 @@ case "$BASE" in
     exit 2 ;;
 esac
 
-CONTENT=$(json_get "$INPUT" '.tool_input.content')
-NEW=$(json_get "$INPUT" '.tool_input.new_string')
+CONTENT="${JF[1]}"; NEW="${JF[2]}"
 [ -z "$CONTENT$NEW" ] && exit 0
+mogger_secret_maybe "$CONTENT$NEW" || exit 0
 
 FOUND=$(printf '%s\n%s\n' "$CONTENT" "$NEW" | mogger_find_secret) && {
   mogger_event block "blocked a secret in $BASE"; echo "BLOCKED: this write to '$FILE' contains what looks like a hardcoded secret: $FOUND. Read it from the environment instead (process.env.X / os.environ['X']) and document the variable in .env.example. If it is a deliberate fake for a test fixture, build it at runtime or use an obvious placeholder like 'your-key-here'." >&2

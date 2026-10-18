@@ -13,7 +13,7 @@
 # Only commands that look like TEST runs are recorded (lint/build alone are not).
 # MOGGER_TEST_CMD_REGEX adds a project pattern. MOGGER_EVIDENCE=off disables.
 # Always exits 0.
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 [ "${MOGGER_EVIDENCE:-on}" = "off" ] && exit 0
 INPUT=$(cat); [ -n "$INPUT" ] || exit 0
 CMD=$(json_get "$INPUT" '.tool_input.command'); [ -n "$CMD" ] || exit 0

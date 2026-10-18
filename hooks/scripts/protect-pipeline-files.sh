@@ -3,7 +3,7 @@
 # Blocks edits to files that control deployment pipelines or payments.
 # Agents can still read these files, just not change them unsupervised.
 
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 INPUT=$(cat)
 FILE_PATH=$(json_get "$INPUT" '.tool_input.file_path')
 

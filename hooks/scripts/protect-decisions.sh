@@ -5,7 +5,7 @@
 # one entry's "Status: active" to "Status: superseded-by #n".
 # Escape hatch: MOGGER_DECISIONS_LOCK=off
 
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 INPUT=$(cat)
 
 [ "${MOGGER_DECISIONS_LOCK:-on}" = "off" ] && exit 0

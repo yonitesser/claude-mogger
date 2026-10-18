@@ -10,7 +10,7 @@
 # Text matching only; a seat belt, not a sandbox.
 # States (MOGGER_CONFIG_GUARD): ask (default), off = allow.
 
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 set -f   # no filename expansion while splitting words
 [ "$(mogger_state MOGGER_CONFIG_GUARD ask)" = "off" ] && exit 0
 
@@ -28,14 +28,19 @@ ask() {  # ask <basename>
   exit 0
 }
 
-FILE_PATH=$(json_get "$INPUT" '.tool_input.file_path')
+json_fields "$INPUT" .tool_input.file_path .tool_input.command
+FILE_PATH="${JF[0]}"
 if [ -n "$FILE_PATH" ] && [[ "$FILE_PATH" =~ $CFG ]]; then
-  ask "$(basename "$FILE_PATH")"
+  ask "${FILE_PATH##*/}"
 fi
 
-CMD=$(json_get "$INPUT" '.tool_input.command')
+CMD="${JF[1]}"
 [ -z "$CMD" ] && exit 0
-CLEAN=$(printf '%s' "$CMD" | tr -d "\"'\`" | sed -E 's/[0-9]*>&[0-9-]//g; s/[0-9]*>>?[[:space:]]*\/dev\/null//g')   # not writes
+# pure bash from here (this hook runs on every Bash call); `2>&1` and `>/dev/null` are not writes
+shopt -s extglob
+CLEAN=${CMD//[\"\'\`]/}
+CLEAN=${CLEAN//>&[0-9-]/}
+CLEAN=${CLEAN//>?(>)*([[:space:]])\/dev\/null/}
 while IFS= read -r seg; do
   [ -z "$seg" ] && continue
   write=0; hit=""
@@ -43,11 +48,12 @@ while IFS= read -r seg; do
   case " $seg " in *" tee "*|*" cp "*|*" mv "*|*" rm "*|*" truncate "*|*" ln "*|*" install "*|*" dd "*) write=1 ;; esac
   case "$seg" in *"sed "*" -i"*|*"sed -i"*|*"perl -i"*|*"perl -pi"*) write=1 ;; esac
   for w in $seg; do
-    for tok in $(printf '%s' "$w" | tr '=<>' '   '); do
+    wt=${w//[=<>]/ }
+    for tok in $wt; do
       [[ "$tok" =~ $CFG ]] && hit="$tok"
     done
   done
-  [ "$write" = 1 ] && [ -n "$hit" ] && ask "$(basename "$hit")"
-done <<<"$(printf '%s' "$CLEAN" | tr ';|&' '\n\n\n')"
+  [ "$write" = 1 ] && [ -n "$hit" ] && ask "${hit##*/}"
+done <<<"${CLEAN//[;|&]/$'\n'}"
 
 exit 0

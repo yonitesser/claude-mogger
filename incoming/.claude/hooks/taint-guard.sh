@@ -6,7 +6,7 @@
 # Asks (never blocks), once per command. Speed bump against prompt injection,
 # not a defence: a determined attacker can phrase around it.
 # Env: MOGGER_TAINT=off disables. MOGGER_TAINT_TTL=seconds (default 7200).
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 [ "${MOGGER_TAINT:-on}" = "off" ] && exit 0
 F="${CLAUDE_PROJECT_DIR:-.}/.claude/state/tainted"
 [ -f "$F" ] || exit 0

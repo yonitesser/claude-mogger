@@ -6,7 +6,7 @@
 # taint-guard.sh then asks the human before network commands run.
 # This is a speed bump, not a defence. Cleared at session start.
 # Always exits 0. MOGGER_TAINT=off disables.
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 [ "${MOGGER_TAINT:-on}" = "off" ] && exit 0
 INPUT=$(cat); [ -n "$INPUT" ] || exit 0
 TOOL=$(json_get "$INPUT" '.tool_name'); [ -n "$TOOL" ] || exit 0

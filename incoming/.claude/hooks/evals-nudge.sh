@@ -34,9 +34,9 @@
 #
 # Usage (sourced):   source evals-nudge.sh; evals_session_context
 # Usage (executed):  bash evals-nudge.sh
-[ -f "$(dirname "${BASH_SOURCE[0]}")/lib.sh" ] && source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+[ -f "${BASH_SOURCE[0]%/*}/lib.sh" ] && source "${BASH_SOURCE[0]%/*}/lib.sh"
 
-_evn_here() { cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd; }
+_evn_here() { cd "${BASH_SOURCE[0]%/*}" 2>/dev/null && pwd; }
 
 # Prints the path of the engine script, or nothing.
 evals_engine() {

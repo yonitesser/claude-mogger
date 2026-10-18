@@ -6,7 +6,7 @@
 #   .claude/settings.json, .mcp.json, .claude/hooks/*  (settings.local.json is yours, not the repo's)
 # First sight of a repo that HAS such files: lists them once. Later: only on change.
 # Names and counts only, never file contents. Always exits 0. MOGGER_CONFIG_NOTICE=off disables.
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 [ "${MOGGER_CONFIG_NOTICE:-on}" = "off" ] && exit 0
 ROOT="${CLAUDE_PROJECT_DIR:-.}"
 cd "$ROOT" 2>/dev/null || exit 0

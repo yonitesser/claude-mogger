@@ -44,6 +44,21 @@ mogger_is_placeholder() {  # returns 0 if the match looks like a placeholder
   return 1
 }
 
+# mogger_secret_maybe <text> -> success when the text holds a word that could start any
+# pattern above. A free pre-filter (no fork): mogger_find_secret forks one grep per pattern.
+# Keep in step with the pattern list; tests/safety-net.test.sh blocks one sample of each.
+mogger_secret_maybe() {
+  local was=0 rc=1
+  shopt -q nocasematch && was=1
+  shopt -s nocasematch
+  case "$1" in
+    *AKIA*|*gh[pousr]_*|*github_pat_*|*sk-*|*_live_*|*-----BEGIN*|*xox[abprs]-*) rc=0 ;;
+    *password*|*passwd*|*pwd*|*secret*|*api[_-]key*|*apikey*|*access[_-]key*|*auth[_-]token*|*token*) rc=0 ;;
+  esac
+  [ "$was" = 1 ] || shopt -u nocasematch
+  return $rc
+}
+
 mogger_find_secret() {
   local text line label re hits hit found
   text=$(cat)

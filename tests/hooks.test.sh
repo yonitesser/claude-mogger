@@ -131,7 +131,8 @@ for c in 'rm -rf /' 'rm -rf ~' 'rm -rf $HOME/' 'rm -rf ${HOME}' 'sudo rm -rf /et
          'chmod -R 777 /var/www' 'chmod 777 run.sh' 'git reset --hard' 'git reset --hard HEAD~3' 'git clean -fd' \
          'psql -c "DROP TABLE users"' "mysql -e 'drop database shop'" 'psql -c "TRUNCATE TABLE orders"' \
          'psql -c "DELETE FROM users;"' 'redis-cli flushall' 'dropdb shop' 'npx prisma migrate reset' \
-         'dd if=/dev/zero of=/dev/sda' 'mkfs.ext4 /dev/sda1' ':(){ :|:& };:'; do
+         'dd if=/dev/zero of=/dev/sda' 'mkfs.ext4 /dev/sda1' ':(){ :|:& };:' \
+         'GIT RESET --HARD' 'PSQL -c "Drop Table users"' "$(printf 'echo hi\ngit reset --hard')" "$(printf 'psql -c "delete from users\n"')"; do
   expect 2 danger-guard.sh "$(bash_cmd "$c")" "blocks: $c"
 done
 for c in 'rm -rf node_modules' 'rm -rf /tmp/build' 'rm -rf ./dist' 'rm -rf "$TMP"' 'rm notes.txt' 'rm -r build/' \

@@ -9,7 +9,7 @@
 # States (MOGGER_SECRET_READ): on = block (default), ask = permission prompt for
 # the human, off = allow. Where no prompt can be shown, ask blocks.
 
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 set -f   # no filename expansion while splitting words
 STATE=$(mogger_state MOGGER_SECRET_READ on)
 [ "$STATE" = "off" ] && exit 0
@@ -39,15 +39,15 @@ block() {  # block <what>
 }
 
 # Read / Grep / Glob: look at every path-like field.
-for f in .tool_input.file_path .tool_input.path .tool_input.glob .tool_input.pattern; do
-  v=$(json_get "$INPUT" "$f")
-  [ -n "$v" ] && is_sens "$v" && block "$(basename "$v")"
+json_fields "$INPUT" .tool_input.file_path .tool_input.path .tool_input.glob .tool_input.pattern .tool_input.command
+for v in "${JF[@]:0:4}"; do
+  [ -n "$v" ] && is_sens "$v" && block "${v##*/}"
 done
 
 # Bash
-CMD=$(json_get "$INPUT" '.tool_input.command')
+CMD="${JF[4]}"
 [ -z "$CMD" ] && exit 0
-CLEAN=$(printf '%s' "$CMD" | tr -d "\"'\`")
+CLEAN=${CMD//[\"\'\`]/}   # pure bash from here: this hook runs on every Bash call
 
 VERBS=' cat less more head tail grep egrep fgrep rg ag awk sed cut sort uniq strings xxd od hexdump base64 nl tee bat jq curl wget scp rsync nc openssl tar zip zcat diff source python python3 node ruby perl '
 while IFS= read -r seg; do
@@ -61,18 +61,21 @@ while IFS= read -r seg; do
     case "$w" in cp|mv) src=next; continue ;; esac
     if [ "$src" = next ]; then case "$w" in -*) ;; *) src=""; is_sens "$w" && hit="$w" && verb=1 ;; esac; fi
     case "$VERBS" in *" $w "*) verb=1 ;; esac
-    for tok in $(printf '%s' "$w" | tr '=<>@:()' '       '); do
+    wt=${w//[=<>@:()]/ }
+    for tok in $wt; do
       is_sens "$tok" && hit="$tok"
     done
   done
-  [ "$verb" = 1 ] && [ -n "$hit" ] && block "$(basename "$hit")"
-done <<<"$(printf '%s' "$CLEAN" | tr ';|&' '\n\n\n')"
+  [ "$verb" = 1 ] && [ -n "$hit" ] && block "${hit##*/}"
+done <<<"${CLEAN//[;|&]/$'\n'}"
 
 # Environment dumps and echoing secret-named variables
-if printf '%s' "$CLEAN" | grep -qE '(^|[;&|])[[:space:]]*(printenv|env|export[[:space:]]+-p)[[:space:]]*($|[;&|])|/proc/(self|[0-9]+)/environ'; then
+ONE=${CLEAN//$'\n'/;}
+if mogger_re "$ONE" '(^|[;&|])[[:space:]]*(printenv|env|export[[:space:]]+-p)[[:space:]]*($|[;&|])|/proc/(self|[0-9]+)/environ'; then
   block "the whole environment"
 fi
-if printf '%s' "$CLEAN" | grep -qiE '(echo|printf)[^;&|]*\$\{?[A-Za-z0-9_]*(SECRET|TOKEN|PASSWORD|PASSWD|API_?KEY|PRIVATE_?KEY)'; then
+shopt -s nocasematch
+if mogger_re "$ONE" '(echo|printf)[^;&|]*\$\{?[A-Za-z0-9_]*(SECRET|TOKEN|PASSWORD|PASSWD|API_?KEY|PRIVATE_?KEY)'; then
   block "a secret variable"
 fi
 

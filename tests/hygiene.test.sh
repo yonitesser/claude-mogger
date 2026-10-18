@@ -611,6 +611,27 @@ case "$SSOUT" in *'Before "done":'*) ok "session-start keeps the quotes around \
 
 ( cd "$ROOT" && bash scripts/sync-incoming.sh --check >/dev/null 2>&1 ) && ok "incoming/ is in sync (sync-incoming.sh --check)" || bad "incoming/ is out of sync: run bash scripts/sync-incoming.sh"
 
+# Hook speed. These run on every Bash call, so they must not fork grep/sed/tr per check
+# (bash builtins instead: [[ =~ ]], ${var//x/y}). Static check on the three that are fully converted.
+for h in danger-guard secret-read-guard config-guard; do
+  if sed -E 's/[[:space:]]#[[:space:]].*$//; /^[[:space:]]*#/d' "$ROOT/hooks/scripts/$h.sh" | grep -qE '\| *(grep|sed|tr|awk|cut|head)\b|\$\((grep|sed|tr|awk|cut|head|basename|dirname)\b'; then
+    bad "$h.sh forks a text tool per call again"; else ok "$h.sh stays fork-free (pure bash checks)"; fi
+done
+# Measured: total process spawns for the Bash-path hooks on a plain `ls -la` (Linux with strace only).
+if command -v strace >/dev/null 2>&1; then
+  SPD=$(mktemp -d); TOT=0
+  for h in cost-cap require-approval danger-guard check-bash-read hint-noisy-bash secret-guard-bash verify-packages taint-guard secret-read-guard config-guard; do
+    n=$(cd "$SPD" && printf '%s' '{"tool_name":"Bash","tool_input":{"command":"ls -la"}}' | CLAUDE_PROJECT_DIR="$SPD" strace -f -e trace=execve -o "$SPD/st" bash "$ROOT/hooks/scripts/$h.sh" >/dev/null 2>&1; grep -c 'execve(.*= 0' "$SPD/st")
+    TOT=$((TOT + n))
+  done
+  [ "$TOT" -le 40 ] && ok "Bash-path hooks spawn $TOT processes for a plain command (limit 40; was 104)" || bad "Bash-path hooks spawn $TOT processes for a plain command (limit 40)"
+  rm -rf "$SPD"
+fi
+
+# \s is not POSIX ERE: macOS bash reads it as a plain "s", so mogger_re must spell it out.
+if ( source "$ROOT/hooks/scripts/lib.sh"; mogger_re "git push" 'git\s+push' && ! mogger_re "gitspush" 'git\s+push' ); then
+  ok "mogger_re turns \\s into [[:space:]] (macOS bash has no \\s)"; else bad "mogger_re leaves \\s raw (breaks on macOS bash)"; fi
+
 LK=$(mktemp -d); mkdir -p "$LK/t"; printf 'test("x", () => {});\n' > "$LK/t/a.test.js"
 ( cd "$LK" && printf '{"tool_name":"Write","tool_input":{"file_path":"%s/t/a.test.js"}}' "$LK" | TMPDIR="$LK/t" CLAUDE_PROJECT_DIR="$LK" bash "$ROOT/hooks/scripts/check-test-quality.sh" >/dev/null 2>&1 )
 [ -z "$(ls "$LK"/t/mogger-tq.* 2>/dev/null)" ] && ok "check-test-quality leaves no temp file behind" || bad "check-test-quality leaked its awk temp file"

@@ -2,6 +2,25 @@
 # Sourced by every hook. Provides json_get so hooks work with jq OR python3.
 # Usage: VALUE=$(json_get "$INPUT" '.tool_input.file_path')
 
+# json_fields <input> <jq-path>... -> fills the array JF with one value per path ("" when
+# missing). One jq call for all of them instead of one per field. Falls back to json_get.
+json_fields() {
+  local input="$1" filt="" p i=0 out; shift
+  JF=()
+  if command -v jq >/dev/null 2>&1; then
+    for p in "$@"; do filt="$filt${filt:+,}(($p) // \"\" | tostring)"; done
+    out=$(printf '%s' "$input" | jq -j "[$filt] | join(\"\\u001f\") + \"\\u001f\"" 2>/dev/null)
+    IFS=$'\x1f' read -r -d '' -a JF <<<"$out" || true
+    [ "${#JF[@]}" -ge "$#" ] && return 0
+    JF=()
+  fi
+  for p in "$@"; do JF[i]=$(json_get "$input" "$p"); i=$((i + 1)); done
+}
+
+# mogger_re <string> <ERE> -> success when the string matches (no fork; honours nocasematch).
+# \s is not POSIX: macOS bash (regcomp without REG_ENHANCED) takes it as a plain "s", so spell it out.
+mogger_re() { local p=${2//\\s/[[:space:]]}; [[ $1 =~ $p ]]; }
+
 # mogger_rel_path <path> -> the path as seen from the project root, with a leading
 # slash, so `*/build/*` style tests judge folders INSIDE the project and not the
 # folders the project itself happens to live in (/work/payments-app/...).
@@ -103,7 +122,7 @@ fl_recognised() {
 # must not be able to switch your guards off. Use an env var or an untracked file.
 _mogger_load_config() {
   local f="${CLAUDE_PROJECT_DIR:-.}/.claude/mogger.json" cat pairs name val n e kind onv dflt on_t off_t states rest tracked="" rows
-  cat="$(dirname "${BASH_SOURCE[0]}")/../guards.tsv"
+  cat="${BASH_SOURCE[0]%/*}/../guards.tsv"
   [ -f "$f" ] && [ -f "$cat" ] || return 0
   if command -v jq >/dev/null 2>&1; then
     pairs=$(jq -r 'to_entries[] | select(.value|type=="string") | "\(.key)\t\(.value)"' "$f" 2>/dev/null) || return 0
@@ -122,7 +141,7 @@ for k,v in json.load(open(sys.argv[1])).items():
       [ -z "${!e+x}" ] || continue
       case ",${states:-on,off}," in *",$val,"*) ;; *) continue ;; esac
       if [ "$val" = off ] && [ "$kind" = safety ]; then
-        [ -n "$tracked" ] || tracked=$(git -C "$(dirname "$f")" ls-files --error-unmatch mogger.json >/dev/null 2>&1 && echo yes || echo no)
+        [ -n "$tracked" ] || tracked=$(git -C "${f%/*}" ls-files --error-unmatch mogger.json >/dev/null 2>&1 && echo yes || echo no)
         [ "$tracked" = yes ] && continue
       fi
       case "$val" in

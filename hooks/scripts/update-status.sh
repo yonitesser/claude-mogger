@@ -18,7 +18,7 @@
 # error). Fast: pure bash + one `git status`, no python. Atomic write (temp
 # file + mv). If nothing changed except the timestamp, the file is not
 # rewritten, so its mtime stays put.
-source "$(dirname "$0")/lib.sh" 2>/dev/null
+source "${0%/*}/lib.sh" 2>/dev/null
 
 [ -t 0 ] || cat >/dev/null 2>&1
 

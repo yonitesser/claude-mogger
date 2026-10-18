@@ -3,7 +3,7 @@
 # Reviewer may not run unless tester recorded a REAL pass (exit code 0) and
 # nothing changed since. The gate is a file the model didn't get to write
 # with its opinion — it wrote it with $?.
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 
 INPUT=$(cat)
 SUBAGENT=$(json_get "$INPUT" '.tool_input.subagent_type')

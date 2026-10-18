@@ -25,7 +25,7 @@
 #   MOGGER_CRATES_URL   (https://crates.io/api/v1/crates)
 #   MOGGER_GOPROXY      (https://proxy.golang.org)
 #   MOGGER_VERIFY_MODE=parse  prints "<eco> <name>" per parsed package, no network (tests).
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 
 [ "${MOGGER_VERIFY_PACKAGES:-on}" = "off" ] && exit 0
 

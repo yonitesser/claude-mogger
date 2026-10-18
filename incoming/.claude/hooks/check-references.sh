@@ -10,7 +10,7 @@
 # dynamic imports, try/except ImportError, missing manifests) fails open.
 # Disable with MOGGER_CHECK_REFERENCES=off. Needs python3; without it, allows.
 
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 [ "${MOGGER_CHECK_REFERENCES:-on}" = "off" ] && exit 0
 
 INPUT=$(cat)

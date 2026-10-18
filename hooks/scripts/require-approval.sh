@@ -14,11 +14,19 @@
 # Opt-out for repos whose own workflow owns releases:
 #   MOGGER_ALLOW_PUSH=on  — same as MOGGER_PUSH_GUARD=off: plain pushes of feature branches.
 #   Set it per-repo in .claude/settings.local.json: {"env": {"MOGGER_ALLOW_PUSH": "on"}}
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 
 INPUT=$(cat)
 CMD=$(json_get "$INPUT" '.tool_input.command')
 [ -z "$CMD" ] && exit 0
+
+# Cheap pre-filter: every check below is about a named tool. A command that names none of
+# them (ls, cat, a test run) needs neither the python normaliser nor the regexes.
+# Keep this list in step with the tools named in check_line.
+case "$CMD" in
+  *git*|*gh*|*vercel*|*netlify*|*npm*|*yarn*|*cargo*|*docker*|*kubectl*|*helm*|*terraform*|*pulumi*|*railway*|*fly*|*firebase*|*serverless*|*wrangler*|*sst*|*amplify*|*prisma*|*drizzle*|*supabase*|*sam*|*cdk*|*gcloud*|*az*|*stripe*|*aws*|*paypal*|*braintree*|*twilio*) ;;
+  *) exit 0 ;;
+esac
 
 # --- states: on = block, ask = the human gets a permission prompt, off = allow.
 # MOGGER_ALLOW_PUSH=on is the old name for MOGGER_PUSH_GUARD=off. merge-guard
@@ -47,14 +55,14 @@ gate() {
 # mentions "git push" is not a push). Falls back to the raw line without python3.
 NORM=""
 if command -v python3 >/dev/null 2>&1; then
-  NORM=$(printf '%s' "$CMD" | python3 "$(dirname "$0")/cmd-normalize.py" 2>/dev/null)
+  NORM=$(printf '%s' "$CMD" | python3 "${0%/*}/cmd-normalize.py" 2>/dev/null)
 fi
 [ -n "$NORM" ] || NORM="$CMD"
 
 check_line() {
   local CMD="$1"
   # --- git push ---
-  if echo "$CMD" | grep -qE '(^|[;&|]\s*|\s)git\s+push(\s|$)'; then
+  if mogger_re "$CMD" '(^|[;&|]\s*|\s)git\s+push(\s|$)'; then
     if [ "$PUSH" = on ]; then
       mogger_event block "blocked git push"; echo "BLOCKED: git push requires human approval. Say the branch is ready and stop. Do not retry with --force or another remote." >&2
       exit 2
@@ -98,7 +106,7 @@ check_line() {
   fi
 
   # --- git merge: only when on a protected branch (merging main INTO a feature branch is fine) ---
-  if echo "$CMD" | grep -qE '(^|[;&|]\s*|\s)git\s+merge(\s|$)'; then
+  if mogger_re "$CMD" '(^|[;&|]\s*|\s)git\s+merge(\s|$)'; then
     BR=$(git_branch)
     if [ -z "$BR" ] || is_protected_branch "$BR"; then
       gate "$MERGE" "blocked git merge on a protected branch" "merging while on '${BR:-unknown}' requires human approval. Report the branch is ready for review instead." "Mogger: git merge while on ${BR:-an unknown branch}. Approve only if you want this merge."
@@ -106,17 +114,17 @@ check_line() {
   fi
 
   # --- PR merge ---
-  if echo "$CMD" | grep -qE 'gh\s+([^;&|]*\s)?pr\s+merge'; then
+  if mogger_re "$CMD" 'gh\s+([^;&|]*\s)?pr\s+merge'; then
     gate "$MERGE" "blocked a PR merge" "merging a PR requires human approval. Open/update the PR and stop." "Mogger: merge a pull request. Approve only if you want it merged."
   fi
 
   # --- production deploys / publishes ---
-  if echo "$CMD" | grep -qE '(vercel\s+.*--prod|netlify\s+deploy\s+.*--prod|npm\s+([^;&|]*\s)?publish|pnpm\s+([^;&|]*\s)?publish|yarn\s+npm\s+publish|cargo\s+([^;&|]*\s)?publish|docker\s+([^;&|]*\s)?push|kubectl\s+([^;&|]*\s)?(apply|delete|rollout)|helm\s+([^;&|]*\s)?(install|upgrade|uninstall)|terraform\s+([^;&|]*\s)?(apply|destroy)|pulumi\s+([^;&|]*\s)?(up|destroy)|railway\s+up|fly\s+deploy|firebase\s+deploy|serverless\s+deploy|wrangler\s+(deploy|publish|rollback)|sst\s+deploy|amplify\s+(push|publish)|prisma\s+(migrate\s+(deploy|reset)|db\s+(push|execute))|drizzle-kit\s+push|supabase\s+(db\s+(push|reset)|functions\s+deploy)|gh\s+api\s+[^;&|]*pulls/[0-9]+/merge|gh\s+(release\s+(create|delete)|repo\s+(delete|create\s+[^;&|]*--public|edit\s+[^;&|]*--visibility)|gist\s+create)|sam\s+deploy|cdk\s+deploy|gcloud\s+.*deploy|az\s+.*deployment\s+.*create)'; then
+  if mogger_re "$CMD" '(vercel\s+.*--prod|netlify\s+deploy\s+.*--prod|npm\s+([^;&|]*\s)?publish|pnpm\s+([^;&|]*\s)?publish|yarn\s+npm\s+publish|cargo\s+([^;&|]*\s)?publish|docker\s+([^;&|]*\s)?push|kubectl\s+([^;&|]*\s)?(apply|delete|rollout)|helm\s+([^;&|]*\s)?(install|upgrade|uninstall)|terraform\s+([^;&|]*\s)?(apply|destroy)|pulumi\s+([^;&|]*\s)?(up|destroy)|railway\s+up|fly\s+deploy|firebase\s+deploy|serverless\s+deploy|wrangler\s+(deploy|publish|rollback)|sst\s+deploy|amplify\s+(push|publish)|prisma\s+(migrate\s+(deploy|reset)|db\s+(push|execute))|drizzle-kit\s+push|supabase\s+(db\s+(push|reset)|functions\s+deploy)|gh\s+api\s+[^;&|]*pulls/[0-9]+/merge|gh\s+(release\s+(create|delete)|repo\s+(delete|create\s+[^;&|]*--public|edit\s+[^;&|]*--visibility)|gist\s+create)|sam\s+deploy|cdk\s+deploy|gcloud\s+.*deploy|az\s+.*deployment\s+.*create)'; then
     gate "$DEPLOY" "blocked a deploy command" "production deploy/publish command. Requires human approval. Stop and report what would be deployed." "Mogger: a deploy or publish command. Approve only if you want it to go out."
   fi
 
   # --- money: actual CLIs that move or configure spend, not file names ---
-  if echo "$CMD" | grep -qE '(^|[;&|]\s*|\s)(stripe\s+(charges|payment_intents|invoices|subscriptions|refunds|payouts|customers)\s+(create|update|delete|cancel|capture|confirm|pay|void)|aws\s+(ce|budgets|billing|cur|pricing)\s|gcloud\s+billing|az\s+(consumption|billing|costmanagement)|paypal\s|braintree\s|twilio\s+.*(buy|purchase))'; then
+  if mogger_re "$CMD" '(^|[;&|]\s*|\s)(stripe\s+(charges|payment_intents|invoices|subscriptions|refunds|payouts|customers)\s+(create|update|delete|cancel|capture|confirm|pay|void)|aws\s+(ce|budgets|billing|cur|pricing)\s|gcloud\s+billing|az\s+(consumption|billing|costmanagement)|paypal\s|braintree\s|twilio\s+.*(buy|purchase))'; then
     gate "$MONEY" "blocked a money command" "this command moves or configures money. Requires human approval regardless of amount. Stop and describe what it would do." "Mogger: a command that moves or configures money. Approve only if you want it to run."
   fi
   return 0

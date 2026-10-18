@@ -16,11 +16,12 @@
 # Escape hatch: MOGGER_CHECK_RESILIENCE=off. Fails open without jq/python3.
 # The broader, heuristic resilience audit lives in scripts/checks/resilience.sh.
 
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 [ "${MOGGER_CHECK_RESILIENCE:-on}" = "off" ] && exit 0
 
 INPUT=$(cat)
-FILE_PATH=$(json_get "$INPUT" '.tool_input.file_path')
+json_fields "$INPUT" .tool_input.file_path .tool_input.new_string   # one jq call
+FILE_PATH="${JF[0]}"
 [ -z "$FILE_PATH" ] && exit 0
 [ -f "$FILE_PATH" ] || exit 0
 
@@ -72,7 +73,7 @@ function jsproc(line) {
 EOF
 
 TARGET="$FILE_PATH"; OFF=0
-NEWS=$(json_get "$INPUT" '.tool_input.new_string')
+NEWS="${JF[1]}"
 if [ -n "$NEWS" ]; then
   # Edit: only the text the model just wrote. Map lines back to the file.
   printf '%s\n' "$NEWS" > "$TMP/new"

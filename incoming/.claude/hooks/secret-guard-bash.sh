@@ -9,8 +9,8 @@
 #
 # Fails OPEN outside a git repo or when jq/python3 are missing.
 # Escape hatch: MOGGER_SECRET_GUARD=off.
-source "$(dirname "$0")/lib.sh"
-source "$(dirname "$0")/secret-patterns.sh"
+source "${0%/*}/lib.sh"
+source "${0%/*}/secret-patterns.sh"
 
 [ "${MOGGER_SECRET_GUARD:-on}" = "off" ] && exit 0
 
@@ -19,11 +19,13 @@ CMD=$(json_get "$INPUT" '.tool_input.command')
 [ -z "$CMD" ] && exit 0
 # A key typed into any shell command (curl header, echo > .env) is a leak too.
 # Only the named key formats (ghp_, AKIA, sk-ant-...): the generic password pattern is for files.
-if FOUND=$(printf '%s\n' "$CMD" | MOGGER_SECRET_SKIP_GENERIC=1 mogger_find_secret); then
+# (named formats only, so the pre-filter is the prefix list; generic words would match every command)
+case "$CMD" in *AKIA*|*gh[pousr]_*|*github_pat_*|*sk-*|*_live_*|*-----BEGIN*|*xox[abprs]-*) MAYBE=1 ;; *) MAYBE=0 ;; esac
+if [ "$MAYBE" = 1 ] && FOUND=$(printf '%s\n' "$CMD" | MOGGER_SECRET_SKIP_GENERIC=1 mogger_find_secret); then
   mogger_event block "blocked a secret in a shell command"; echo "BLOCKED: this command contains what looks like a hardcoded secret: $FOUND. Read it from an environment variable instead, and rotate the credential if it was ever real." >&2
   exit 2
 fi
-echo "$CMD" | grep -qE '(^|[^[:alnum:]_-])git[[:space:]]+([^;&|]*[[:space:]])?(add|commit)([[:space:]]|$)' || exit 0
+mogger_re "$CMD" '(^|[^[:alnum:]_-])git[[:space:]]+([^;&|]*[[:space:]])?(add|commit)([[:space:]]|$)' || exit 0
 git rev-parse --git-dir >/dev/null 2>&1 || exit 0
 
 is_env_file() {  # basename check: .env, .env.local... but not the example/sample/template trio

@@ -5,25 +5,28 @@
 
 THRESHOLD="${MOGGER_READ_LINES:-350}"  # Off: MOGGER_READ_GUARD=off
 
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 [ "${MOGGER_READ_GUARD:-on}" = "off" ] && exit 0
 INPUT=$(cat)
 CMD=$(json_get "$INPUT" '.tool_input.command')
 
 # Only look at simple read-style commands, not every Bash call
-if ! echo "$CMD" | grep -qE '^\s*(cat|head|tail|less|more)\s'; then
+if ! mogger_re "$CMD" '^[[:space:]]*(cat|head|tail|less|more)[[:space:]]'; then
   exit 0
 fi
 
 # head/tail with a small line count is a bounded read: let it through.
-N=$(echo "$CMD" | sed -nE 's/^[[:space:]]*(head|tail)[[:space:]]+(-n[[:space:]]*|-)([0-9]+)[[:space:]].*/\3/p')
-[ -n "$N" ] && [ "$N" -le "$THRESHOLD" ] && exit 0
+# (pure bash: this hook runs on every Bash call)
+if [[ $CMD =~ ^[[:space:]]*(head|tail)[[:space:]]+(-n[[:space:]]*|-)([0-9]+)[[:space:]] ]]; then
+  [ "${BASH_REMATCH[3]}" -le "$THRESHOLD" ] && exit 0
+fi
 # head -c / tail -c N: a byte count is bounded too (allow up to ~100 bytes per allowed line)
-B=$(echo "$CMD" | sed -nE 's/^[[:space:]]*(head|tail)[[:space:]]+-c[[:space:]]*([0-9]+)[[:space:]].*/\2/p')
-[ -n "$B" ] && [ "$B" -le $((THRESHOLD * 100)) ] && exit 0
+if [[ $CMD =~ ^[[:space:]]*(head|tail)[[:space:]]+-c[[:space:]]*([0-9]+)[[:space:]] ]]; then
+  [ "${BASH_REMATCH[2]}" -le $((THRESHOLD * 100)) ] && exit 0
+fi
 
 # Pull the last whitespace-separated token as the likely file path
-FILE_PATH=$(echo "$CMD" | awk '{print $NF}')
+FILE_PATH=${CMD##*[[:space:]]}
 
 if [ -z "$FILE_PATH" ] || [ ! -f "$FILE_PATH" ]; then
   exit 0

@@ -16,7 +16,7 @@
 #   - MOGGER_SCOPE_GUARD=off
 # Parallel tasks: MOGGER_SCOPE_PARALLEL=on allows files from ANY unchecked
 # task that declares files:, not only the first one.
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 
 [ "${MOGGER_SCOPE_GUARD:-on}" = "off" ] && exit 0
 
