@@ -5,7 +5,7 @@
 
 THRESHOLD="${MOGGER_READ_LINES:-350}"  # lines. Off: MOGGER_READ_GUARD=off. Tune: MOGGER_READ_LINES.
 
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 [ "${MOGGER_READ_GUARD:-on}" = "off" ] && exit 0
 INPUT=$(cat)
 FILE_PATH=$(json_get "$INPUT" '.tool_input.file_path')

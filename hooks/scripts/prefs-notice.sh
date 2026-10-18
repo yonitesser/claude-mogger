@@ -7,7 +7,7 @@
 # Silent (and no marker) where nobody can answer: headless/SDK runs, permission
 # modes that skip prompts, MOGGER_HEADLESS=on. Silent when .claude/mogger.json
 # already exists (the user has chosen). MOGGER_PREFS_PROMPT=off disables it.
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 [ "${MOGGER_PREFS_PROMPT:-on}" = "off" ] && exit 0
 INPUT=""; [ -t 0 ] || INPUT=$(cat 2>/dev/null)
 mogger_can_ask "$INPUT" || exit 0

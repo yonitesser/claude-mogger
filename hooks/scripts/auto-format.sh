@@ -5,7 +5,7 @@
 # anything, never imposes a formatter the project didn't already choose.
 # If nothing is configured, does nothing. Clean code as a hook, not a hope.
 
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 INPUT=$(cat)
 FILE=$(json_get "$INPUT" '.tool_input.file_path')
 

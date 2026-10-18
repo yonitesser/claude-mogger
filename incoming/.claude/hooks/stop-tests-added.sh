@@ -11,7 +11,7 @@
 # tests changed (fast timeout). The model cannot claim "done" over a red suite.
 # Costs no tokens when green; on red it hands back the last lines of output.
 # Escape hatch: MOGGER_STOP_TESTS=off. Timeout: MOGGER_STOP_TESTS_TIMEOUT (default 50s; the hook entry allows 60s).
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 
 # Print the test command for this project, nothing if none is clearly set up.
 stop_test_cmd() {

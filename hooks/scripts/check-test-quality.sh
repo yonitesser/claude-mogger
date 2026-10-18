@@ -373,7 +373,7 @@ if [ "${1:-}" = "--scan" ]; then
   exit 0
 fi
 
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 [ "${MOGGER_CHECK_TESTS:-on}" = "off" ] && exit 0
 
 INPUT=$(cat)

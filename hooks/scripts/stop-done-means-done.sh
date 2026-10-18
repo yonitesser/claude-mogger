@@ -9,7 +9,7 @@
 #   - a line in TASKS.md starting with "BLOCKED:" or a "## Open questions" section with content
 #   - TASKS.md "## Status:" line says "paused" or "awaiting-approval"
 #   - stop_hook_active is true (we already sent it back once this turn — don't loop)
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 
 INPUT=$(cat)
 

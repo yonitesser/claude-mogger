@@ -4,7 +4,7 @@
 # reviewer may not run unless scripts/smoke-check.sh recorded ok:true in
 # .claude/state/smoke.json and nothing changed since. Default OFF (fail open)
 # so projects without a runnable app are never wedged.
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 
 [ "${MOGGER_REQUIRE_SMOKE:-off}" != "on" ] && exit 0
 

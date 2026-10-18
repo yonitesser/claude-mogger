@@ -9,7 +9,7 @@
 # States (MOGGER_DANGER_GUARD): on = block (default), ask = permission prompt for
 # the human, off = allow. Where no prompt can be shown, ask blocks.
 
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 STATE=$(mogger_state MOGGER_DANGER_GUARD on)
 [ "$STATE" = "off" ] && exit 0
 
@@ -29,9 +29,13 @@ block() {  # block <short event text> <what was found>
 }
 
 # Quotes and backticks removed so wrappers like bash -c "rm -rf /" are seen.
-CLEAN=$(printf '%s' "$CMD" | tr -d "\"'\`" | sed 's/\${HOME}/$HOME/g')
-LC=$(printf '%s' "$CLEAN" | tr 'A-Z' 'a-z')
+# Pure bash from here on (no grep/sed/tr per check): this hook runs on every Bash call.
+shopt -s nocasematch   # replaces lower-casing the text; `=~` and `case` both honour it
+CLEAN=${CMD//[\"\'\`]/}
+CLEAN=${CLEAN//\$\{HOME\}/\$HOME}
+LC=${CLEAN//$'\n'/;}   # one line, so `$` and `^` in the patterns below mean end/start of the command
 
+SEP='[;|&(){}]'   # in a variable: a literal } inside ${var//[..}]/..} ends the expansion early
 # 1. rm -r on root, home, cwd, wildcards or system dirs
 BAD='^(\.git/?|/|/\*|~|~/|~/\*|\$HOME|\$HOME/|\$HOME/\*|\.|\./|\.\.|\.\./|\*|\./\*|\.\./\*|/(etc|usr|var|bin|sbin|lib|lib64|boot|root|home|opt|dev|proc|sys|System|Library|Users|Applications)/?|/(etc|usr|var|bin|sbin|lib|boot|root|home|opt|Users)/\*|/(home|Users)/[^/]+/?|/(home|Users)/[^/]+/\*)$'
 while IFS= read -r seg; do
@@ -54,38 +58,38 @@ while IFS= read -r seg; do
       [[ "$t" =~ $BAD ]] && block "blocked rm -r on $t" "rm -r on '$t'"
     done
   fi
-done <<<"$(printf '%s' "$CLEAN" | tr ';|&(){}' '\n\n\n\n\n\n\n')"
+done <<<"${CLEAN//$SEP/$'\n'}"
 
 # 2. Disks and fork bombs
-echo "$LC" | grep -qE 'dd[[:space:]]+[^;&|]*of=/dev/' && block "blocked dd to a device" "dd writing to a device"
-echo "$LC" | grep -qE '(^|[[:space:];&|])mkfs(\.[a-z0-9]+)?([[:space:]]|$)' && block "blocked mkfs" "mkfs formats a disk"
-echo "$LC" | grep -qE '>[[:space:]]*/dev/(sd|nvme|hd|disk|vd)' && block "blocked write to a disk device" "redirect into a disk device"
-printf '%s' "$CMD" | grep -qE ':\(\)[[:space:]]*\{' && block "blocked fork bomb" "fork bomb"
+mogger_re "$LC" 'dd[[:space:]]+[^;&|]*of=/dev/' && block "blocked dd to a device" "dd writing to a device"
+mogger_re "$LC" '(^|[[:space:];&|])mkfs(\.[a-z0-9]+)?([[:space:]]|$)' && block "blocked mkfs" "mkfs formats a disk"
+mogger_re "$LC" '>[[:space:]]*/dev/(sd|nvme|hd|disk|vd)' && block "blocked write to a disk device" "redirect into a disk device"
+mogger_re "$CMD" ':\(\)[[:space:]]*\{' && block "blocked fork bomb" "fork bomb"
 
 # 3. Download piped into a shell
-echo "$LC" | grep -qE '(curl|wget)[^|]*\|[[:space:]]*(sudo[[:space:]]+)?(env[[:space:]]+)?(ba|z|da|k|fi)?sh([[:space:]]|$)' && block "blocked curl piped to shell" "download piped into a shell"
-echo "$LC" | grep -qE '((ba|z|da|k)?sh|eval)[[:space:]]+(-c[[:space:]]+)?(<\(|\$\()[[:space:]]*(curl|wget)' && block "blocked curl run as shell code" "downloaded script run as code"
+mogger_re "$LC" '(curl|wget)[^|]*\|[[:space:]]*(sudo[[:space:]]+)?(env[[:space:]]+)?(ba|z|da|k|fi)?sh([[:space:]]|$)' && block "blocked curl piped to shell" "download piped into a shell"
+mogger_re "$LC" '((ba|z|da|k)?sh|eval)[[:space:]]+(-c[[:space:]]+)?(<\(|\$\()[[:space:]]*(curl|wget)' && block "blocked curl run as shell code" "downloaded script run as code"
 
 # 4. World-writable permissions
-echo "$LC" | grep -qE 'chmod[[:space:]]+(-[a-z]+[[:space:]]+)*(0?777|a\+rwx|ugo\+rwx)([[:space:]]|$)' && block "blocked chmod 777" "chmod 777 (anyone can write)"
+mogger_re "$LC" 'chmod[[:space:]]+(-[a-z]+[[:space:]]+)*(0?777|a\+rwx|ugo\+rwx)([[:space:]]|$)' && block "blocked chmod 777" "chmod 777 (anyone can write)"
 
 # 5. Git commands that throw away uncommitted work
-echo "$LC" | grep -qE 'git[[:space:]]+([^;&|]*[[:space:]])?reset[[:space:]]+([^;&|]*[[:space:]])?--hard' && block "blocked git reset --hard" "git reset --hard (drops uncommitted work)"
-if echo "$LC" | grep -qE 'git[[:space:]]+([^;&|]*[[:space:]])?clean[[:space:]]+[^;&|]*-[a-z]*f'; then
-  echo "$LC" | grep -qE 'git[[:space:]]+([^;&|]*[[:space:]])?clean[[:space:]]+[^;&|]*(-[a-z]*n|--dry-run)' || block "blocked git clean -f" "git clean -f (deletes untracked files)"
+mogger_re "$LC" 'git[[:space:]]+([^;&|]*[[:space:]])?reset[[:space:]]+([^;&|]*[[:space:]])?--hard' && block "blocked git reset --hard" "git reset --hard (drops uncommitted work)"
+if mogger_re "$LC" 'git[[:space:]]+([^;&|]*[[:space:]])?clean[[:space:]]+[^;&|]*-[a-z]*f'; then
+  mogger_re "$LC" 'git[[:space:]]+([^;&|]*[[:space:]])?clean[[:space:]]+[^;&|]*(-[a-z]*n|--dry-run)' || block "blocked git clean -f" "git clean -f (deletes untracked files)"
 fi
 
-echo "$LC" | grep -qE 'git[[:space:]]+([^;&|]*[[:space:]])?(checkout|restore)[[:space:]]+(--[[:space:]]+)?\.([[:space:]]|$)' && block "blocked git checkout/restore ." "git checkout/restore . (throws away every uncommitted change)"
+mogger_re "$LC" 'git[[:space:]]+([^;&|]*[[:space:]])?(checkout|restore)[[:space:]]+(--[[:space:]]+)?\.([[:space:]]|$)' && block "blocked git checkout/restore ." "git checkout/restore . (throws away every uncommitted change)"
 # --no-verify skips the repo's own pre-commit and pre-push checks: do not retry a failed commit with it
-echo "$LC" | grep -qE 'git[[:space:]]+([^;&|]*[[:space:]])?(commit|push|merge|am|cherry-pick)[[:space:]]+([^;&|]*[[:space:]])?--no-verify' && block "blocked --no-verify" "--no-verify (skips the repo's own checks; fix the failing check instead)"
+mogger_re "$LC" 'git[[:space:]]+([^;&|]*[[:space:]])?(commit|push|merge|am|cherry-pick)[[:space:]]+([^;&|]*[[:space:]])?--no-verify' && block "blocked --no-verify" "--no-verify (skips the repo's own checks; fix the failing check instead)"
 
 # 5b. Another AI agent started with its safety checks off
-echo "$LC" | grep -qE '(^|[[:space:];&|/])(claude|codex|gemini|aider|cursor-agent|opencode|amp|qwen|copilot)[[:space:]]+([^;&|]*[[:space:]])?(--dangerously-skip-permissions|--dangerously-bypass-approvals-and-sandbox|--yolo|--trust-all-tools|--allow-all-tools|--allow-dangerously-skip-permissions)' && block "blocked an AI agent started with permission checks off" "starting another AI agent with its permission checks turned off"
+mogger_re "$LC" '(^|[[:space:];&|/])(claude|codex|gemini|aider|cursor-agent|opencode|amp|qwen|copilot)[[:space:]]+([^;&|]*[[:space:]])?(--dangerously-skip-permissions|--dangerously-bypass-approvals-and-sandbox|--yolo|--trust-all-tools|--allow-all-tools|--allow-dangerously-skip-permissions)' && block "blocked an AI agent started with permission checks off" "starting another AI agent with its permission checks turned off"
 
 # 6. Destructive database commands
-if echo "$LC" | grep -qE '(^|[[:space:];&|])(psql|mysql|mariadb|sqlite3|sqlcmd|mongosh|duckdb|sqlplus|clickhouse-client|cockroach|redis-cli)([[:space:]]|$)'; then
-  echo "$LC" | grep -qE 'drop[[:space:]]+(table|database|schema)|truncate[[:space:]]+(table[[:space:]]+)?[a-z_"]|flushall|flushdb|delete[[:space:]]+from[[:space:]]+[a-z0-9_."]+[[:space:]]*(;|$)' && block "blocked destructive SQL" "destructive database command (DROP, TRUNCATE, DELETE with no WHERE, FLUSH)"
+if mogger_re "$LC" '(^|[[:space:];&|])(psql|mysql|mariadb|sqlite3|sqlcmd|mongosh|duckdb|sqlplus|clickhouse-client|cockroach|redis-cli)([[:space:]]|$)'; then
+  mogger_re "$LC" 'drop[[:space:]]+(table|database|schema)|truncate[[:space:]]+(table[[:space:]]+)?[a-z_"]|flushall|flushdb|delete[[:space:]]+from[[:space:]]+[a-z0-9_."]+[[:space:]]*(;|$)' && block "blocked destructive SQL" "destructive database command (DROP, TRUNCATE, DELETE with no WHERE, FLUSH)"
 fi
-echo "$LC" | grep -qE '(^|[[:space:];&|])dropdb[[:space:]]|prisma[[:space:]]+migrate[[:space:]]+reset|db:(drop|reset)' && block "blocked database reset" "database drop or reset"
+mogger_re "$LC" '(^|[[:space:];&|])dropdb[[:space:]]|prisma[[:space:]]+migrate[[:space:]]+reset|db:(drop|reset)' && block "blocked database reset" "database drop or reset"
 
 exit 0

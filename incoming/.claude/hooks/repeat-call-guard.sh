@@ -7,20 +7,19 @@
 # State: .claude/state/repeat-call.txt ("<signature> <count>").
 # Escape hatch: MOGGER_REPEAT_GUARD=off. Fails OPEN on missing tools or bad input.
 
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 [ "${MOGGER_REPEAT_GUARD:-on}" = "off" ] && exit 0
 
 INPUT=$(cat)
 [ -n "$INPUT" ] || exit 0
-TOOL=$(json_get "$INPUT" '.tool_name')
+json_fields "$INPUT" .tool_name .tool_input .hook_event_name   # one jq call: this hook runs after every tool
+TOOL="${JF[0]}"; ARGS="${JF[1]}"; EVENT="${JF[2]}"
 [ -n "$TOOL" ] || exit 0
-ARGS=$(json_get "$INPUT" '.tool_input')
-EVENT=$(json_get "$INPUT" '.hook_event_name')
-SIG=$(printf '%s|%s' "$TOOL" "$ARGS" | cksum | tr -d ' ')
+SIG=$(printf '%s|%s' "$TOOL" "$ARGS" | cksum); SIG=${SIG// /}
 
 DIR="${CLAUDE_PROJECT_DIR:-.}/.claude/state"
 F="$DIR/repeat-call.txt"
-mkdir -p "$DIR" 2>/dev/null || exit 0
+[ -d "$DIR" ] || mkdir -p "$DIR" 2>/dev/null || exit 0
 
 PREV=""; N=0
 [ -f "$F" ] && read -r PREV N < "$F" 2>/dev/null

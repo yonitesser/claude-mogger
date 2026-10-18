@@ -10,7 +10,7 @@
 # Same states as the Bash gate: MOGGER_PUSH_GUARD and MOGGER_MERGE_GUARD, each
 # on (block), ask (permission prompt for the human) or off (allow; merge has no
 # off). Where no prompt can be shown, ask blocks.
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 
 INPUT=$(cat)
 TOOL=$(json_get "$INPUT" '.tool_name')

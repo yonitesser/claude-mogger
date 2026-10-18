@@ -28,7 +28,7 @@
 # FAILS OPEN (exit 0) if: no budget, no python3 (verified to really run, not the
 # Windows Store stub), transcript missing/unreadable, pricing.json missing, or
 # any internal error. Needs python3 only; bash 3.2 compatible.
-source "$(dirname "$0")/lib.sh"
+source "${0%/*}/lib.sh"
 
 INPUT=$(cat)
 
@@ -41,7 +41,7 @@ command -v python3 >/dev/null 2>&1 && python3 -c '1' >/dev/null 2>&1 || exit 0
 TRANSCRIPT=$(json_get "$INPUT" '.transcript_path')
 [ -n "$TRANSCRIPT" ] && [ -r "$TRANSCRIPT" ] || exit 0
 
-PRICING="${MOGGER_PRICING_FILE:-$(cd "$(dirname "$0")/../.." && pwd)/templates/pricing.json}"
+PRICING="${MOGGER_PRICING_FILE:-$(cd "${0%/*}/../.." && pwd)/templates/pricing.json}"
 [ -r "$PRICING" ] || exit 0
 
 STATE_DIR=".claude/state"
