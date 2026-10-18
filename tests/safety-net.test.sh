@@ -135,6 +135,11 @@ check ""                              "$(parse 'go get ./...')"                 
 check "npm a,pypi b,"                 "$(parse 'npm i a && pip install b')"                   "chained commands"
 check ""                              "$(parse 'echo hello world')"                           "unrelated command"
 check ""                              "$(parse 'git commit -m "npm install stuff"' )"         "git message containing 'npm install' still parsed as text only"
+check "pypi foo,"                     "$(parse 'pip install foo 2>&1 | tail -2')"             "2>&1 is a redirect, not a package '2'"
+check "crates serde,"                 "$(parse 'cargo add serde 2>/dev/null')"               "2>/dev/null is not a package"
+check "pypi foo,"                     "$(parse 'pip install foo > out.txt')"                  "redirect target is not a package"
+check "pypi foo,"                     "$(parse 'pip install foo &> o.log')"                   "&> is not a command separator"
+check "npm a,pypi b,"                 "$(parse 'npm i a >> l 2>&1 && pip install b')"        "redirects plus chain"
 
 echo "== verify-packages.sh (local stub registry)"
 if command -v python3 >/dev/null 2>&1 && command -v curl >/dev/null 2>&1; then

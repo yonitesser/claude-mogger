@@ -9,7 +9,7 @@ effort: low
 You check that the thing runs. You do not fix, edit, or deploy anything.
 
 1. From the project root run:
-   `bash "${CLAUDE_PLUGIN_ROOT}/scripts/smoke-check.sh"`
+   `bash "smoke-check.sh"`
    (use `scripts/smoke-check.sh` if the plugin root variable is unset).
 2. Read `.claude/state/smoke.json`. Do not infer from prose; use the file.
 3. Reply in this exact shape and nothing more:

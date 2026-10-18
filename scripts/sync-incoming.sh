@@ -6,7 +6,10 @@ set -e
 cd "$(dirname "$0")/.."
 rm -rf incoming
 mkdir -p incoming/.claude/agents incoming/.claude/hooks
-cp agents/*.md incoming/.claude/agents/
+# agents name plugin paths; rewrite them to the manual layout (hooks in .claude/hooks, scripts and checks/ at the project root)
+for f in agents/*.md; do
+  sed -e 's|${CLAUDE_PLUGIN_ROOT}/hooks/scripts/|.claude/hooks/|g' -e 's|${CLAUDE_PLUGIN_ROOT}/scripts/checks/|checks/|g' -e 's|${CLAUDE_PLUGIN_ROOT}/scripts/||g' "$f" > "incoming/.claude/agents/$(basename "$f")"
+done
 cp hooks/scripts/*.sh hooks/scripts/*.py incoming/.claude/hooks/
 chmod +x incoming/.claude/hooks/*.sh
 cp hooks/guards.tsv incoming/.claude/guards.tsv

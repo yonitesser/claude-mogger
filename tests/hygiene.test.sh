@@ -589,6 +589,9 @@ done
 
 grep -q '"no change" is a good answer' "$ROOT/agents/retro.md" && grep -q 're-check before use' "$ROOT/agents/retro.md" && ok "retro: no-change answer and fact-vs-rule label" || bad "retro lost the no-change / fact-vs-rule lines"
 
+if grep -rq 'CLAUDE_PLUGIN_ROOT}/' "$ROOT/incoming/.claude/agents"; then bad "incoming agents still point at plugin-only paths"; else ok "incoming agents use manual-install paths"; fi
+grep -q "\.claude/hooks/log-savings.sh" "$ROOT/incoming/.claude/agents/tester.md" && ok "incoming tester logs via .claude/hooks" || bad "incoming tester lost the rewritten log path"
+
 echo
 echo "passed: $PASS  failed: $FAIL"
 [ "$FAIL" -eq 0 ]

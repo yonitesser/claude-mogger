@@ -58,5 +58,5 @@ size (your reply) in characters. A rough count is fine, this feeds an
 estimate, not an audit:
 
 ```
-bash "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/log-savings.sh" explainer haiku INPUT_CHARS OUTPUT_CHARS
+bash ".claude/hooks/log-savings.sh" explainer haiku INPUT_CHARS OUTPUT_CHARS
 ```
