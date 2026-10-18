@@ -628,6 +628,10 @@ if command -v strace >/dev/null 2>&1; then
   rm -rf "$SPD"
 fi
 
+# \s is not POSIX ERE: macOS bash reads it as a plain "s", so mogger_re must spell it out.
+if ( source "$ROOT/hooks/scripts/lib.sh"; mogger_re "git push" 'git\s+push' && ! mogger_re "gitspush" 'git\s+push' ); then
+  ok "mogger_re turns \\s into [[:space:]] (macOS bash has no \\s)"; else bad "mogger_re leaves \\s raw (breaks on macOS bash)"; fi
+
 LK=$(mktemp -d); mkdir -p "$LK/t"; printf 'test("x", () => {});\n' > "$LK/t/a.test.js"
 ( cd "$LK" && printf '{"tool_name":"Write","tool_input":{"file_path":"%s/t/a.test.js"}}' "$LK" | TMPDIR="$LK/t" CLAUDE_PROJECT_DIR="$LK" bash "$ROOT/hooks/scripts/check-test-quality.sh" >/dev/null 2>&1 )
 [ -z "$(ls "$LK"/t/mogger-tq.* 2>/dev/null)" ] && ok "check-test-quality leaves no temp file behind" || bad "check-test-quality leaked its awk temp file"

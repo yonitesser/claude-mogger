@@ -18,7 +18,8 @@ json_fields() {
 }
 
 # mogger_re <string> <ERE> -> success when the string matches (no fork; honours nocasematch).
-mogger_re() { [[ $1 =~ $2 ]]; }
+# \s is not POSIX: macOS bash (regcomp without REG_ENHANCED) takes it as a plain "s", so spell it out.
+mogger_re() { local p=${2//\\s/[[:space:]]}; [[ $1 =~ $p ]]; }
 
 # mogger_rel_path <path> -> the path as seen from the project root, with a leading
 # slash, so `*/build/*` style tests judge folders INSIDE the project and not the
