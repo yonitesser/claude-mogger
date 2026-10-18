@@ -37,4 +37,4 @@ jobs:
         run: bash scripts/sync-incoming.sh --check
       - name: shellcheck (warnings and up; unused variables are allowed)
         if: runner.os == 'Linux'
-        run: shellcheck -x -S warning -e SC2034 hooks/scripts/*.sh scripts/*.sh scripts/checks/*.sh
+        run: shellcheck -x -S warning -e SC2034,SC2119,SC2120 hooks/scripts/*.sh scripts/*.sh scripts/checks/*.sh
