@@ -592,6 +592,15 @@ grep -q '"no change" is a good answer' "$ROOT/agents/retro.md" && grep -q 're-ch
 if grep -rq 'CLAUDE_PLUGIN_ROOT}/' "$ROOT/incoming/.claude/agents"; then bad "incoming agents still point at plugin-only paths"; else ok "incoming agents use manual-install paths"; fi
 grep -q "\.claude/hooks/log-savings.sh" "$ROOT/incoming/.claude/agents/tester.md" && ok "incoming tester logs via .claude/hooks" || bad "incoming tester lost the rewritten log path"
 
+T=$(jq -r '[.. | objects | select((.command // "") | test("stop-tests-added")) | .timeout][0]' "$ROOT/hooks/hooks.json")
+D=$(grep -o 'STOP_TESTS_TIMEOUT:-[0-9]*' "$ROOT/hooks/scripts/stop-tests-added.sh" | head -1 | grep -o '[0-9]*$')
+[ "${T:-0}" -gt "${D:-999}" ] && ok "stop-tests-added hook timeout ($T s) outlasts its own test timeout ($D s)" || bad "stop-tests-added hook timeout ${T:-?} s would kill its own ${D:-?} s test run"
+
+LK=$(mktemp -d); mkdir -p "$LK/t"; printf 'test("x", () => {});\n' > "$LK/t/a.test.js"
+( cd "$LK" && printf '{"tool_name":"Write","tool_input":{"file_path":"%s/t/a.test.js"}}' "$LK" | TMPDIR="$LK/t" CLAUDE_PROJECT_DIR="$LK" bash "$ROOT/hooks/scripts/check-test-quality.sh" >/dev/null 2>&1 )
+[ -z "$(ls "$LK"/t/mogger-tq.* 2>/dev/null)" ] && ok "check-test-quality leaves no temp file behind" || bad "check-test-quality leaked its awk temp file"
+rm -rf "$LK"
+
 echo
 echo "passed: $PASS  failed: $FAIL"
 [ "$FAIL" -eq 0 ]

@@ -268,7 +268,7 @@
           {
             "type": "command",
             "command": "bash .claude/hooks/stop-tests-added.sh",
-            "timeout": 30
+            "timeout": 60
           },
           {
             "type": "command",

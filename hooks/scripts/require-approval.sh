@@ -64,13 +64,16 @@ check_line() {
     PUSH_ARGS=$(echo "$CMD" | sed -E 's/.*git[[:space:]]+push//; s/[;&|].*//')
     REMOTE_SEEN=0
     REFSPECS=0
+    is_force_flag() {  # long flags (git accepts unique abbreviations) and short clusters like -uf
+      case "$1" in --for|--forc|--force*|--mir*|--del*|--all*) return 0 ;; --*) return 1 ;; -*[fd]*) return 0 ;; esac
+      return 1
+    }
     for tok in $PUSH_ARGS; do
-      case "$tok" in
-        --force|--force-with-lease|--force-with-lease=*|--force-if-includes|-f|--mirror|--delete|-d|--all)
-          mogger_event block "blocked a force push"; echo "BLOCKED: '$tok' is never allowed, even with MOGGER_ALLOW_PUSH=on. Push a normal feature branch instead." >&2
-          exit 2 ;;
-        -*) continue ;;
-      esac
+      if is_force_flag "$tok"; then
+        mogger_event block "blocked a force push"; echo "BLOCKED: '$tok' is never allowed, even with MOGGER_ALLOW_PUSH=on. Push a normal feature branch instead." >&2
+        exit 2
+      fi
+      case "$tok" in -*) continue ;; esac
       if [ "$REMOTE_SEEN" -eq 0 ]; then REMOTE_SEEN=1; continue; fi
       REFSPECS=$((REFSPECS + 1))
       case "$tok" in

@@ -63,6 +63,11 @@ expect 0 "$PUSH origin feat"                                   "feature push all
 expect 2 "bash -c \"$PUSH --force origin feat\""               "force inside bash -c"
 expect 2 "git -C . push origin main"                           "protected branch via git -C"
 expect 2 "$PUSH origin +feat"                                  "plus-refspec"
+expect 2 "$PUSH -uf origin feat"                               "combined short flags -uf"
+expect 2 "$PUSH --forc origin feat"                            "abbreviated --forc"
+expect 2 "$PUSH --del origin feat"                             "abbreviated --del"
+expect 0 "$PUSH -u origin feat"                                "-u alone is fine"
+expect 0 "$PUSH --follow-tags origin feat"                     "--follow-tags is not a force"
 unset MOGGER_ALLOW_PUSH
 
 echo "== GitHub MCP tools"

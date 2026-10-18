@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Audit fixes (report: `research/mogger-audit-2026-10-18.md` in the project files). `verify-packages.sh` no longer reads `2>&1` or `> file` as a package named `2`. `incoming/` agents now use manual-install paths (`.claude/hooks/`, `checks/`) instead of `${CLAUDE_PLUGIN_ROOT}`. With `MOGGER_PUSH_GUARD=off`, `require-approval.sh` also catches `-uf`, `--forc` and `--del`. `taint-guard.sh` judges the URL host, so `evil.example/?r=localhost` still asks. `config-guard.sh` ignores `2>/dev/null` and `2>&1`. The Stop test run (`stop-tests-added.sh`) now defaults to 50 s, inside its 60 s hook limit. `check-test-quality.sh` no longer leaks a temp file per edit. CI gets `permissions: contents: read`, a 20 minute limit and cancel-in-progress.
+
 ## 1.11.2 — 2026-10-16
 
 - Five short rules for apps that handle real money and real users, from a "before a paying customer" checklist. I checked each against the repo first; none existed. `code-health` rule 7 now says: migrations have a down/rollback step; money is integer cents or DECIMAL, never float; timestamps are UTC (`timestamptz`); user-created records get a soft delete (`deleted_at`). `edge-cases` duplicate-submit row now says: payments and webhooks use an idempotency key, and each webhook event id is stored so repeats are skipped.

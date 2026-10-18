@@ -385,6 +385,7 @@ tq_is_test_path "$REL" || exit 0
 [ -f "$FP" ] || exit 0
 
 trap 'rm -f "${TQ_AWK:-}"' EXIT
+tq_init || exit 0   # in the parent: the $(...) below is a subshell and its TQ_AWK would be lost, leaking the temp file
 OUT=$(tq_scan_file "$FP") || exit 0
 [ -n "$OUT" ] || exit 0
 
