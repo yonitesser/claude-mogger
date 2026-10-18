@@ -55,6 +55,7 @@ Verdict key:
 |---|---|---|
 | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | OPTIONAL | Real. Searchable design database (styles, palettes, fonts, ~22 stacks). Has a freemium upsell. Good for concrete lookups. |
 | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | OPTIONAL | Real. Opinionated anti-generic frontend direction. Complements ui-ux-pro-max (lookup vs direction), doesn't conflict. |
+| [google-research/harness2](https://github.com/google-research/harness2) | IDEAS TAKEN | Apache 2.0, research code (Google, 2026-10). Tunes an agent harness per task: runs the task about 4 times with edited harnesses, merges the best, saves lessons. Read the code: no data sent out except model API calls; executor network is open and the Codex sandbox is off. Skipped: the variant-and-merge loop (several times the cost per task, needs a model judge), the lesson library (we have `retro` and `DECISIONS.md`), evidence-is-data (we have taint-mark). Took 2 wording ideas into `retro`: "no change" is a good answer, and a project fact is not a rule. |
 | [vojtaholik/good-css](https://github.com/vojtaholik/good-css) | IDEAS TAKEN | Real, MIT, CSS-technique skill (install via npx or plugin: not bundled). Took 3 short rules (hover media query, `:active`, motion guards) into design-mogger. `outline: none` already caught by `scripts/checks/a11y.sh`. Skipped: logical properties (Tailwind 4.2 dependent), oklch, clamp tokens (taste, browser-floor), the rest of the 94 KB PRACTICES.md. |
 
 ## Different job entirely
