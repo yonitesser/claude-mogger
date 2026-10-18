@@ -35,7 +35,7 @@ fi
 
 CMD=$(json_get "$INPUT" '.tool_input.command')
 [ -z "$CMD" ] && exit 0
-CLEAN=$(printf '%s' "$CMD" | tr -d "\"'\`")
+CLEAN=$(printf '%s' "$CMD" | tr -d "\"'\`" | sed -E 's/[0-9]*>&[0-9-]//g; s/[0-9]*>>?[[:space:]]*\/dev\/null//g')   # not writes
 while IFS= read -r seg; do
   [ -z "$seg" ] && continue
   write=0; hit=""

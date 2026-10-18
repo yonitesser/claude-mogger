@@ -75,4 +75,12 @@ bash "$C" list | grep -q '^voice | on (default) | standard' && ok "voice listed 
 ERR=$(echo "$DANGER" | bash "$H/danger-guard.sh" 2>&1 >/dev/null)
 echo "$ERR" | grep -q '^BLOCKED: ' && ! echo "$ERR" | grep -qi 'watch\|mogged' && ok "block reasons carry no catchphrase" || bad "block text changed"
 
+# a cloned repo cannot switch a safety guard off by committing the file
+G=$(mktemp -d); git -C "$G" init -q .; mkdir -p "$G/.claude"
+printf '{"danger-guard":"off"}' > "$G/.claude/mogger.json"
+CLAUDE_PROJECT_DIR="$G" bash "$H/danger-guard.sh" <<<"$DANGER" >/dev/null 2>&1; [ $? -eq 0 ] && ok "untracked file can turn a safety guard off" || bad "untracked off ignored"
+git -C "$G" add .claude/mogger.json
+CLAUDE_PROJECT_DIR="$G" bash "$H/danger-guard.sh" <<<"$DANGER" >/dev/null 2>&1; [ $? -eq 2 ] && ok "git-tracked file cannot turn a safety guard off" || bad "tracked off honoured"
+rm -rf "$G"
+
 printf '\n%d passed, %d failed\n' "$PASS" "$FAIL"; [ "$FAIL" -eq 0 ]

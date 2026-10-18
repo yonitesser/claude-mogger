@@ -16,8 +16,8 @@ Process:
 1. Run both scans from the project root (use the plugin's path for the
    scripts; if `${CLAUDE_PLUGIN_ROOT}` is unset, find them with Glob
    `**/scripts/checks/security.sh`):
-   - `bash ${CLAUDE_PLUGIN_ROOT}/scripts/checks/security.sh .`
-   - `bash ${CLAUDE_PLUGIN_ROOT}/scripts/checks/dep-audit.sh .`
+   - `bash checks/security.sh .`
+   - `bash checks/dep-audit.sh .`
    Output is one line per finding: `LEVEL|check-id|message (file:line)`.
    PASS needs no action. SKIP means "could not check" - report the reason,
    never treat it as safe.

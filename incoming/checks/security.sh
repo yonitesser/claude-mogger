@@ -135,7 +135,7 @@ pass_if_clean secrets-public-env "no secret-looking NEXT_PUBLIC_/VITE_/REACT_APP
 
 : > "$T/client"
 while IFS= read -r f; do
-  case "$f" in */api/*|api/*|*.server.*|*/server/*|server/*|*/pages/api/*) continue;; esac
+  case "$f" in */api/*|api/*|*.server.*|*/server/*|server/*) continue;; esac
   if grep -qxF "$f" "$T/useclient"; then echo "$f" >> "$T/client"; continue; fi
   case "$f" in public/*|*/public/*|*.html|*.htm|components/*|*/components/*)
     grep -qE "^[[:space:]]*[${DQ}${SQ}]use server[${DQ}${SQ}]|server-only" "$f" 2>/dev/null || echo "$f" >> "$T/client";;

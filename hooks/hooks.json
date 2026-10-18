@@ -268,7 +268,7 @@
           {
             "type": "command",
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/scripts/stop-tests-added.sh",
-            "timeout": 30
+            "timeout": 60
           },
           {
             "type": "command",

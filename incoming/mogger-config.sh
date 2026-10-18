@@ -28,7 +28,7 @@ case "${1:-list}" in
     printf '%s\n' "name | state | kind | allowed | ON does | ASK does | OFF does"
     rows | while IFS=$'\t' read -r n e kind onv dflt on_t off_t states ask_t; do
       states="${states:-on,off}"; st="$dflt"; src=default
-      v=$(cur "$n"); [ -n "$v" ] && has "$states" "$v" && { st="$v"; src=file; }
+      v=$(cur "$n"); [ -n "$v" ] && has "$states" "$v" && { st="$v"; src="file"; }
       if [ -n "${!e+x}" ]; then
         case "${!e}" in
           off) st=off ;;
@@ -36,7 +36,7 @@ case "${1:-list}" in
           *) st="$onv" ;;
         esac
         [ "$st" = "$onv" ] && [ "$onv" != ask ] && st=on
-        src=env
+        src="env"
       fi
       printf '%s | %s (%s) | %s | %s | %s | %s | %s\n' "$n" "$st" "$src" "$kind" "$states" "$on_t" "${ask_t:--}" "$off_t"
     done ;;

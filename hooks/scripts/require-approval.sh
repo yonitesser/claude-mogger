@@ -64,13 +64,16 @@ check_line() {
     PUSH_ARGS=$(echo "$CMD" | sed -E 's/.*git[[:space:]]+push//; s/[;&|].*//')
     REMOTE_SEEN=0
     REFSPECS=0
+    is_force_flag() {  # long flags (git accepts unique abbreviations) and short clusters like -uf
+      case "$1" in --for|--forc|--force*|--mir*|--del*|--all*) return 0 ;; --*) return 1 ;; -*[fd]*) return 0 ;; esac
+      return 1
+    }
     for tok in $PUSH_ARGS; do
-      case "$tok" in
-        --force|--force-with-lease|--force-with-lease=*|--force-if-includes|-f|--mirror|--delete|-d|--all)
-          mogger_event block "blocked a force push"; echo "BLOCKED: '$tok' is never allowed, even with MOGGER_ALLOW_PUSH=on. Push a normal feature branch instead." >&2
-          exit 2 ;;
-        -*) continue ;;
-      esac
+      if is_force_flag "$tok"; then
+        mogger_event block "blocked a force push"; echo "BLOCKED: '$tok' is never allowed, even with MOGGER_ALLOW_PUSH=on. Push a normal feature branch instead." >&2
+        exit 2
+      fi
+      case "$tok" in -*) continue ;; esac
       if [ "$REMOTE_SEEN" -eq 0 ]; then REMOTE_SEEN=1; continue; fi
       REFSPECS=$((REFSPECS + 1))
       case "$tok" in
@@ -103,12 +106,12 @@ check_line() {
   fi
 
   # --- PR merge ---
-  if echo "$CMD" | grep -qE 'gh\s+pr\s+merge'; then
+  if echo "$CMD" | grep -qE 'gh\s+([^;&|]*\s)?pr\s+merge'; then
     gate "$MERGE" "blocked a PR merge" "merging a PR requires human approval. Open/update the PR and stop." "Mogger: merge a pull request. Approve only if you want it merged."
   fi
 
   # --- production deploys / publishes ---
-  if echo "$CMD" | grep -qE '(vercel\s+.*--prod|netlify\s+deploy\s+.*--prod|npm\s+publish|pnpm\s+publish|yarn\s+npm\s+publish|cargo\s+publish|docker\s+push|kubectl\s+(apply|delete|rollout)|helm\s+(install|upgrade|uninstall)|terraform\s+(apply|destroy)|pulumi\s+(up|destroy)|railway\s+up|fly\s+deploy|firebase\s+deploy|serverless\s+deploy|wrangler\s+(deploy|publish|rollback)|sst\s+deploy|amplify\s+(push|publish)|prisma\s+(migrate\s+(deploy|reset)|db\s+(push|execute))|drizzle-kit\s+push|supabase\s+(db\s+(push|reset)|functions\s+deploy)|gh\s+(release\s+(create|delete)|repo\s+(delete|create\s+[^;&|]*--public|edit\s+[^;&|]*--visibility)|gist\s+create)|sam\s+deploy|cdk\s+deploy|gcloud\s+.*deploy|az\s+.*deployment\s+.*create)'; then
+  if echo "$CMD" | grep -qE '(vercel\s+.*--prod|netlify\s+deploy\s+.*--prod|npm\s+([^;&|]*\s)?publish|pnpm\s+([^;&|]*\s)?publish|yarn\s+npm\s+publish|cargo\s+([^;&|]*\s)?publish|docker\s+([^;&|]*\s)?push|kubectl\s+([^;&|]*\s)?(apply|delete|rollout)|helm\s+([^;&|]*\s)?(install|upgrade|uninstall)|terraform\s+([^;&|]*\s)?(apply|destroy)|pulumi\s+([^;&|]*\s)?(up|destroy)|railway\s+up|fly\s+deploy|firebase\s+deploy|serverless\s+deploy|wrangler\s+(deploy|publish|rollback)|sst\s+deploy|amplify\s+(push|publish)|prisma\s+(migrate\s+(deploy|reset)|db\s+(push|execute))|drizzle-kit\s+push|supabase\s+(db\s+(push|reset)|functions\s+deploy)|gh\s+api\s+[^;&|]*pulls/[0-9]+/merge|gh\s+(release\s+(create|delete)|repo\s+(delete|create\s+[^;&|]*--public|edit\s+[^;&|]*--visibility)|gist\s+create)|sam\s+deploy|cdk\s+deploy|gcloud\s+.*deploy|az\s+.*deployment\s+.*create)'; then
     gate "$DEPLOY" "blocked a deploy command" "production deploy/publish command. Requires human approval. Stop and report what would be deployed." "Mogger: a deploy or publish command. Approve only if you want it to go out."
   fi
 

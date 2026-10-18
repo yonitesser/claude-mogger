@@ -147,7 +147,8 @@ skip_token() {  # local paths, URLs, shorthands, archives
 }
 
 COUNT=0
-SEGS=$(printf '%s\n' "$CMD" | sed -E 's/(&&|\|\||[;&|])/\
+# `2>&1` and `&>f` are redirects, not command separators: drop them before splitting on `&`
+SEGS=$(printf '%s\n' "$CMD" | sed -E 's/[0-9]*[<>]+&[0-9-]+//g; s/&>>?/>/g; s/(&&|\|\||[;&|])/\
 /g')
 while IFS= read -r seg; do
   # shellcheck disable=SC2086
@@ -187,6 +188,8 @@ while IFS= read -r seg; do
         continue ;;
       -r|--requirement|-e|--editable|-c|--constraint|-f|--target|-t|--prefix|--python|-p|--package|--features|-F|--rename|--manifest-path|--tag|--branch|--rev|--dev-group|--group|--optional|--workspace)
         SKIPNEXT=1; continue ;;
+      \>|\>\>|[0-9]\>|[0-9]\>\>|\<|[0-9]\<) SKIPNEXT=1; continue ;;   # bare redirect operator: next word is a file
+      \>*|\<*|[0-9]\>*|[0-9]\<*) continue ;;               # redirect glued to its file
       -*) continue ;;
     esac
     skip_token "$tok" && continue

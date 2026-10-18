@@ -60,6 +60,8 @@ MOGGER_CONFIG_GUARD=ask run config-guard.sh "$CFGEDIT"; [ $RC -eq 0 ] && is_ask 
 MOGGER_CONFIG_GUARD=off run config-guard.sh "$CFGEDIT"; [ $RC -eq 0 ] && [ -z "$OUT" ] && ok "config-guard off: allows" || bad "config-guard off"
 MOGGER_CONFIG_GUARD=zzz run config-guard.sh "$CFGEDIT"; [ $RC -eq 0 ] && is_ask && ok "config-guard bad value: default (ask)" || bad "config-guard bad"
 run config-guard.sh '{"tool_name":"Edit","permission_mode":"bypassPermissions","tool_input":{"file_path":"/p/.mcp.json"}}'; [ $RC -eq 2 ] && ok "config-guard in bypass mode: blocks, never allows" || bad "config-guard bypass"
+run config-guard.sh "$(bash_in 'cat .claude/settings.json 2>/dev/null')"; [ $RC -eq 0 ] && [ -z "$OUT" ] && ok "config-guard: 2>/dev/null read is not a write" || bad "config-guard read with 2>/dev/null"
+run config-guard.sh "$(bash_in 'echo x > .claude/settings.json')"; [ $RC -eq 0 ] && is_ask && ok "config-guard: real redirect still asks" || bad "config-guard redirect write"
 run config-guard.sh '{"tool_name":"Write","tool_input":{"file_path":"/p/.claude/mogger.json"}}'; [ $RC -eq 0 ] && is_ask && ok "config-guard asks before an edit of .claude/mogger.json" || bad "mogger.json write"
 run config-guard.sh "$(bash_in 'echo {} > .claude/mogger.json')"; [ $RC -eq 0 ] && is_ask && ok "config-guard asks before a shell write to mogger.json" || bad "mogger.json shell write"
 run config-guard.sh "$(bash_in 'cat .claude/mogger.json')"; [ $RC -eq 0 ] && [ -z "$OUT" ] && ok "config-guard lets a read of mogger.json pass" || bad "mogger.json read"

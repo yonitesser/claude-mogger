@@ -10,7 +10,7 @@
 # Also runs the project's own test command before the turn may end, when code or
 # tests changed (fast timeout). The model cannot claim "done" over a red suite.
 # Costs no tokens when green; on red it hands back the last lines of output.
-# Escape hatch: MOGGER_STOP_TESTS=off. Timeout: MOGGER_STOP_TESTS_TIMEOUT (default 90s).
+# Escape hatch: MOGGER_STOP_TESTS=off. Timeout: MOGGER_STOP_TESTS_TIMEOUT (default 50s; the hook entry allows 60s).
 source "$(dirname "$0")/lib.sh"
 
 # Print the test command for this project, nothing if none is clearly set up.
@@ -40,7 +40,7 @@ if [ "${MOGGER_STOP_TESTS:-on}" != "off" ] && [ $((CODE + TESTS)) -gt 0 ]; then
   CMD=$(stop_test_cmd)
   if [ -n "$CMD" ]; then
     # macOS has no `timeout`; use gtimeout, else run unbounded
-    TO=""; for c in timeout gtimeout; do command -v "$c" >/dev/null 2>&1 && { TO="$c ${MOGGER_STOP_TESTS_TIMEOUT:-90}"; break; }; done
+    TO=""; for c in timeout gtimeout; do command -v "$c" >/dev/null 2>&1 && { TO="$c ${MOGGER_STOP_TESTS_TIMEOUT:-50}"; break; }; done
     OUT=$($TO bash -c "$CMD" 2>&1); RC=$?
     if [ "$RC" -ne 0 ] && [ "$RC" -ne 124 ] && [ "$RC" -ne 127 ]; then
       mogger_event block "stopped with failing tests"

@@ -18,7 +18,7 @@ case "$FILE_PATH" in
     exit 2 ;;
 esac
 
-if echo "$FILE_PATH" | grep -qiE '(\.github/workflows/|\.gitlab-ci\.yml|Dockerfile|docker-compose.*\.yml|terraform/|\.tf$|stripe|billing|payment)'; then
+if mogger_rel_path "$FILE_PATH" | grep -qiE '(\.github/workflows/|\.gitlab-ci\.yml|Dockerfile|docker-compose.*\.yml|terraform/|\.tf$|stripe|billing|payment)'; then
   mogger_event block "blocked an edit of ${FILE_PATH##*/}"; echo "BLOCKED: '$FILE_PATH' controls deployment or payments. Editing it requires human approval. Explain the change you want to make instead of making it." >&2
   exit 2
 fi

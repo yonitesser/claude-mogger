@@ -1,6 +1,6 @@
 ---
 name: ship-check
-description: Use when asked "is this ready to ship?" or all TASKS are done. Report-only.
+description: Runs scripts/ship-check.sh and reports PASS/WARN/FAIL for ship readiness. Use when asked "is this ready to ship?" or all TASKS are done. Report-only.
 ---
 
 # Ship-readiness checklist

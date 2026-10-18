@@ -20,8 +20,14 @@ case "$TS" in ''|*[!0-9]*) exit 0 ;; esac
 CLEAN=$(printf '%s' "$CMD" | tr -d "\"'\`")
 EGRESS='(^|[;&|(]|[[:space:]])(curl|wget|nc|ncat|netcat|socat|scp|sftp|rsync|ssh|ftp|telnet)[[:space:]]|git[[:space:]]+([^;&|]*[[:space:]])?remote[[:space:]]+(add|set-url)'
 printf '%s' "$CLEAN" | grep -qE "$EGRESS" || exit 0
-# local-only traffic is fine
-printf '%s' "$CLEAN" | grep -qE '(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0)' && exit 0
+# local-only traffic is fine: judge URL hosts when there are any, else the bare words (`nc localhost 80`)
+LOCAL='(localhost|127\.0\.0\.1|\[::1\]|0\.0\.0\.0)'
+HOSTS=$(printf '%s' "$CLEAN" | grep -oE '[A-Za-z][A-Za-z0-9+.-]*://[^/[:space:]]+' | sed -E 's#^[^:]*://([^@]*@)?##')
+if [ -n "$HOSTS" ]; then
+  printf '%s\n' "$HOSTS" | grep -qvE "^$LOCAL(:[0-9]+)?$" || exit 0
+else
+  printf '%s' "$CLEAN" | grep -qE "$LOCAL" && exit 0
+fi
 
 mogger_event warn "asked before a network command after reading outside content"
 printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"This session read outside content (%s), which can carry hidden instructions. Approve this network command only if you asked for it."}}\n' "${SRC:-web}"

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Reads .claude/state/savings.jsonl and prints/renders an ESTIMATE of cost
-avoided by routing work to a cheaper model, using published per-token
+Reads .claude/state/savings.jsonl and prints/renders an ESTIMATE of the price
+gap between routed calls and the same calls at your Lead model's rate, using published per-token
 pricing. This is NOT a comparison against a real counterfactual run — no
 task in this log was ever actually run twice. It's a disclosed calculation:
 "this output's length, billed at the Lead's model rate instead of the
@@ -69,7 +69,7 @@ def main():
         in_c, out_c = r.get("input_chars", 0), r.get("output_chars", 0)
         actual = cost(model, rates, in_c, out_c) or 0.0
         hypothetical = cost(lead_model, rates, in_c, out_c) or 0.0
-        avoided = max(0.0, hypothetical - actual)  # never claim negative "savings"
+        avoided = max(0.0, hypothetical - actual)  # a gap, never a negative number
         total_actual += actual
         total_hypothetical += hypothetical
         a = by_agent.setdefault(r.get("agent", "unknown"), {"calls": 0, "actual": 0.0, "avoided": 0.0})
@@ -83,12 +83,12 @@ def main():
     print(f"Lead model used for comparison: {lead_model} (override with MOGGER_LEAD_MODEL or --lead-model)")
     print(f"Token counts: chars/4 estimate, not a real tokenizer — treat as directional, not exact.")
     print()
-    print(f"{'agent':<14} {'calls':>6} {'actual $':>10} {'avoided $ (est.)':>18}")
+    print(f"{'agent':<14} {'calls':>6} {'actual $':>10} {'price gap $ (est.)':>18}")
     for agent, d in sorted(by_agent.items(), key=lambda kv: -kv[1]["avoided"]):
         print(f"{agent:<14} {d['calls']:>6} {d['actual']:>10.4f} {d['avoided']:>18.4f}")
     print(f"{'TOTAL':<14} {len(rows):>6} {total_actual:>10.4f} {total_avoided:>18.4f}")
     print()
-    print("This is an estimate of avoided spend from model routing, not a comparison")
+    print("This is the price gap of routed calls vs the Lead rate, not a total-cost comparison")
     print("to a session that was actually re-run without this kit. See README for the")
     print("full methodology disclosure.")
 
@@ -123,7 +123,7 @@ def write_dashboard(by_agent, total_actual, total_avoided, lead_model, as_of):
   footer {{ margin-top: 32px; font-size: 12px; color: #888; }}
 </style></head>
 <body>
-  <h1>mogger — estimated cost avoided by model routing</h1>
+  <h1>mogger — routed calls: price gap vs the Lead rate</h1>
   <div class="disclaimer">
     <strong>What this is:</strong> an estimate of what routed calls (Haiku)
     would have cost if billed at the {lead_model} rate instead, for the
@@ -133,7 +133,7 @@ def write_dashboard(by_agent, total_actual, total_avoided, lead_model, as_of):
     tokenizer count. Pricing snapshot as of {as_of} — verify current rates
     at claude.com/pricing.
   </div>
-  <div>Total estimated avoided spend</div>
+  <div>Total price gap (routed calls vs the Lead rate)</div>
   <div class="total">${total_avoided:.4f}</div>
   <div>Total actual spend (routed calls only): ${total_actual:.4f}</div>
   <h3>By agent</h3>

@@ -17,7 +17,13 @@ source "$(dirname "$0")/secret-patterns.sh"
 INPUT=$(cat)
 CMD=$(json_get "$INPUT" '.tool_input.command')
 [ -z "$CMD" ] && exit 0
-echo "$CMD" | grep -qE '(^|[^[:alnum:]_-])git[[:space:]]+(add|commit)([[:space:]]|$)' || exit 0
+# A key typed into any shell command (curl header, echo > .env) is a leak too.
+# Only the named key formats (ghp_, AKIA, sk-ant-...): the generic password pattern is for files.
+if FOUND=$(printf '%s\n' "$CMD" | MOGGER_SECRET_SKIP_GENERIC=1 mogger_find_secret); then
+  mogger_event block "blocked a secret in a shell command"; echo "BLOCKED: this command contains what looks like a hardcoded secret: $FOUND. Read it from an environment variable instead, and rotate the credential if it was ever real." >&2
+  exit 2
+fi
+echo "$CMD" | grep -qE '(^|[^[:alnum:]_-])git[[:space:]]+([^;&|]*[[:space:]])?(add|commit)([[:space:]]|$)' || exit 0
 git rev-parse --git-dir >/dev/null 2>&1 || exit 0
 
 is_env_file() {  # basename check: .env, .env.local... but not the example/sample/template trio
@@ -38,9 +44,9 @@ while IFS= read -r seg; do
     *) continue ;;
   esac
 
-  if echo "$seg" | grep -qE '(^|[[:space:]])git[[:space:]]+add([[:space:]]|$)'; then
+  if echo "$seg" | grep -qE '(^|[[:space:]])git[[:space:]]+([^;&|]*[[:space:]])?add([[:space:]]|$)'; then
     ADD_ALL=0
-    for tok in $(echo "$seg" | sed -E 's/.*git[[:space:]]+add//'); do
+    for tok in $(echo "$seg" | sed -E 's/.*git[[:space:]]+([^;&|]*[[:space:]])?add//'); do
       tok="${tok%\"}"; tok="${tok#\"}"; tok="${tok%\'}"; tok="${tok#\'}"
       case "$tok" in
         -f|--force)
@@ -63,7 +69,7 @@ while IFS= read -r seg; do
     fi
   fi
 
-  if echo "$seg" | grep -qE '(^|[[:space:]])git[[:space:]]+commit([[:space:]]|$)'; then
+  if echo "$seg" | grep -qE '(^|[[:space:]])git[[:space:]]+([^;&|]*[[:space:]])?commit([[:space:]]|$)'; then
     DIFF=$(git diff --cached 2>/dev/null)
     if echo "$seg" | grep -qE '[[:space:]]-[a-zA-Z]*a[a-zA-Z]*([[:space:]]|$)|[[:space:]]--all([[:space:]]|$)'; then
       DIFF="$DIFF

@@ -589,6 +589,33 @@ done
 
 grep -q '"no change" is a good answer' "$ROOT/agents/retro.md" && grep -q 're-check before use' "$ROOT/agents/retro.md" && ok "retro: no-change answer and fact-vs-rule label" || bad "retro lost the no-change / fact-vs-rule lines"
 
+if grep -rq 'CLAUDE_PLUGIN_ROOT}/' "$ROOT/incoming/.claude/agents"; then bad "incoming agents still point at plugin-only paths"; else ok "incoming agents use manual-install paths"; fi
+grep -q "\.claude/hooks/log-savings.sh" "$ROOT/incoming/.claude/agents/tester.md" && ok "incoming tester logs via .claude/hooks" || bad "incoming tester lost the rewritten log path"
+
+T=$(jq -r '[.. | objects | select((.command // "") | test("stop-tests-added")) | .timeout][0]' "$ROOT/hooks/hooks.json")
+D=$(grep -o 'STOP_TESTS_TIMEOUT:-[0-9]*' "$ROOT/hooks/scripts/stop-tests-added.sh" | head -1 | grep -o '[0-9]*$')
+[ "${T:-0}" -gt "${D:-999}" ] && ok "stop-tests-added hook timeout ($T s) outlasts its own test timeout ($D s)" || bad "stop-tests-added hook timeout ${T:-?} s would kill its own ${D:-?} s test run"
+
+# mogger is not a cost saver: no "avoided spend" framing in tool output, agents, skills or README
+if grep -rniE 'avoided (spend|cost|\$)|cost avoided|estimated avoided' "$ROOT/scripts" "$ROOT/agents" "$ROOT/skills" "$ROOT/README.md" >/dev/null 2>&1; then bad "an 'avoided spend' savings claim crept back in"; else ok "no 'avoided spend' savings framing"; fi
+SR=$(mktemp -d); mkdir -p "$SR/.claude/state"
+printf '{"ts":"2026-10-18T00:00:00Z","agent":"tester","model":"haiku","input_chars":4000,"output_chars":2000}\n' > "$SR/.claude/state/savings.jsonl"
+( cd "$SR" && python3 "$ROOT/scripts/savings-report.py" 2>&1 ) | grep -qi 'price gap' && ok "savings-report prints a price gap, not avoided spend" || bad "savings-report output lacks the price-gap wording"
+rm -rf "$SR"
+
+# the standards skill is loaded before every code change: keep companion comparisons in their own file
+[ "$(wc -l < "$ROOT/skills/standards/SKILL.md")" -le 160 ] && [ -f "$ROOT/skills/standards/companions.md" ] && ok "standards skill stays short, companions live in companions.md" || bad "standards skill grew back or lost companions.md"
+
+SSOUT=$(cd "$(mktemp -d)" && echo '{"source":"startup"}' | bash "$ROOT/hooks/scripts/session-start.sh" 2>/dev/null)
+case "$SSOUT" in *'Before "done":'*) ok "session-start keeps the quotes around \"done\"" ;; *) bad "session-start lost the quotes around \"done\"" ;; esac
+
+( cd "$ROOT" && bash scripts/sync-incoming.sh --check >/dev/null 2>&1 ) && ok "incoming/ is in sync (sync-incoming.sh --check)" || bad "incoming/ is out of sync: run bash scripts/sync-incoming.sh"
+
+LK=$(mktemp -d); mkdir -p "$LK/t"; printf 'test("x", () => {});\n' > "$LK/t/a.test.js"
+( cd "$LK" && printf '{"tool_name":"Write","tool_input":{"file_path":"%s/t/a.test.js"}}' "$LK" | TMPDIR="$LK/t" CLAUDE_PROJECT_DIR="$LK" bash "$ROOT/hooks/scripts/check-test-quality.sh" >/dev/null 2>&1 )
+[ -z "$(ls "$LK"/t/mogger-tq.* 2>/dev/null)" ] && ok "check-test-quality leaves no temp file behind" || bad "check-test-quality leaked its awk temp file"
+rm -rf "$LK"
+
 echo
 echo "passed: $PASS  failed: $FAIL"
 [ "$FAIL" -eq 0 ]

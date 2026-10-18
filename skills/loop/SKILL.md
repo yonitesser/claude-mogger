@@ -170,7 +170,7 @@ assignment is deliberate:
 
 Claude Code subagent frontmatter supports an `effort` field
 (`low|medium|high|xhigh|max`) that controls reasoning depth, separately
-from which model runs. The four Haiku agents above now set `effort: low`
+from which model runs. The seven Haiku agents above (and the Sonnet docs-writer) set `effort: low`
 — none of them do anything that benefits from more thinking; they read a
 file, grep, run a command, or copy a pattern.
 

@@ -52,6 +52,7 @@ mogger_find_secret() {
     label="${line%%|*}"
     re="${line#*|}"
     found=""
+    [ "$label" = "generic-credential" ] && [ -n "${MOGGER_SECRET_SKIP_GENERIC:-}" ] && continue   # shell prose: named prefixes only
     hits=$(printf '%s\n' "$text" | grep -oiE -- "$re" 2>/dev/null)
     while IFS= read -r hit; do
       [ -z "$hit" ] && continue
