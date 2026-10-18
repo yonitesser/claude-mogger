@@ -39,6 +39,9 @@ case "$BASE" in
   *) exit 0;;
 esac
 
+# Cheap pre-filter: rules a-d all need one of these words in the file.
+mogger_text_maybe "$(<"$FILE")" card cvv cvc cc_num ccnum pan luhn table model schema entity define column checkout.session payment_intent invoice.paid customer.subscription charge.succeeded || exit 0
+
 FOUND=""
 addf() { FOUND="${FOUND}
   - $1 ($FILE:$2)"; }

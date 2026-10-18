@@ -43,6 +43,9 @@ case "$BASE" in
   *) exit 0;;
 esac
 
+# Cheap pre-filter: none of the six rules below can match unless one of these words is in the file.
+mogger_text_maybe "$(<"$FILE")" NEXT_PUBLIC VITE_ REACT_APP EXPO_PUBLIC verify rejectUnauthorized NODE_TLS 'if*true' 'req.' 'request.' 'process.env' || exit 0
+
 SQ="'"; DQ='"'; BT='`'
 IS_CLIENT=0
 if head -5 "$FILE" 2>/dev/null | grep -qE "^[[:space:]]*[${DQ}${SQ}]use client[${DQ}${SQ}]"; then IS_CLIENT=1; fi

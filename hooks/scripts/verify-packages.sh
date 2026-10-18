@@ -32,7 +32,10 @@ source "${0%/*}/lib.sh"
 INPUT=$(cat)
 CMD=$(json_get "$INPUT" '.tool_input.command')
 [ -z "$CMD" ] && exit 0
-echo "$CMD" | grep -qE '(npm|pnpm|yarn|pip3?|uv|cargo|go)[[:space:]]' || exit 0
+mogger_re "$CMD" '(npm|pnpm|yarn|pip3?|uv|cargo|go)[[:space:]]' || exit 0
+# A commit message or echo that mentions "pip install foo" is text, not an install.
+# When it cannot be told apart (bash -c "...", $(...)), look inside the quotes instead.
+if mogger_prose_free "$CMD"; then CMD=$REPLY; else CMD=${CMD//[\"\'\`()]/ }; fi
 
 NPM="${MOGGER_NPM_REGISTRY:-https://registry.npmjs.org}"
 PYPI="${MOGGER_PYPI_URL:-https://pypi.org/pypi}"

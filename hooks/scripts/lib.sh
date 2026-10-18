@@ -190,3 +190,45 @@ mogger_ask_json() {
   r=$(printf '%s' "$1" | tr -d '"\\' | tr '\n\t\r' '   ')
   printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"%s"}}\n' "$r"
 }
+
+# mogger_text_maybe <text> <word>... -> 0 when the text contains any word (case-insensitive, globs ok).
+# A cheap pre-filter: a hook that scans for a few risky words can stop before it forks grep/awk.
+mogger_text_maybe() {
+  local t="$1" g r=1 had=0; shift
+  shopt -q nocasematch && had=1
+  shopt -s nocasematch
+  for g in "$@"; do [[ $t == *$g* ]] && { r=0; break; }; done
+  [ "$had" = 1 ] || shopt -u nocasematch
+  return $r
+}
+
+# mogger_prose_free <command> -> REPLY = the command with text that is only DATA taken out, so a
+# commit message or echo that merely MENTIONS "git reset --hard" is not read as that command.
+# Removed: heredoc bodies fed to `$(cat <<EOF` or `-F -`, and quoted spans that contain whitespace.
+# Kept as is (REPLY = the original, status 1) when anything could run quoted text as code:
+# sh/bash/eval/ssh/python/node/..., `-c`/`-e`, `$(`, backticks. Pure bash, no forks.
+MOGGER_HEREDOC_RE='(\$\([[:space:]]*cat|(-F|--file|--body-file)[[:space:]]+-)[[:space:]]*<<-?[[:space:]]*["'\'']?([A-Za-z_][A-Za-z0-9_]*)["'\'']?'
+MOGGER_WRAP_RE='\$\(|`|<\(|(^|[[:space:];&|(/])(sh|bash|zsh|dash|ksh|fish|eval|source|xargs|ssh|exec|su|watch|python[0-9.]*|node|nodejs|deno|bun|ruby|perl|php|osascript|pwsh|powershell|docker|podman|kubectl|nsenter|chroot|script)([[:space:]]|$)|[[:space:]]-(c|e|exec|command|eval)([[:space:]]|$)'
+MOGGER_SPAN_RE='^([^"'\'']*)("[^"]*"|'\''[^'\'']*'\'')(.*)$'
+mogger_prose_free() {
+  local c="$1" m delim before after rest out="" span
+  REPLY="$1"
+  [[ $c == *'"'* || $c == *"'"* || $c == *'<<'* ]] || return 1
+  while [[ $c =~ $MOGGER_HEREDOC_RE ]]; do
+    m="${BASH_REMATCH[0]}"; delim="${BASH_REMATCH[3]}"
+    before="${c%%"$m"*}"; after="${c#*"$m"}"
+    m="${m/\$(/(}"; m="${m/<</< <}"   # neutralised, so the loop moves on and `$(` is not seen below
+    case "$after" in
+      *$'\n'*) rest=$'\n'"${after#*$'\n'}"; after="${after%%$'\n'*}"
+               case "$rest" in *$'\n'"$delim"*) rest="${rest#*$'\n'"$delim"}" ;; *) rest="" ;; esac ;;
+      *) rest="" ;;
+    esac
+    c="$before$m$after"$'\n'"$rest"
+  done
+  [[ $c =~ $MOGGER_WRAP_RE ]] && return 1
+  while [[ $c =~ $MOGGER_SPAN_RE ]]; do
+    span="${BASH_REMATCH[2]}"; out+="${BASH_REMATCH[1]}"; c="${BASH_REMATCH[3]}"
+    case "$span" in *[[:space:]]*) out+="_" ;; *) out+="$span" ;; esac
+  done
+  REPLY="$out$c"
+}

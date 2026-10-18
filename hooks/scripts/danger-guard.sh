@@ -31,7 +31,9 @@ block() {  # block <short event text> <what was found>
 # Quotes and backticks removed so wrappers like bash -c "rm -rf /" are seen.
 # Pure bash from here on (no grep/sed/tr per check): this hook runs on every Bash call.
 shopt -s nocasematch   # replaces lower-casing the text; `=~` and `case` both honour it
-CLEAN=${CMD//[\"\'\`]/}
+# Text that is only data (a commit message, an echo) is taken out first, unless something could run it.
+mogger_prose_free "$CMD"
+CLEAN=${REPLY//[\"\'\`]/}
 CLEAN=${CLEAN//\$\{HOME\}/\$HOME}
 LC=${CLEAN//$'\n'/;}   # one line, so `$` and `^` in the patterns below mean end/start of the command
 
@@ -86,7 +88,8 @@ mogger_re "$LC" 'git[[:space:]]+([^;&|]*[[:space:]])?(commit|push|merge|am|cherr
 # 5b. Another AI agent started with its safety checks off
 mogger_re "$LC" '(^|[[:space:];&|/])(claude|codex|gemini|aider|cursor-agent|opencode|amp|qwen|copilot)[[:space:]]+([^;&|]*[[:space:]])?(--dangerously-skip-permissions|--dangerously-bypass-approvals-and-sandbox|--yolo|--trust-all-tools|--allow-all-tools|--allow-dangerously-skip-permissions)' && block "blocked an AI agent started with permission checks off" "starting another AI agent with its permission checks turned off"
 
-# 6. Destructive database commands
+# 6. Destructive database commands (judged on the full text: the SQL is usually inside quotes)
+LC=${CMD//[\"\'\`]/}; LC=${LC//$'\n'/;}
 if mogger_re "$LC" '(^|[[:space:];&|])(psql|mysql|mariadb|sqlite3|sqlcmd|mongosh|duckdb|sqlplus|clickhouse-client|cockroach|redis-cli)([[:space:]]|$)'; then
   mogger_re "$LC" 'drop[[:space:]]+(table|database|schema)|truncate[[:space:]]+(table[[:space:]]+)?[a-z_"]|flushall|flushdb|delete[[:space:]]+from[[:space:]]+[a-z0-9_."]+[[:space:]]*(;|$)' && block "blocked destructive SQL" "destructive database command (DROP, TRUNCATE, DELETE with no WHERE, FLUSH)"
 fi

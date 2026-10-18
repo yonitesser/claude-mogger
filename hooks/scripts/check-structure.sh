@@ -39,9 +39,6 @@ esac
 LIMIT="${MOGGER_MAX_FILE_LINES:-800}"
 case "$LIMIT" in ''|*[!0-9]*) LIMIT=800 ;; esac
 
-TMP=$(mktemp -d 2>/dev/null || mktemp -d -t mogger-cs) || exit 0
-trap 'rm -rf "$TMP"' EXIT
-
 # lines, longest line, generated-header flag in one pass
 STATS=$(awk 'FNR<=5 && /DO NOT EDIT|@generated|Code generated|[Aa]uto-?generated|automatically generated|This file is generated/ {g=1}
   {n++; if (length($0)>m) m=length($0)} END {print n+0, m+0, g+0}' "$FILE_PATH" 2>/dev/null)
@@ -49,6 +46,17 @@ LINES=${STATS%% *}; REST=${STATS#* }; MAXLEN=${REST%% *}; GEN=${REST#* }
 [ -z "$LINES" ] && exit 0
 [ "${GEN:-0}" = "1" ] && exit 0
 [ "${MAXLEN:-0}" -gt 1000 ] && exit 0   # minified
+
+# Cheap exit: a file under the limit, and new text too short to hold a 10-line copy, needs no
+# temp dir and no awk programs. Edit: new_string; Write: the whole file.
+if [ "$LINES" -le "$LIMIT" ]; then
+  if [ -n "${JF[2]}" ]; then NEWTXT="${JF[2]}"; elif [ "${JF[1]}" = "Write" ] || [ -n "${JF[4]}" ]; then NEWTXT=$(<"$FILE_PATH"); else NEWTXT=""; fi
+  NLS="${NEWTXT//[!$'\n']/}"
+  [ "${#NLS}" -lt 10 ] && exit 0
+fi
+
+TMP=$(mktemp -d 2>/dev/null || mktemp -d -t mogger-cs) || exit 0
+trap 'rm -rf "$TMP"' EXIT
 
 MSG=""
 
