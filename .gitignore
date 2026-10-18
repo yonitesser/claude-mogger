@@ -1,3 +1,8 @@
 __pycache__/
 *.pyc
 .claude/state/
+.DS_Store
+node_modules/
+.env
+.env.*
+!.env.example

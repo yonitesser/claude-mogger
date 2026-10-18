@@ -37,10 +37,10 @@ rm -f .claude/state/test-evidence.json
 [ "$(gate)" = 2 ] && ok "tester says pass, no hook evidence -> blocked" || bad "forged marker accepted"
 fail "npm test" 1
 [ "$(gate)" = 2 ] && ok "last real run failed -> blocked despite pass marker" || bad "failed run accepted"
-sleep 1; post "npm test"; touch -d '2000-01-01' app.js
+sleep 1; post "npm test"; touch -t 200001010000 app.js
 [ "$(gate)" = 0 ] && ok "real pass + marker pass -> allowed" || bad "valid pass blocked"
 MOGGER_EVIDENCE=off bash -c 'rm .claude/state/test-evidence.json; printf "{\"tool_name\":\"Task\",\"tool_input\":{\"subagent_type\":\"reviewer\"}}" | bash "'$H'/require-tests-pass.sh" >/dev/null 2>&1'; [ $? = 0 ] && ok "MOGGER_EVIDENCE=off falls back to the marker" || bad "off switch broken"
-post "npm test"; touch -d '2000-01-01' app.js
+post "npm test"; touch -t 200001010000 app.js
 
 echo "== STATUS.md rewrite does not make the pass stale (deadlock)"
 sleep 1; echo "# STATUS" > STATUS.md

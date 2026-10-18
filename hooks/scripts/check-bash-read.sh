@@ -18,6 +18,9 @@ fi
 # head/tail with a small line count is a bounded read: let it through.
 N=$(echo "$CMD" | sed -nE 's/^[[:space:]]*(head|tail)[[:space:]]+(-n[[:space:]]*|-)([0-9]+)[[:space:]].*/\3/p')
 [ -n "$N" ] && [ "$N" -le "$THRESHOLD" ] && exit 0
+# head -c / tail -c N: a byte count is bounded too (allow up to ~100 bytes per allowed line)
+B=$(echo "$CMD" | sed -nE 's/^[[:space:]]*(head|tail)[[:space:]]+-c[[:space:]]*([0-9]+)[[:space:]].*/\2/p')
+[ -n "$B" ] && [ "$B" -le $((THRESHOLD * 100)) ] && exit 0
 
 # Pull the last whitespace-separated token as the likely file path
 FILE_PATH=$(echo "$CMD" | awk '{print $NF}')

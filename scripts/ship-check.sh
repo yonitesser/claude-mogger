@@ -154,7 +154,7 @@ else
   scan() {  # scan <label> <ere>
     local f
     f=$(git ls-files -z | xargs -0 grep -I -l -E -e "$2" -- 2>/dev/null | head -3 | tr '\n' ' ')
-    [ -n "$f" ] && HITS="$HITS[$1: $f] "
+    [ -n "$f" ] && HITS="${HITS}[$1: $f] "
   }
   scan "aws-key" 'AKIA[0-9A-Z]{16}'
   scan "github-token" 'ghp_[A-Za-z0-9]{36}'

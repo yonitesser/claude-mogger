@@ -2,6 +2,15 @@
 # Sourced by every hook. Provides json_get so hooks work with jq OR python3.
 # Usage: VALUE=$(json_get "$INPUT" '.tool_input.file_path')
 
+# mogger_rel_path <path> -> the path as seen from the project root, with a leading
+# slash, so `*/build/*` style tests judge folders INSIDE the project and not the
+# folders the project itself happens to live in (/work/payments-app/...).
+mogger_rel_path() {
+  local p="$1" root="${CLAUDE_PROJECT_DIR:-$PWD}"
+  case "$p" in "$root"/*) p="${p#"$root"}" ;; esac
+  case "$p" in /*) printf '%s' "$p" ;; *) printf '/%s' "$p" ;; esac
+}
+
 json_get() {
   local input="$1" path="$2"
   if command -v jq >/dev/null 2>&1; then
@@ -93,7 +102,7 @@ fl_recognised() {
 # A safety guard set to "off" in a file that git tracks is ignored: a cloned repo
 # must not be able to switch your guards off. Use an env var or an untracked file.
 _mogger_load_config() {
-  local f="${CLAUDE_PROJECT_DIR:-.}/.claude/mogger.json" cat pairs name val n e kind onv dflt on_t off_t states rest tracked=
+  local f="${CLAUDE_PROJECT_DIR:-.}/.claude/mogger.json" cat pairs name val n e kind onv dflt on_t off_t states rest tracked="" rows
   cat="$(dirname "${BASH_SOURCE[0]}")/../guards.tsv"
   [ -f "$f" ] && [ -f "$cat" ] || return 0
   if command -v jq >/dev/null 2>&1; then
@@ -105,6 +114,7 @@ for k,v in json.load(open(sys.argv[1])).items():
   else
     return 0
   fi
+  rows=$(grep -v '^#' "$cat")   # read the catalog once, not once per key
   while IFS=$'\t' read -r name val; do
     [ -n "$name" ] || continue
     while IFS=$'\t' read -r n e kind onv dflt on_t off_t states rest; do
@@ -120,7 +130,7 @@ for k,v in json.load(open(sys.argv[1])).items():
         ask) export "$e=ask" ;;
         on) export "$e=$onv" ;;
       esac
-    done < <(grep -v '^#' "$cat")
+    done <<<"$rows"
   done <<<"$pairs"
   return 0
 }

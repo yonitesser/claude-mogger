@@ -4,7 +4,10 @@
 # start. So the Lead doesn't have to be *asked* to read CONSTRAINTS.md —
 # it's already there. Enforced, not requested.
 source "$(dirname "$0")/lib.sh"
-rm -f .claude/state/tainted 2>/dev/null   # a new session starts untainted (see taint-mark.sh)
+# A new session starts untainted (see taint-mark.sh). A compact or resume keeps the same conversation,
+# and the same untrusted text, so the taint stays.
+IFS= read -r -t 1 -d '' SS_INPUT 2>/dev/null
+case "$(json_get "${SS_INPUT:-}" '.source')" in compact|resume) ;; *) rm -f "${CLAUDE_PROJECT_DIR:-.}/.claude/state/tainted" 2>/dev/null ;; esac
 
 # Dependency check — the other hooks need jq, or a REAL python3 (not the
 # Windows Store stub, which sits on PATH but only prints an install nag).
@@ -83,7 +86,7 @@ if [ -f "$(dirname "$0")/evals-nudge.sh" ]; then
 fi
 
 source "$(dirname "$0")/claim-lib.sh"; claim_baseline
-echo "Least code, never least tests: skip it, reuse the repo (grep first), then stdlib, new code last. Every behaviour change gets a test (keep old test names). Do what was asked; if you disagree, do it and say so. Before "done": show output proving each ask, plus one awkward input. Cite file:line for code claims; mark unchecked ones UNVERIFIED:."
+echo "Least code, never least tests: skip it, reuse the repo (grep first), then stdlib, new code last. Every behaviour change gets a test (keep old test names). Do what was asked; if you disagree, do it and say so. Before \"done\": show output proving each ask, plus one awkward input. Cite file:line for code claims; mark unchecked ones UNVERIFIED:."
 
 mogger_event info "mogger is on for this session"
 # Voice (toggle: voice in .claude/mogger.json, MOGGER_VOICE=off). Few words on purpose: this line is paid for every session.

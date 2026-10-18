@@ -64,8 +64,8 @@ bash ".claude/hooks/log-savings.sh" tester haiku INPUT_CHARS OUTPUT_CHARS
 
 This is self-reported — nobody
 verifies it — so estimate honestly rather than rounding in your own favor.
-It powers `scripts/savings-report.py`, an optional dashboard of estimated
-cost avoided by routing this work to Haiku instead of the Lead's model.
+It powers `scripts/savings-report.py`, an optional dashboard of the estimated
+price gap of running this work on Haiku instead of the Lead's model.
 
 ## Unhappy paths
 

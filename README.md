@@ -58,7 +58,7 @@ one does:
    field. Model aliases (`model: sonnet`) resolve to whatever's current
    automatically, so a new Sonnet release upgrades every Sonnet-tier
    agent with zero file changes. The Lead is told, in writing, not to Read
-   or Grep itself. Then: diff-only re-reads (never re-read a file you just
+   big files or Grep widely itself (small files it reads directly). Then: diff-only re-reads (never re-read a file you just
    edited — read `git diff`), stable-first prompt ordering for prompt
    caching, and short output (no preambles, no re-printing unchanged
    code). Optional compression proxy (headroom) for heavy tool output.
@@ -291,7 +291,7 @@ both hooks still run. The preset says what to do about it.
 ## Routing estimate (optional, self-reported — read the caveat)
 
 `bash scripts/savings-report.py` reads `.claude/state/savings.jsonl` (the
-four Haiku agents log their own approximate input/output size at the end
+four logging agents (tester, explainer, fact-checker, docs-writer) log their own approximate input/output size at the end
 of each turn) and prints a table plus a `savings-dashboard.html`, showing
 what those calls would have cost billed at your Lead model's rate instead
 of Haiku's. It is not a claim that mogger costs less than plain Claude.

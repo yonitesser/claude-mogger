@@ -29,13 +29,13 @@ SZ=$(wc -c < "$FILE" 2>/dev/null | tr -d ' ')
 [ -n "$SZ" ] && [ "$SZ" -gt 400000 ] && exit 0
 
 BASE="${FILE##*/}"
-case "$FILE" in
+case "$(mogger_rel_path "$FILE")" in
   */node_modules/*|*/.git/*|*/dist/*|*/build/*|*/venv/*|*/.venv/*) exit 0;;
   test/*|tests/*|*/test/*|*/tests/*|*/__tests__/*|*.test.*|*.spec.*|*_test.*|test_*|*/test_*|*/e2e/*|*/fixtures/*|*/__mocks__/*|*/cypress/*) exit 0;;
 esac
 KIND=""
 case "$BASE" in
-  .env.example|.env.sample|.env.template) KIND=env;;
+  .env.example|.env.sample|.env.template) KIND="env";;
   *.js|*.jsx|*.ts|*.tsx|*.mjs|*.cjs|*.vue|*.svelte|*.astro|*.html|*.htm) KIND=js;;
   *.py) KIND=py;;
   *.rules) KIND=rules;;
@@ -122,7 +122,7 @@ if [ "$IS_CLIENT" -eq 1 ]; then
   cb_cli() {
     local name="${2#process.env.}"
     case "$name" in NEXT_PUBLIC_*|VITE_*|REACT_APP_*|EXPO_PUBLIC_|NODE_ENV) return;; esac
-    case "$name" in *SECRET*|*PASSWORD*|*PRIVATE*|*SERVICE_ROLE*|*SERVICE_KEY*|*OPENAI*|*ANTHROPIC*|*DATABASE_URL*|*AWS_SECRET*) ;; *) return;; esac
+    case "$name" in *SECRET*|*PASSWORD*|*PRIVATE*|*SERVICE_ROLE*|*SERVICE_KEY*|*OPENAI*|*ANTHROPIC*|*DATABASE_URL*) ;; *) return;; esac
     rec "$1" "client-side file reads server secret process.env.$name"
   }
   grep -noE -e "process[.]env[.][[:upper:][:digit:]_]+" -- "$FILE" 2>/dev/null | head -100 | while IFS= read -r h; do

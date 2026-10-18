@@ -29,11 +29,12 @@ FILE=$(json_get "$INPUT" '.tool_input.file_path')
 TASK_LINE=$(grep -m1 '^\s*- \[ \]' TASKS.md 2>/dev/null)
 [ -z "$TASK_LINE" ] && exit 0
 
-# Extract the files: field — everything between "files:" and the next " — " or EOL
+# Extract the files: field — everything between "files:" and the next " — ", " - ", " -- " or EOL
+files_field() { sed -nE 's/.*files:[[:space:]]*//p' | sed -E 's/[[:space:]]+(—|-+)([[:space:]].*)?$//'; }
 if [ "${MOGGER_SCOPE_PARALLEL:-off}" = "on" ]; then
-  SCOPE=$(grep '^\s*- \[ \]' TASKS.md | sed -n 's/.*files:[[:space:]]*\([^—]*\).*/\1/p' | paste -sd, -)
+  SCOPE=$(grep '^\s*- \[ \]' TASKS.md | files_field | paste -sd, -)
 else
-  SCOPE=$(printf '%s' "$TASK_LINE" | sed -n 's/.*files:[[:space:]]*\([^—]*\).*/\1/p')
+  SCOPE=$(printf '%s' "$TASK_LINE" | files_field)
 fi
 [ -z "$SCOPE" ] && exit 0   # task declares no scope — nothing to enforce
 
@@ -50,11 +51,12 @@ REL="${REL#./}"
 # Does REL match any declared path? Declared entries are comma/space separated
 # and may be a file, a directory prefix, or a glob.
 MATCH=0
-IFS=',' read -ra ENTRIES <<< "$SCOPE"
+IFS=' ' read -ra ENTRIES <<< "${SCOPE//,/ }"
 for e in "${ENTRIES[@]}"; do
   e="$(printf '%s' "$e" | sed 's/^[[:space:]]*//; s/[[:space:]]*$//; s#^\./##')"
   [ -z "$e" ] && continue
   # exact, glob, or directory-prefix match
+  # shellcheck disable=SC2053  # $e is a glob on purpose
   if [ "$REL" = "$e" ] || [[ "$REL" == $e ]] || [[ "$REL" == "${e%/}/"* ]]; then
     MATCH=1; break
   fi

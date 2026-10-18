@@ -68,6 +68,10 @@ printf '1000\tWebFetch\n' > .claude/state/tainted
 [ -z "$(tg 'curl https://example.com')" ] && ok "old taint expires (TTL)" || bad "stale taint still asks"
 mark mcp__github__issue_read; [ -f .claude/state/tainted ] && ok "an MCP read taints" || bad "MCP did not taint"
 bash "$H/session-start.sh" >/dev/null 2>&1; [ -f .claude/state/tainted ] && bad "session start kept the taint" || ok "new session starts untainted"
+mark WebFetch; echo '{"source":"compact"}' | bash "$H/session-start.sh" >/dev/null 2>&1
+[ -f .claude/state/tainted ] && ok "a compact keeps the taint" || bad "compact cleared the taint"
+echo '{"source":"startup"}' | bash "$H/session-start.sh" >/dev/null 2>&1
+[ -f .claude/state/tainted ] && bad "startup kept the taint" || ok "an explicit startup clears the taint"
 
 echo "== config notice"
 cn() { bash "$H/config-notice.sh" 2>&1; }

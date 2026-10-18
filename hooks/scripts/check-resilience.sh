@@ -29,7 +29,7 @@ case "$EXT" in
   js|jsx|mjs|cjs|ts|tsx|py) ;;
   *) exit 0 ;;
 esac
-case "$FILE_PATH" in
+case "$(mogger_rel_path "$FILE_PATH")" in
   */node_modules/*|*/dist/*|*/build/*|*/vendor/*|*/.git/*|*/venv/*|*/.venv/*|*/site-packages/*|*/.next/*|*/__pycache__/*) exit 0 ;;
   *.min.*|*.bundle.js|*.d.ts|*.generated.*|*_generated.*|*.gen.*|*_pb2.py|*/generated/*|*/__generated__/*) exit 0 ;;
   *.test.*|*.spec.*|*/__tests__/*|*/tests/*|*/test/*|*/test_*|test_*|*_test.py|*/conftest.py|*/fixtures/*|*/mocks/*|*/__mocks__/*|*/e2e/*) exit 0 ;;

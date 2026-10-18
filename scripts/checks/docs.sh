@@ -137,7 +137,7 @@ else
     case "$name" in -*) continue;; esac
     CHECKED=$((CHECKED+1))
     if [ -z "$MK" ]; then bad "$README:$ln says 'make $name' but there is no Makefile"
-    elif ! grep -q -E "^$name[[:space:]]*:" "$MK"; then bad "$README:$ln says 'make $name' but $MK has no '$name' target"; fi
+    elif ! grep -q -E "^${name}[[:space:]]*:" "$MK"; then bad "$README:$ln says 'make $name' but $MK has no '$name' target"; fi
   done < "$TMP/c3"
   # interpreter + file path
   grep -n -o -E '(python3?|node|tsx|ts-node|bash|sh|ruby|php) [[:alnum:]_./-]+[.](py|js|mjs|cjs|ts|sh|rb|php)' "$README" 2>/dev/null > "$TMP/c4"
@@ -216,7 +216,7 @@ else
     if [ -n "$README" ] && grep -q -w -F -e "$v" "$README" 2>/dev/null; then continue; fi
     NUNDOC=$((NUNDOC+1))
     if [ "$NUNDOC" -le 15 ]; then
-      loc=$(grep -E "^$v[|]" "$TMP/used2" | head -1 | cut -d'|' -f2)
+      loc=$(grep -E "^${v}[|]" "$TMP/used2" | head -1 | cut -d'|' -f2)
       out FAIL docs-env "$v is read at $loc but is not in ${EXFILE:-any .env.example} or the README"
     fi
   done < "$TMP/usednames"
@@ -239,7 +239,7 @@ else
     [ -n "$other" ] && continue
     NUNUSED=$((NUNUSED+1))
     if [ "$NUNUSED" -le 15 ]; then
-      loc=$(grep -E "^$v[|]" "$TMP/docexloc" | head -1 | cut -d'|' -f2)
+      loc=$(grep -E "^${v}[|]" "$TMP/docexloc" | head -1 | cut -d'|' -f2)
       out WARN docs-env-unused "$v documented at $loc but no code reads it (typo, stale, or read implicitly by a framework?)"
     fi
   done < "$TMP/exnames"
