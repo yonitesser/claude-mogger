@@ -19,7 +19,7 @@ For an input handler or endpoint:
 - [ ] **Whitespace only**: `"   "`. Expect the same as empty (trim first).
 - [ ] **Huge**: 10x-1000x the expected size (long string, big file, 10k items). Expect a rejection or a limit, not a hang or a 500.
 - [ ] **Wrong type**: number where text is expected, array where object, `"abc"` for an id. Expect a 4xx / validation error, not an exception.
-- [ ] **Duplicate submit**: same action twice fast (double click, retry). Expect one effect (one row, one charge), or the button disabled.
+- [ ] **Duplicate submit**: same action twice fast (double click, retry). Expect one effect (one row, one charge), or the button disabled. Payments and webhooks: send an idempotency key; store each webhook event id and skip repeats.
 - [ ] **Concurrent**: two requests at once on the same record (stock, balance, coupon, one-per-user limit). Expect one winner, not two.
 - [ ] **Permission denied**: not logged in, wrong user, wrong role. Expect 401/403 and no data leaked.
 

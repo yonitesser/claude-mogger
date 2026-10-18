@@ -772,6 +772,26 @@ has "^WARN\|db-fk-index\|entity.ts:[0-9]+: TypeORM entity 'Photo'" "TypeORM Many
 hasnt "db-unique.*Photo" "TypeORM email with unique:true not flagged"
 hasnt "db-primary-key.*Photo" "TypeORM entity with @PrimaryGeneratedColumn not flagged"
 
+mkdir -p d6/db && cd d6
+w db/a.sql 'create table orders (
+  id int primary key,
+  total_price float not null,
+  amount_cents bigint not null,
+  rating real
+);'
+w db/schema.prisma 'model Item {
+  id Int @id
+  price Float
+  qty Int
+}'
+cd "$SANDBOX"
+run database.sh d6
+has '^WARN\|db-money-float\|db/a.sql:3:' "SQL total_price float flagged"
+has '^WARN\|db-money-float\|db/schema.prisma:3:' "Prisma price Float flagged"
+hasnt 'db-money-float.*(a.sql:(4|5)|prisma:4)' "integer cents, rating real and qty Int not flagged"
+run database.sh d2
+has '^PASS\|db-money-float' "no money floats: PASS"
+
 # =====================================================================
 echo "== check: cost-risk.sh"
 mkdir -p k1/src && cd k1
