@@ -587,6 +587,8 @@ for k in $(grep -oE "plugin: 'mogger', key: '[a-zA-Z]+'" "$ROOT/mods/mogger-stat
   grep -qE "^[[:space:]]+$k:" "$ROOT/mods/mogger-status/types/index.d.ts" && ok "mod state key declared in types: $k" || bad "mod state key not declared in types: $k"
 done
 
+grep -q '"no change" is a good answer' "$ROOT/agents/retro.md" && grep -q 're-check before use' "$ROOT/agents/retro.md" && ok "retro: no-change answer and fact-vs-rule label" || bad "retro lost the no-change / fact-vs-rule lines"
+
 echo
 echo "passed: $PASS  failed: $FAIL"
 [ "$FAIL" -eq 0 ]

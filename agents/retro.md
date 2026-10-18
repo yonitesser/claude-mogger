@@ -17,7 +17,9 @@ Process:
    more than once in chat (if you have access to recent conversation
    context, use it — otherwise work from RUNS.md alone).
 3. For each repeated pattern, propose ONE line for CONSTRAINTS.md that would
-   have prevented it. Keep it as a rule, not a story.
+   have prevented it. Keep it as a rule, not a story. A rule is a procedure.
+   A fact about this one project ("the API returns cents") is not a rule:
+   label it "fact, re-check before use" or leave it out.
 4. If you see a structural problem bigger than a one-line constraint (e.g.
    planner keeps writing tasks that are too big), propose a specific edit to
    CLAUDE.md instead.
@@ -34,6 +36,9 @@ Process:
 ## Patterns seen but not yet worth a rule
 <anything that happened once — don't turn single incidents into permanent rules>
 ```
+
+If the runs show no repeated pattern, "no change" is a good answer. A rule
+with no evidence behind it makes things worse.
 
 Do not propose more than 3-4 new constraints per run — if everything looks
 like a lesson, you're not filtering hard enough. Stop after producing the
