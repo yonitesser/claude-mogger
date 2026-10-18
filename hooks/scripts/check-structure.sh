@@ -50,9 +50,15 @@ LINES=${STATS%% *}; REST=${STATS#* }; MAXLEN=${REST%% *}; GEN=${REST#* }
 # Cheap exit: a file under the limit, and new text too short to hold a 10-line copy, needs no
 # temp dir and no awk programs. Edit: new_string; Write: the whole file.
 if [ "$LINES" -le "$LIMIT" ]; then
-  if [ -n "${JF[2]}" ]; then NEWTXT="${JF[2]}"; elif [ "${JF[1]}" = "Write" ] || [ -n "${JF[4]}" ]; then NEWTXT=$(<"$FILE_PATH"); else NEWTXT=""; fi
-  NLS="${NEWTXT//[!$'\n']/}"
-  [ "${#NLS}" -lt 10 ] && exit 0
+  if [ -n "${JF[2]}" ]; then
+    NEWTXT="${JF[2]}"
+    # no ${var//x/y} on a big string: macOS bash 3.2 takes minutes over it
+    if [ "${#NEWTXT}" -le 4000 ]; then NLS="${NEWTXT//[!$'\n']/}"; [ "${#NLS}" -lt 10 ] && exit 0; fi
+  elif [ "${JF[1]}" = "Write" ] || [ -n "${JF[4]}" ]; then
+    [ "$LINES" -lt 10 ] && exit 0   # a whole-file write: the new text is the file
+  else
+    exit 0
+  fi
 fi
 
 TMP=$(mktemp -d 2>/dev/null || mktemp -d -t mogger-cs) || exit 0
