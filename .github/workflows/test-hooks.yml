@@ -18,14 +18,15 @@ jobs:
       - name: run every test suite (in parallel; report all failures, not just the first)
         run: |
           mkdir -p /tmp/suites
-          ls tests/*.test.sh | xargs -P 4 -I{} sh -c 'n=$(basename {}); bash {} > /tmp/suites/$n.log 2>&1; echo $? > /tmp/suites/$n.rc'
+          # a suite that hangs is stopped after 8 minutes (exit 142) and named, instead of eating the whole job
+          ls tests/*.test.sh | xargs -P 4 -I{} sh -c 'n=$(basename {}); perl -e "alarm 480; exec @ARGV" bash {} > /tmp/suites/$n.log 2>&1; echo $? > /tmp/suites/$n.rc'
           fail=0
           : > /tmp/all-tests.log
           for t in tests/*.test.sh; do
             n=$(basename "$t")
             echo "== $t" | tee -a /tmp/all-tests.log
             cat "/tmp/suites/$n.log" | tee -a /tmp/all-tests.log
-            [ "$(cat /tmp/suites/$n.rc)" = 0 ] || { echo "::error::$t failed"; fail=1; }
+            [ "$(cat /tmp/suites/$n.rc)" = 0 ] || { echo "::error::$t failed (exit $(cat /tmp/suites/$n.rc); 142 = timed out)"; fail=1; }
           done
           echo "=========== FAILED-LINES-SUMMARY ==========="
           grep -E '^[[:space:]]*FAIL|^== tests/|passed[:,]? .*failed' /tmp/all-tests.log | grep -B1 -E 'FAIL|[1-9][0-9]* failed|failed: [1-9]' || true
