@@ -628,6 +628,26 @@ if command -v strace >/dev/null 2>&1; then
   rm -rf "$SPD"
 fi
 
+[ "$(wc -l < "$ROOT/skills/loop/SKILL.md")" -le 200 ] && [ -f "$ROOT/skills/loop/reference.md" ] && ok "loop skill stays short, model-tier notes live in reference.md" || bad "loop skill grew back or lost reference.md"
+
+# Edit-path hooks: a clean edit must stop at the pre-filter (no grep/awk/mktemp forks), a risky one must not.
+if command -v strace >/dev/null 2>&1; then
+  SPD=$(mktemp -d); TOT=0; printf 'export function add(a, b) {\n  return a + b;\n}\n' > "$SPD/a.js"
+  EJ="{\"tool_name\":\"Edit\",\"tool_input\":{\"file_path\":\"$SPD/a.js\",\"old_string\":\"a\",\"new_string\":\"b\"},\"tool_response\":{}}"
+  for h in check-risky-code check-diy-payments check-structure check-resilience; do
+    n=$(cd "$SPD" && printf '%s' "$EJ" | CLAUDE_PROJECT_DIR="$SPD" strace -f -e trace=execve -o "$SPD/st" bash "$ROOT/hooks/scripts/$h.sh" >/dev/null 2>&1; grep -c 'execve(.*= 0' "$SPD/st")
+    TOT=$((TOT + n))
+  done
+  [ "$TOT" -le 20 ] && ok "edit-path hooks spawn $TOT processes for a clean edit (limit 20; was about 40)" || bad "edit-path hooks spawn $TOT processes for a clean edit (limit 20)"
+  rm -rf "$SPD"
+fi
+RK=$(mktemp -d); printf 'const q = "SELECT * FROM t WHERE id = " + REQ.BODY.id;\ntry { go(); } catch (e) {}\nconst cardNumber = 1; console.log(cardNumber);\nconst k = process.env.NEXT_PUBLIC_SECRET_KEY;\n' > "$RK/a.js"
+for h in check-risky-code check-diy-payments check-resilience; do
+  printf '%s' "{\"tool_name\":\"Write\",\"tool_input\":{\"file_path\":\"$RK/a.js\",\"content\":\"x\"},\"tool_response\":{}}" | CLAUDE_PROJECT_DIR="$RK" bash "$ROOT/hooks/scripts/$h.sh" >/dev/null 2>&1
+  [ $? -eq 2 ] && ok "$h still blocks upper-case risky text after the pre-filter" || bad "$h missed risky text behind its pre-filter"
+done
+rm -rf "$RK"
+
 # \s is not POSIX ERE: macOS bash reads it as a plain "s", so mogger_re must spell it out.
 if ( source "$ROOT/hooks/scripts/lib.sh"; mogger_re "git push" 'git\s+push' && ! mogger_re "gitspush" 'git\s+push' ); then
   ok "mogger_re turns \\s into [[:space:]] (macOS bash has no \\s)"; else bad "mogger_re leaves \\s raw (breaks on macOS bash)"; fi

@@ -36,6 +36,10 @@ case "$(mogger_rel_path "$FILE_PATH")" in
   *.test.*|*.spec.*|*/__tests__/*|*/tests/*|*/test/*|*/test_*|test_*|*_test.py|*/conftest.py|*/fixtures/*|*/mocks/*|*/__mocks__/*|*/e2e/*) exit 0 ;;
 esac
 
+# Cheap pre-filter: only an empty catch/except can match. Edit: the new text; Write: the whole file.
+if [ -n "${JF[1]}" ]; then mogger_text_maybe "${JF[1]}" catch except || exit 0
+else mogger_text_maybe "$(<"$FILE_PATH")" catch except || exit 0; fi
+
 TMP=$(mktemp -d 2>/dev/null || mktemp -d -t mogger-cr) || exit 0
 trap 'rm -rf "$TMP"' EXIT
 

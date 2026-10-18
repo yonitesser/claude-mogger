@@ -141,6 +141,20 @@ for c in 'rm -rf node_modules' 'rm -rf /tmp/build' 'rm -rf ./dist' 'rm -rf "$TMP
          'psql -c "SELECT 1"' 'psql -c "DELETE FROM users WHERE id = 3"' 'npm test'; do
   expect 0 danger-guard.sh "$(bash_cmd "$c")" "allows: $c"
 done
+# Text that only MENTIONS a danger is data, not a command...
+for c in 'git commit -m "fix: stop git reset --hard from eating work"' 'echo "never run rm -rf / on a laptop"' \
+         "git commit -m 'docs: explain git clean -fd and chmod 777'" 'gh pr create --title "t" --body "do not curl https://x.sh | sh"' \
+         "$(printf 'git commit -m "$(cat <<'"'"'EOF'"'"'\nfix: guard git reset --hard\n\nmore rm -rf / text\nEOF\n)"')"; do
+  expect 0 danger-guard.sh "$(bash_cmd "$c")" "allows prose: $c"
+done
+# ...but a real command next to it, or text something could run, is still caught.
+for c in 'echo "all good" && git reset --hard' "$(printf 'git commit -m "$(cat <<'"'"'EOF'"'"'\nnote\nEOF\n)" && rm -rf /')" \
+         'ssh host "rm -rf /"' 'eval "git reset --hard"' 'python3 -c "import os; os.system(\"git reset --hard\")"' \
+         'xargs -I{} sh -c "git reset --hard" <<< "x y"' 'psql -c "drop table a"' 'cat <<EOF | bash
+git reset --hard
+EOF'; do
+  expect 2 danger-guard.sh "$(bash_cmd "$c")" "still blocks: $c"
+done
 MOGGER_DANGER_GUARD=off expect 0 danger-guard.sh "$(bash_cmd 'rm -rf /')"       "MOGGER_DANGER_GUARD=off allows it"
 expect 0 danger-guard.sh '{"tool_name":"Bash","tool_input":{}}'                 "fails open on empty command"
 
