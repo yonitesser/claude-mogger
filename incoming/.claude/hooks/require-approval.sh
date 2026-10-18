@@ -106,12 +106,12 @@ check_line() {
   fi
 
   # --- PR merge ---
-  if echo "$CMD" | grep -qE 'gh\s+pr\s+merge'; then
+  if echo "$CMD" | grep -qE 'gh\s+([^;&|]*\s)?pr\s+merge'; then
     gate "$MERGE" "blocked a PR merge" "merging a PR requires human approval. Open/update the PR and stop." "Mogger: merge a pull request. Approve only if you want it merged."
   fi
 
   # --- production deploys / publishes ---
-  if echo "$CMD" | grep -qE '(vercel\s+.*--prod|netlify\s+deploy\s+.*--prod|npm\s+publish|pnpm\s+publish|yarn\s+npm\s+publish|cargo\s+publish|docker\s+push|kubectl\s+(apply|delete|rollout)|helm\s+(install|upgrade|uninstall)|terraform\s+(apply|destroy)|pulumi\s+(up|destroy)|railway\s+up|fly\s+deploy|firebase\s+deploy|serverless\s+deploy|wrangler\s+(deploy|publish|rollback)|sst\s+deploy|amplify\s+(push|publish)|prisma\s+(migrate\s+(deploy|reset)|db\s+(push|execute))|drizzle-kit\s+push|supabase\s+(db\s+(push|reset)|functions\s+deploy)|gh\s+(release\s+(create|delete)|repo\s+(delete|create\s+[^;&|]*--public|edit\s+[^;&|]*--visibility)|gist\s+create)|sam\s+deploy|cdk\s+deploy|gcloud\s+.*deploy|az\s+.*deployment\s+.*create)'; then
+  if echo "$CMD" | grep -qE '(vercel\s+.*--prod|netlify\s+deploy\s+.*--prod|npm\s+([^;&|]*\s)?publish|pnpm\s+([^;&|]*\s)?publish|yarn\s+npm\s+publish|cargo\s+([^;&|]*\s)?publish|docker\s+([^;&|]*\s)?push|kubectl\s+([^;&|]*\s)?(apply|delete|rollout)|helm\s+([^;&|]*\s)?(install|upgrade|uninstall)|terraform\s+([^;&|]*\s)?(apply|destroy)|pulumi\s+([^;&|]*\s)?(up|destroy)|railway\s+up|fly\s+deploy|firebase\s+deploy|serverless\s+deploy|wrangler\s+(deploy|publish|rollback)|sst\s+deploy|amplify\s+(push|publish)|prisma\s+(migrate\s+(deploy|reset)|db\s+(push|execute))|drizzle-kit\s+push|supabase\s+(db\s+(push|reset)|functions\s+deploy)|gh\s+api\s+[^;&|]*pulls/[0-9]+/merge|gh\s+(release\s+(create|delete)|repo\s+(delete|create\s+[^;&|]*--public|edit\s+[^;&|]*--visibility)|gist\s+create)|sam\s+deploy|cdk\s+deploy|gcloud\s+.*deploy|az\s+.*deployment\s+.*create)'; then
     gate "$DEPLOY" "blocked a deploy command" "production deploy/publish command. Requires human approval. Stop and report what would be deployed." "Mogger: a deploy or publish command. Approve only if you want it to go out."
   fi
 

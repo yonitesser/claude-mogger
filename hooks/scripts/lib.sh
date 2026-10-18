@@ -90,8 +90,10 @@ fl_recognised() {
 # (on, ask, off) are in hooks/guards.tsv. A variable that is already set wins
 # over the file. A missing, bad, unreadable or not-allowed value changes nothing,
 # so the guard keeps its default. Runs when a hook sources this file.
+# A safety guard set to "off" in a file that git tracks is ignored: a cloned repo
+# must not be able to switch your guards off. Use an env var or an untracked file.
 _mogger_load_config() {
-  local f="${CLAUDE_PROJECT_DIR:-.}/.claude/mogger.json" cat pairs name val n e kind onv dflt on_t off_t states rest
+  local f="${CLAUDE_PROJECT_DIR:-.}/.claude/mogger.json" cat pairs name val n e kind onv dflt on_t off_t states rest tracked=
   cat="$(dirname "${BASH_SOURCE[0]}")/../guards.tsv"
   [ -f "$f" ] && [ -f "$cat" ] || return 0
   if command -v jq >/dev/null 2>&1; then
@@ -109,6 +111,10 @@ for k,v in json.load(open(sys.argv[1])).items():
       [ "$n" = "$name" ] || continue
       [ -z "${!e+x}" ] || continue
       case ",${states:-on,off}," in *",$val,"*) ;; *) continue ;; esac
+      if [ "$val" = off ] && [ "$kind" = safety ]; then
+        [ -n "$tracked" ] || tracked=$(git -C "$(dirname "$f")" ls-files --error-unmatch mogger.json >/dev/null 2>&1 && echo yes || echo no)
+        [ "$tracked" = yes ] && continue
+      fi
       case "$val" in
         off) export "$e=off" ;;
         ask) export "$e=ask" ;;

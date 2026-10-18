@@ -49,14 +49,19 @@ CMD=$(json_get "$INPUT" '.tool_input.command')
 [ -z "$CMD" ] && exit 0
 CLEAN=$(printf '%s' "$CMD" | tr -d "\"'\`")
 
-VERBS=' cat less more head tail grep egrep fgrep rg ag awk sed cut sort uniq strings xxd od hexdump base64 nl tee bat jq curl wget scp rsync nc openssl tar zip zcat '
+VERBS=' cat less more head tail grep egrep fgrep rg ag awk sed cut sort uniq strings xxd od hexdump base64 nl tee bat jq curl wget scp rsync nc openssl tar zip zcat diff source python python3 node ruby perl '
 while IFS= read -r seg; do
   [ -z "$seg" ] && continue
   verb=0; hit=""
   case "$seg" in *"< "*|*"<"[~./\$]*) verb=1 ;; esac
+  case "$seg" in *git*" show "*|*git*" cat-file "*|*git*" diff "*|*git*" log "*|*git*" blame "*|*git*" grep "*) verb=1 ;; esac
+  src=""   # cp/mv leak the file only when it is the SOURCE (copying .env.example to .env.local is fine)
   for w in $seg; do
+    w=${w//[()\$]/}
+    case "$w" in cp|mv) src=next; continue ;; esac
+    if [ "$src" = next ]; then case "$w" in -*) ;; *) src=""; is_sens "$w" && hit="$w" && verb=1 ;; esac; fi
     case "$VERBS" in *" $w "*) verb=1 ;; esac
-    for tok in $(printf '%s' "$w" | tr '=<>@:' '     '); do
+    for tok in $(printf '%s' "$w" | tr '=<>@:()' '       '); do
       is_sens "$tok" && hit="$tok"
     done
   done
