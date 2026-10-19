@@ -13,19 +13,6 @@
 # Escape hatch: MOGGER_STOP_TESTS=off. Timeout: MOGGER_STOP_TESTS_TIMEOUT (default 50s; the hook entry allows 60s).
 source "${0%/*}/lib.sh"
 
-# Print the test command for this project, nothing if none is clearly set up.
-stop_test_cmd() {
-  if [ -f package.json ]; then
-    local t; t=$(json_get "$(cat package.json)" '.scripts.test')
-    case "$t" in ''|*"no test specified"*) ;; *) echo "npm test --silent"; return ;; esac
-  fi
-  if [ -f pytest.ini ] || [ -f tox.ini ] || { [ -f pyproject.toml ] && grep -q 'pytest' pyproject.toml; }; then
-    python3 -c 'import pytest' 2>/dev/null && { echo "python3 -m pytest -x -q"; return; }
-  fi
-  [ -f go.mod ] && { echo "go test ./..."; return; }
-  [ -f Cargo.toml ] && { echo "cargo test -q"; return; }
-}
-
 [ "${MOGGER_TESTS_ADDED:-on}" = "off" ] && exit 0
 INPUT=$(cat)
 LOG=".claude/state/edits.log"
@@ -37,7 +24,7 @@ ACTIVE=$(json_get "$INPUT" '.stop_hook_active')
 : > "$LOG" 2>/dev/null
 [ "$ACTIVE" = "true" ] && exit 0
 if [ "${MOGGER_STOP_TESTS:-on}" != "off" ] && [ $((CODE + TESTS)) -gt 0 ]; then
-  CMD=$(stop_test_cmd)
+  CMD=$(mogger_test_cmd)
   if [ -n "$CMD" ]; then
     # macOS has no `timeout`; use gtimeout, else run unbounded
     TO=""; for c in timeout gtimeout; do command -v "$c" >/dev/null 2>&1 && { TO="$c ${MOGGER_STOP_TESTS_TIMEOUT:-50}"; break; }; done

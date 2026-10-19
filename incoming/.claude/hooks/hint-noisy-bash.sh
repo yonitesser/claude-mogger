@@ -21,6 +21,10 @@ NOISY='^[[:space:]]*(npm[[:space:]]+(run[[:space:]]+)?(test|build|ls)|yarn[[:spa
 mogger_re "$CMD" "$NOISY" || exit 0
 
 TEXT="This command can print a lot. Add | tail -n 80 or | grep to keep only the failing lines."
+# A bare full-suite run in the middle of a task: point at the related-tests picker (toggle: related-tests)
+if [ "${MOGGER_RELATED_TESTS:-on}" != off ] && mogger_re "$CMD" '^[[:space:]]*(npm[[:space:]]+(run[[:space:]]+)?test|yarn[[:space:]]+test|pnpm[[:space:]]+(run[[:space:]]+)?test|pytest|python3?[[:space:]]+-m[[:space:]]+pytest|go[[:space:]]+test|cargo[[:space:]]+test|jest|vitest)([[:space:]]*$|[[:space:]]+(\.\/\.\.\.|-q|--silent))'; then
+  TEXT="$TEXT Mid-task? related-tests.sh (in the mogger hooks folder) prints only the tests for the changed files. The full suite runs before done."
+fi
 mogger_event hint "noisy bash command without a pipe"
 echo "mogger: $TEXT" >&2
 printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"%s"}}\n' "$TEXT"
