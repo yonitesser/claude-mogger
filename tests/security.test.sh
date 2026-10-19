@@ -514,6 +514,9 @@ printf '%s' "$(wj "$HP/b/p.js")" | MOGGER_CHECK_PAYMENTS=off bash "$H/$D" >/dev/
 MSG=$(printf '%s' "$(wj "$HP/b/p.js")" | bash "$H/$D" 2>&1 >/dev/null)
 case "$MSG" in *"never handle card numbers"*"p.js:1"*|*"p.js:1"*"never handle card numbers"*) ok "$D: message has guidance and file:line";; *) bad "$D: message ($MSG)";; esac
 
+SR="$(dirname "$0")/../agents/security-reviewer.md"
+grep -q "HARDENING NOTES" "$SR" && grep -q "no attacker path" "$SR" && ok "security-reviewer: hardening notes section" || bad "security-reviewer: hardening notes section"
+
 echo
 echo "$PASS passed, $FAIL failed"
 [ "$FAIL" -eq 0 ]
