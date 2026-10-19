@@ -15,13 +15,13 @@ Process:
    CI config — don't guess a generic one).
 2. **Two-phase, to save wall-clock time on large suites:**
    - **During the build loop** (a builder just finished a task): run only
-     the tests plausibly affected by the changed files — the test file
-     paired with each changed source file, plus its directory's tests.
-     Most runners support this: `jest <path>`, `pytest <path>`,
-     `go test ./pkg/...`, `cargo test <module>`, `vitest related <files>`.
-     Get `git diff --name-only` first to know what actually changed.
-     Report results and write the marker (below) with
-     `"scope": "affected"`.
+     the tests that match the changed files. Do not guess them. Run
+     `bash ".claude/hooks/related-tests.sh"`. It reads
+     the changed files and prints `scope:` and `command:`. Run that command
+     and write the marker with the scope it printed (`affected` or `full`).
+     It prints `full` itself when a changed file has no matching test, when
+     config or docs changed, or when the toggle is off. No output and exit 1
+     means the project has no test command: say so.
    - **Once, before reviewer runs on the final task**: run the FULL suite.
      Write the marker with `"scope": "full"`. An affected-only pass is not
      grounds for declaring the whole feature done — a change can break a

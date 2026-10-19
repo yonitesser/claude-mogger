@@ -52,7 +52,8 @@ out of the weeds and able to run for a long stretch without checking in.
      they overlap at all, run them sequentially and ignore the marking.
 
 4. **After builder(s) finish** → delegate to `tester`. During the loop it
-   runs only the affected tests (fast); that's enough to catch a broken
+   runs only the tests that match the changed files (`hooks/scripts/related-tests.sh`
+   picks them, and says `full` when it cannot); that's enough to catch a broken
    task early. If tests fail, send the ACTUAL failure reason (not a vague
    "fix the tests") back to `builder`. Cap this at 2 fix passes for the
    same task — if it's still failing after 2 tries, stop and escalate to

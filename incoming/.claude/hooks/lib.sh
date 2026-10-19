@@ -113,6 +113,19 @@ fl_recognised() {
 }
 
 
+# Print the test command for this project, nothing if none is clearly set up.
+mogger_test_cmd() {
+  if [ -f package.json ]; then
+    local t; t=$(json_get "$(cat package.json)" '.scripts.test')
+    case "$t" in ''|*"no test specified"*) ;; *) echo "npm test --silent"; return ;; esac
+  fi
+  if [ -f pytest.ini ] || [ -f tox.ini ] || { [ -f pyproject.toml ] && grep -q 'pytest' pyproject.toml; }; then
+    python3 -c 'import pytest' 2>/dev/null && { echo "python3 -m pytest -x -q"; return; }
+  fi
+  [ -f go.mod ] && { echo "go test ./..."; return; }
+  [ -f Cargo.toml ] && { echo "cargo test -q"; return; }
+}
+
 # Toggles from .claude/mogger.json: {"danger-guard": "off", "push-guard": "ask", ...}.
 # Names, the MOGGER_* variable each one maps to and the states it allows
 # (on, ask, off) are in hooks/guards.tsv. A variable that is already set wins
