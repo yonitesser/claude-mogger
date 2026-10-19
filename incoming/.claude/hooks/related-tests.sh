@@ -79,7 +79,7 @@ UNIQ=(); while IFS= read -r t; do [ -n "$t" ] && UNIQ+=("$t"); done < <(printf '
 # runner by file type; mixed types or an unknown runner means "full"
 KIND=""
 for t in "${UNIQ[@]}"; do
-  case "${t##*.}" in py) k=py ;; go) k=go ;; sh) k=sh ;; js|jsx|ts|tsx|mjs|cjs) k=js ;; *) full ;; esac
+  case "${t##*.}" in py) k="py" ;; go) k="go" ;; sh) k="sh" ;; js|jsx|ts|tsx|mjs|cjs) k="js" ;; *) full ;; esac
   [ -z "$KIND" ] || [ "$KIND" = "$k" ] || full
   KIND=$k
 done
