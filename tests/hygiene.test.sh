@@ -501,6 +501,13 @@ has "plain npm run dev PASS" "PASS|lockin-run|'npm run dev' defined at package.j
 has "no Dockerfile and no docs -> exit-path WARN" "WARN|lockin-exit-path|no Dockerfile"
 [ "$before" = "$(tree_sum "$L")" ] && ok "lockin.sh never modifies the project" || bad "lockin.sh never modifies the project"
 
+# evidence order must not depend on how the filesystem lists files
+L="$SANDBOX/l1b"
+w "$L/src/z/z.js" 'import { doc } from "firebase/firestore";'
+w "$L/src/a/a.js" 'import { doc } from "firebase/firestore";'
+run "$L" lockin
+has "lockin evidence lists files in sorted order" "used in 2 source file(s): src/a/a.js:1, src/z/z.js:1"
+
 L="$SANDBOX/l2"
 w "$L/package.json" '{"scripts":{"start":"node server.js"},"dependencies":{"@supabase/supabase-js":"2"}}'
 w "$L/lib/supabase.js" 'import { createClient } from "@supabase/supabase-js";'
