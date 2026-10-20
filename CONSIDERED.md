@@ -48,6 +48,7 @@ Verdict key:
 |---|---|---|
 | [NVIDIA/SkillSpector](https://github.com/NVIDIA/SkillSpector) | COMPANION | Real, NVIDIA, actively maintained. Scans skills for prompt injection / exfiltration / over-permissioning before install. The correct response to every "install these 10 repos" thread. |
 | [mukul975/Anthropic-Cybersecurity-Skills](https://github.com/mukul975/Anthropic-Cybersecurity-Skills) | OUT (scope) | Real. 800+ security playbooks. Not relevant to a coding loop; would bloat context. Fine for security work specifically. |
+| [cloudflare/security-audit-skill](https://github.com/cloudflare/security-audit-skill) | OPTIONAL | Real, MIT, from Cloudflare (2026-10). A 6-phase audit run by many sub-agents: map the code, hunt bugs, a fresh agent tries to disprove each one, then a JSON report. Repeated runs find more. Built for deep audits of big codebases. Needs Node and a network-blocking sandbox. Install it yourself for that job. Not bundled: mogger is for small apps and its pipeline is heavy, with Node scripts and JSON schemas. We took one idea into `security-reviewer`: a weak spot with no traced attacker path is a hardening note, not a finding. |
 
 ## Design
 

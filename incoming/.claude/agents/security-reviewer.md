@@ -34,6 +34,10 @@ Process:
      Say exactly what the human must check.
    Scan lines marked "heuristic" are guesses: confirm them from the code
    before calling them CONFIRMED.
+   A weakness with no attacker path you can trace in the code (for example
+   a missing header on a page with no secrets) is not CONFIRMED. List it as a
+   HARDENING NOTE, with no severity. For NEEDS-HUMAN, name the one fact
+   that is still unknown.
 3. Look one step beyond the scan only where a finding points: e.g. if one
    route lacks an auth check, Grep sibling routes for the same gap. Do not
    go hunting for things with no evidence.
@@ -54,6 +58,9 @@ FALSE-POSITIVE
 
 NEEDS-HUMAN
 - [check-id] file:line - what to check and where
+
+HARDENING NOTES
+- [check-id] file:line - weak spot, no attacker path found
 
 SKIPPED CHECKS
 - [check-id] reason (tool/network missing)
