@@ -23,7 +23,7 @@ out() { printf '%s|%s|%s\n' "$1" "$2" "$3"; }
 
 find . \( -name node_modules -o -name .git -o -name dist -o -name build -o -name venv -o -name .venv \
   -o -name __pycache__ -o -name .next -o -name coverage -o -name target -o -name vendor -o -name .cache \) \
-  -prune -o -type f -print 2>/dev/null | sed 's|^\./||' | head -8000 > "$TMP/all"
+  -prune -o -type f -print 2>/dev/null | sed 's|^\./||' | LC_ALL=C sort | head -8000 > "$TMP/all"
 : > "$TMP/src"; : > "$TMP/deps"
 while IFS= read -r f; do
   case "$f" in
