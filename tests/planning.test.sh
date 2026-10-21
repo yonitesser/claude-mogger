@@ -163,6 +163,7 @@ grep -qi "cite" "$ROOT/skills/decisions/SKILL.md" && ok "decisions skill has cit
 
 grep -q "## Requirements per task" "$ROOT/agents/planner.md" && ok "planner lists R requirements per task" || bad "planner R lines"
 grep -q "unresolved" "$ROOT/agents/reviewer.md" && grep -q "| requirement | verdict | evidence |" "$ROOT/agents/reviewer.md" && ok "reviewer writes check table" || bad "reviewer check table"
+grep -q "one-way door" "$ROOT/agents/reviewer.md" && grep -q "swallow errors" "$ROOT/agents/reviewer.md" && ok "reviewer notes one-way doors and swallowed errors" || bad "reviewer risk notes"
 
 echo
 echo "passed: $PASS  failed: $FAIL"

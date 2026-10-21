@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `reviewer` now notes one-way doors (migration, delete, public API change) and swallowed errors, for the human only; it never makes a READY verdict easier. Idea from warpdotdev/common-skills `merge-risk`, judged IDEAS TAKEN in `CONSIDERED.md`; its risk score was skipped, so the merge block stays a hook. Test: `tests/planning.test.sh`.
+
 - `scripts/checks/lockin.sh` sorts its file list, so the cited evidence is the same on every machine. A CI run had failed once on ubuntu because `find` listed the files in a different order. Test: `tests/hygiene.test.sh`.
 
 - `security-reviewer` has a new HARDENING NOTES section: a weak spot with no attacker path you can trace is listed there with no severity, not as CONFIRMED. NEEDS-HUMAN must name the one fact still unknown. Idea from cloudflare/security-audit-skill, which is judged OPTIONAL in `CONSIDERED.md` (not bundled). Test: `tests/security.test.sh`.
