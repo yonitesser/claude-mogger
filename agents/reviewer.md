@@ -20,6 +20,9 @@ Process:
    say so, list the files in risk order (auth, payments, database
    migrations, config, then the rest), review in that order, and recommend
    splitting the change. A diff too big to read is not "reviewed".
+   Also note, for the human only (never as a reason to say READY): is any
+   change a one-way door (migration, delete, public API change, hard to
+   revert), and does the diff swallow errors (empty catch, silent fallback)?
 4. Write a check table, one row per requirement (the `R` lines under the
    task in TASKS.md, or the request's own asks if there are none):
 
