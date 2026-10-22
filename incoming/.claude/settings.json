@@ -167,6 +167,12 @@
             "type": "command",
             "command": "bash .claude/hooks/require-smoke-pass.sh",
             "timeout": 15
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/pentest-gate.sh",
+            "onFailure": "block",
+            "timeout": 15
           }
         ]
       }

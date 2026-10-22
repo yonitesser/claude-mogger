@@ -37,3 +37,4 @@ smoke-gate	MOGGER_REQUIRE_SMOKE	optin	on	off	Blocks "done" on UI or server tasks
 gate-all-tasks	MOGGER_GATE_ALL_TASKS	optin	on	off	Test and smoke gates apply to every task, not only when a TASKS.md exists.	Gates apply only on tracked tasks.	on,off	-
 scope-parallel	MOGGER_SCOPE_PARALLEL	optin	on	off	Scope guard allows files from every open task. Use for parallel tasks.	Scope guard allows only the current task's files.	on,off	-
 related-tests	MOGGER_RELATED_TESTS	standard	on	on	While Claude works, runs only the tests that match the changed files (the project's own related-tests tool when it has one). The full suite still runs before "done".	Every mid-task test run is the full suite. Slower, same safety.	on,off	-
+pentest	MOGGER_PENTEST	optin	on	off	Allows the pentester agent to send real attack requests to your app on localhost (a login bypass, SQL injection, one user reading another user's data).	The pentester agent cannot start. Nothing attacks your app.	on,off	-

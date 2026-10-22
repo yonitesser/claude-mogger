@@ -16,7 +16,7 @@ cp hooks/scripts/*.sh hooks/scripts/*.py $NEW/.claude/hooks/
 chmod +x $NEW/.claude/hooks/*.sh
 cp hooks/guards.tsv $NEW/.claude/guards.tsv
 cp templates/CONSTRAINTS.md templates/RUNS.md templates/STACK.md templates/DECISIONS.md templates/SPEC.md templates/DATA.md templates/HANDOFF.md templates/pricing.json $NEW/
-cp scripts/savings-report.py scripts/savings-report.sh scripts/mogger-rewind.sh scripts/mogger-config.sh scripts/smoke-check.sh scripts/smoke-browser.mjs scripts/ship-check.sh scripts/cost-report.sh scripts/context-cost.sh scripts/a11y-browser.mjs $NEW/
+cp scripts/savings-report.py scripts/savings-report.sh scripts/mogger-rewind.sh scripts/mogger-config.sh scripts/smoke-check.sh scripts/smoke-browser.mjs scripts/ship-check.sh scripts/cost-report.sh scripts/context-cost.sh scripts/a11y-browser.mjs scripts/pentest-probe.sh $NEW/
 mkdir -p $NEW/checks
 cp scripts/checks/*.sh $NEW/checks/
 chmod +x $NEW/checks/*.sh
