@@ -1,8 +1,3 @@
----
-name: superpowers-preset
-description: Config for running mogger's hooks under Superpowers' planning/TDD workflow. Load when both are installed or the user asks how to combine them.
----
-
 # Running mogger + Superpowers together
 
 Superpowers (`obra/superpowers`, MIT, on Anthropic's official marketplace)

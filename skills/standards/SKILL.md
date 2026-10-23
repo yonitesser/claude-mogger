@@ -16,6 +16,13 @@ description: Coding standards: Karpathy principles, library choice via STACK.md 
 - **Surgical changes**: touch only what the task requires. Don't "improve"
   adjacent code, don't refactor things that aren't broken, don't delete
   pre-existing dead code unless asked — mention it instead.
+- **Bug fix = every caller**: before you edit a function, grep all its
+  callers and fix the root cause once, in the shared code. Code you move
+  or merge keeps its error handling and validation.
+- **Name the shortcut**: a known limit gets a one-line comment:
+  `shortcut: <the limit>, <when to upgrade>`. End your report with one or
+  two lines on what you skipped or did not check. (Ideas from
+  DietrichGebert/ponytail, see CONSIDERED.md.)
 - **Chesterton's Fence**: before you delete or "simplify" code, find out why
   it is there (read the callers, `git log`, a test). If you cannot tell, keep
   it and say so.
