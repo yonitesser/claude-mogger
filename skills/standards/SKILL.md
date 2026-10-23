@@ -13,6 +13,12 @@ description: Coding standards: Karpathy principles, library choice via STACK.md 
   an interpretation when the request is ambiguous — ask or present options.
 - **Simplicity first**: minimum code that solves the problem, nothing
   speculative, no unrequested flexibility. If 200 lines could be 50, rewrite it.
+- **Speculative edge cases need a yes**: before you add code for a
+  race or security case that is far-fetched, tell the user the failure,
+  how likely it is and what the code costs, and wait for a yes. Do not grow
+  the scope silently. Normal cases (input checks, auth, secrets) stay
+  required. Validate once at the boundary; do not re-check inside. (Idea
+  from opencode AGENTS.md, see CONSIDERED.md.)
 - **Surgical changes**: touch only what the task requires. Don't "improve"
   adjacent code, don't refactor things that aren't broken, don't delete
   pre-existing dead code unless asked — mention it instead.
@@ -107,6 +113,8 @@ planning-with-files, Superpowers, headroom and the frontend-design skills are co
 
 Load this only when the task builds or changes UI. Other tasks: skip it.
 
+0. **DESIGN.md first.** If the repo has a `DESIGN.md` (fonts, colours,
+   spacing, tone), follow it. Do not invent a second system.
 1. **Designer question.** Before each UI choice ask: "Would an experienced
    product designer pick this on purpose?" If not, fix it first.
 2. **One system, not many.** Pick one type scale, one spacing scale, one
