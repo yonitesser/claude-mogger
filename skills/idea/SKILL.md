@@ -52,6 +52,10 @@ round), Data, Done when, Assumptions, Open questions.
   rewrite it as a number or an output.
 - Every assumption you did not verify by reading or running something is
   prefixed `UNVERIFIED:`. Do not present a guess as a fact.
+- Before you show it, read Must-have as a set. If two lines cannot both
+  be true ("approvals are final" and "admins can edit approvals"), name the
+  clash under Open questions and ask which one wins. Do not smooth it over.
+  Keep every original ask visible; mark any you change or drop.
 - Unanswered questions go under Open questions, not into invented answers.
 
 Show the user SPEC.md and ask for a yes or corrections. Do not proceed on

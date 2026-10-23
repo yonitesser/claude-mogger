@@ -164,6 +164,8 @@ grep -qi "cite" "$ROOT/skills/decisions/SKILL.md" && ok "decisions skill has cit
 grep -q "## Requirements per task" "$ROOT/agents/planner.md" && ok "planner lists R requirements per task" || bad "planner R lines"
 grep -q "unresolved" "$ROOT/agents/reviewer.md" && grep -q "| requirement | verdict | evidence |" "$ROOT/agents/reviewer.md" && ok "reviewer writes check table" || bad "reviewer check table"
 grep -q "one-way door" "$ROOT/agents/reviewer.md" && grep -q "swallow errors" "$ROOT/agents/reviewer.md" && ok "reviewer notes one-way doors and swallowed errors" || bad "reviewer risk notes"
+grep -q "cannot both" "$ROOT/skills/idea/SKILL.md" && ok "idea skill names clashing requirements" || bad "idea clash rule"
+grep -q "Speculative edge cases need a yes" "$ROOT/skills/standards/SKILL.md" && grep -q "DESIGN.md first" "$ROOT/skills/standards/SKILL.md" && ok "standards: speculative-edge-case rule and DESIGN.md" || bad "standards new rules"
 
 echo
 echo "passed: $PASS  failed: $FAIL"
