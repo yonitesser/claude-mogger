@@ -594,6 +594,8 @@ for k in $(grep -oE "plugin: 'mogger', key: '[a-zA-Z]+'" "$ROOT/mods/mogger-stat
   grep -qE "^[[:space:]]+$k:" "$ROOT/mods/mogger-status/types/index.d.ts" && ok "mod state key declared in types: $k" || bad "mod state key not declared in types: $k"
 done
 
+grep -q "testsOf" "$ROOT/mods/mogger-status/hooks/register.tsx" && grep -q "test-evidence.json" "$ROOT/mods/mogger-status/hooks/log.ts" && ok "mod bar shows tests pass/fail from the evidence file" || bad "mod bar lost the tests pass/fail line"
+
 grep -q '"no change" is a good answer' "$ROOT/agents/retro.md" && grep -q 're-check before use' "$ROOT/agents/retro.md" && ok "retro: no-change answer and fact-vs-rule label" || bad "retro lost the no-change / fact-vs-rule lines"
 
 if grep -rq 'CLAUDE_PLUGIN_ROOT}/' "$ROOT/incoming/.claude/agents"; then bad "incoming agents still point at plugin-only paths"; else ok "incoming agents use manual-install paths"; fi

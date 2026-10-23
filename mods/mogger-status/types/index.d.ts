@@ -16,6 +16,7 @@ declare module 'claude-code' {
       panel: 'none' | 'guards' | 'bar'
       guards: { name: string; kind: string; state: string; source: 'file' | 'default'; options: string[] }[]
       note: string
+      tests: 'pass' | 'fail' | null
       minute: number
       bar: { robot: boolean; detail: boolean }
     }

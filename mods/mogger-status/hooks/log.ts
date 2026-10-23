@@ -62,3 +62,22 @@ export function voiceOn(events: MoggerEvent[]): boolean {
   }
   return true
 }
+
+// The newest test run, from .claude/state/test-evidence.json (written by record-test-run.sh).
+// Anything that is not a clear pass or fail shows nothing.
+export const TESTS_PATH = '.claude/state/test-evidence.json'
+
+export function testsOf(text: string | null): 'pass' | 'fail' | null {
+  if (text === null) return null
+  try {
+    const v: unknown = JSON.parse(text)
+    const st = typeof v === 'object' && v !== null ? (v as Record<string, unknown>).status : null
+    return st === 'pass' || st === 'fail' ? st : null
+  } catch {
+    return null
+  }
+}
+
+export function testsText(t: 'pass' | 'fail' | null): string {
+  return t === null ? '' : `tests: ${t}`
+}
