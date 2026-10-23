@@ -5,7 +5,7 @@ import type { MoggerSummary } from '../types'
 import { ORANGE, TICK_MS, chadRows, chadSvg, headline, moodOf, toastText } from './chad'
 import { DEFAULT_BAR, isPickable, parseCatalog, parseConfig, readBar, rowOf, withPick } from './panel'
 import type { BarOptions, GuardRow } from './panel'
-import { LOG_PATH, ageText, newBlocks, newestTs, parseLog, statusText, summarize, voiceOn } from './log'
+import { LOG_PATH, TESTS_PATH, ageText, newBlocks, newestTs, parseLog, statusText, summarize, testsOf, testsText, voiceOn } from './log'
 
 const summaryAtom = atom({ plugin: 'mogger', key: 'summary' } as const, null as MoggerSummary | null)
 const isHidden = atom({ plugin: 'mogger', key: 'isHidden' } as const, false)
@@ -17,6 +17,7 @@ const guardsAtom = atom({ plugin: 'mogger', key: 'guards' } as const, [] as Guar
 const noteAtom = atom({ plugin: 'mogger', key: 'note' } as const, '')
 const barAtom = atom({ plugin: 'mogger', key: 'bar' } as const, DEFAULT_BAR as BarOptions)
 const frameAtom = atom({ plugin: 'mogger', key: 'frame' } as const, 0)
+const testsAtom = atom({ plugin: 'mogger', key: 'tests' } as const, null as 'pass' | 'fail' | null)
 const minuteAtom = atom({ plugin: 'mogger', key: 'minute' } as const, 0)
 
 const QUIET_MS = 60_000
@@ -58,6 +59,13 @@ async function refresh($: EngineInterface): Promise<void> {
   seenTs = newestTs(events)
   // write only a changed summary: a redraw every poll could land between a button's press and release
   if (JSON.stringify(s) !== JSON.stringify(await read($, summaryAtom))) await update($, summaryAtom, () => s)
+  let tests: 'pass' | 'fail' | null = null
+  try {
+    tests = testsOf(await $.fs.read(TESTS_PATH))
+  } catch {
+    // no test run yet: show nothing
+  }
+  if (tests !== (await read($, testsAtom))) await update($, testsAtom, () => tests)
   const minute = Math.floor((await $.clock.now()) / 60_000)
   if (minute !== (await read($, minuteAtom))) await update($, minuteAtom, () => minute) // keeps "(5m ago)" fresh
   $.ui.status(statusText(s))
@@ -164,6 +172,7 @@ export const register: Register = on => {
         ? `${statusText(s)}. Nothing to report yet.`
         : `${statusText(s)}. Last: ${last.msg} (${ageText(now, last.ts)})`
 
+    const tests = await read($, testsAtom)
     const frame = await read($, frameAtom)
     const voice = await read($, voiceAtom)
     const mood = moodOf(last?.kind, last ? now - last.ts * 1000 : Infinity)
@@ -225,6 +234,9 @@ export const register: Register = on => {
               <Text dimColor={isQuiet} color={isQuiet ? undefined : color}>
                 {line}{' '}
               </Text>
+            )}
+            {bar.detail && tests !== null && (
+              <Text color={tests === 'fail' ? 'red' : 'green'}>{testsText(tests)} </Text>
             )}
             <Box>
               <Button key="guards" label={`⚙ Guards ${panel === 'guards' ? '▴' : '▾'}`} variant="primary" onPress={() => toggle('guards')} />

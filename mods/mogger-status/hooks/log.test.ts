@@ -1,6 +1,6 @@
 import { expect, test } from 'claude-code/testing'
 
-import { ageText, newBlocks, newestTs, parseLog, statusText, summarize, voiceOn } from './log'
+import { ageText, newBlocks, newestTs, parseLog, statusText, summarize, testsOf, testsText, voiceOn } from './log'
 
 const LOG = [
   '1700000000\tinfo\tmogger is on for this session',
@@ -49,4 +49,15 @@ test('voiceOn: on by default, newest voice line wins', async () => {
   expect(voiceOn(parseLog(LOG))).toBe(true)
   expect(voiceOn(parseLog(LOG + '1700000050\tvoice\toff\n'))).toBe(false)
   expect(voiceOn(parseLog(LOG + '1700000050\tvoice\toff\n1700000060\tvoice\ton\n'))).toBe(true)
+})
+
+test('testsOf reads pass or fail from the evidence file, else nothing', async () => {
+  expect(testsOf('{"status":"pass","exit_code":"0"}')).toBe('pass')
+  expect(testsOf('{"status":"fail"}')).toBe('fail')
+  expect(testsOf('{"status":"maybe"}')).toBe(null)
+  expect(testsOf('{not json')).toBe(null)
+  expect(testsOf(null)).toBe(null)
+  expect(testsText('pass')).toBe('tests: pass')
+  expect(testsText('fail')).toBe('tests: fail')
+  expect(testsText(null)).toBe('')
 })
