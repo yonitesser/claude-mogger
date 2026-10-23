@@ -306,6 +306,24 @@
     "Explain what a Claude Code plugin is."
    ]
   },
+  "pentest": {
+   "should": [
+    "Pentest my app before I ship it.",
+    "Try to hack my app and show me what breaks.",
+    "Can another user read my users' data? Attack it and prove it.",
+    "Run a live attack test on localhost.",
+    "Turn on the pentester and test my login.",
+    "Attack my running app and show me the exact request that breaks it."
+   ],
+   "should_not": [
+    "What is a penetration test?",
+    "Scan my code for hard-coded secrets.",
+    "Review this diff for security problems.",
+    "Write a login form.",
+    "Explain what SQL injection is.",
+    "Is the app up? Run the smoke check."
+   ]
+  },
   "verify-run": {
    "should": [
     "The tests pass. Does the app actually start and respond?",
