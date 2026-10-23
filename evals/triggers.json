@@ -72,24 +72,6 @@
     "Change the button colour to blue."
    ]
   },
-  "explain": {
-   "should": [
-    "Explain that.",
-    "What did you change?",
-    "I don't follow, can you explain what the last change did in plain words?",
-    "Explain the diff to me like I am not a programmer.",
-    "The task is done. Give me a plain-English note about what changed.",
-    "What did that commit actually change in the code?"
-   ],
-   "should_not": [
-    "Explain how Python decorators work.",
-    "What is a closure in JavaScript?",
-    "Explain the difference between TCP and UDP.",
-    "Write a plain-English description of our company for the About page.",
-    "What is the capital of France?",
-    "Explain what a monad is."
-   ]
-  },
   "grounding": {
    "should": [
     "Which library version does this project use for requests? Only say what you can prove.",
@@ -286,24 +268,6 @@
     "Print the current date.",
     "Tell me what the file logo.png is.",
     "Show the git branch name."
-   ]
-  },
-  "superpowers-preset": {
-   "should": [
-    "I have both mogger and Superpowers installed. How should I combine them?",
-    "Should I use Superpowers instead of mogger's own agents?",
-    "How do I run mogger's hooks underneath Superpowers' TDD workflow?",
-    "Is there a tested config for mogger plus Superpowers?",
-    "Do mogger and Superpowers conflict on worktrees and planning?",
-    "Set up the mogger superpowers preset."
-   ],
-   "should_not": [
-    "What are superpowers in Marvel comics?",
-    "Install the prettier plugin for my editor.",
-    "How do git worktrees work?",
-    "Write a test-driven function for FizzBuzz.",
-    "What is the best code editor?",
-    "Explain what a Claude Code plugin is."
    ]
   },
   "pentest": {

@@ -1,6 +1,6 @@
 ---
 name: explainer
-description: Explains a diff or finished task in plain English from the real diff. Use when the user says "explain that".
+description: Explains a diff or finished task in plain English from the real diff. Use at task end or when the user says "explain that".
 tools: Read, Grep, Bash
 model: haiku
 effort: low
@@ -50,6 +50,8 @@ diff, write "Reason not stated.">
 ```
 
 Keep the whole note under about 200 words unless the diff is large.
+
+The Lead shows your note to the user as is, and keeps any "not verified" line.
 
 ## Before you finish: log the routing estimate (optional but requested)
 

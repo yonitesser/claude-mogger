@@ -94,8 +94,7 @@ skills/standards coding principles, library rules, token discipline, SkillSpecto
 skills/init     first-run: scaffolds CONSTRAINTS/RUNS/STACK in your project
 skills/pentest    opt-in live attack test of your own app on localhost (pentester agent, guard `pentest`, off by default)
 skills/config    list guards and set each to on, ask or off (`.claude/mogger.json`, list in `hooks/guards.tsv`)
-skills/superpowers-preset  tested config for running these gates under Superpowers
-skills/ (20 in all)    the four above, plus config, idea, decisions, grounding, security, code-health, edge-cases, verify-run, ship-check, rewind, handoff, docs, privacy, explain, evals, app-evals
+skills/ (19 in all)    the four above, plus config, idea, decisions, grounding, security, code-health, edge-cases, verify-run, ship-check, rewind, handoff, docs, privacy, evals, app-evals
 templates/              the three project files above, plus pricing.json for the routing estimate
 tests/*.test.sh         3,137 assertions across 28 suites (`for t in tests/*.test.sh; do bash $t; done`). If these fail, the gates don't work.
 scripts/savings-report.py  optional: estimate of what routed agent calls would cost at the Lead's rate (self-reported, see below)
@@ -270,7 +269,7 @@ and TDD enforcement. This kit is better at gates that can't be reasoned
 around and at not paying frontier prices for file reads. Those are
 different axes, so the answer is usually both.
 
-The `mogger:superpowers-preset` skill is the tested configuration: which
+The [`docs/superpowers-preset.md`](docs/superpowers-preset.md) file is the tested configuration: which
 mogger agents to stop dispatching, which to keep (all the hooks, all the
 Haiku-routed agents, `library-scout`, `retro`), and the two config changes
 it needs — `MOGGER_GATE_ALL_TASKS=on` so the test gate still fires against
