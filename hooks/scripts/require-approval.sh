@@ -8,7 +8,7 @@
 # spending money. Only actual billing/payment CLIs are blocked.
 #
 # Each part has three states (see hooks/guards.tsv, skill mogger:config):
-#   MOGGER_PUSH_GUARD, MOGGER_MERGE_GUARD, MOGGER_DEPLOY_GUARD, MOGGER_MONEY_GUARD
+#   MOGGER_PUSH_GUARD, MOGGER_MERGE_GUARD, MOGGER_DEPLOY_GUARD, MOGGER_MONEY_GUARD, MOGGER_SEND_GUARD (default ask)
 #   on = block (default), ask = permission prompt for the human, off = allow.
 #   Force pushes and pushes to a protected branch stay blocked in every state.
 # Opt-out for repos whose own workflow owns releases:
@@ -24,7 +24,7 @@ CMD=$(json_get "$INPUT" '.tool_input.command')
 # them (ls, cat, a test run) needs neither the python normaliser nor the regexes.
 # Keep this list in step with the tools named in check_line.
 case "$CMD" in
-  *git*|*gh*|*vercel*|*netlify*|*npm*|*yarn*|*cargo*|*docker*|*kubectl*|*helm*|*terraform*|*pulumi*|*railway*|*fly*|*firebase*|*serverless*|*wrangler*|*sst*|*amplify*|*prisma*|*drizzle*|*supabase*|*sam*|*cdk*|*gcloud*|*az*|*stripe*|*aws*|*paypal*|*braintree*|*twilio*) ;;
+  *git*|*gh*|*vercel*|*netlify*|*npm*|*yarn*|*cargo*|*docker*|*kubectl*|*helm*|*terraform*|*pulumi*|*railway*|*fly*|*firebase*|*serverless*|*wrangler*|*sst*|*amplify*|*prisma*|*drizzle*|*supabase*|*sam*|*cdk*|*gcloud*|*az*|*stripe*|*aws*|*paypal*|*braintree*|*twilio*|*send*|*mail*|*remind*|*notify*|*blast*|*webhook*|*slack*|*discord*|*postmark*) ;;
   *) exit 0 ;;
 esac
 
@@ -36,6 +36,7 @@ PUSH=$(mogger_state MOGGER_PUSH_GUARD on)
 MERGE=$(mogger_state MOGGER_MERGE_GUARD on); [ "$MERGE" = off ] && MERGE=on
 DEPLOY=$(mogger_state MOGGER_DEPLOY_GUARD on)
 MONEY=$(mogger_state MOGGER_MONEY_GUARD on)
+SEND=$(mogger_state MOGGER_SEND_GUARD ask)
 ASKS=""
 
 # gate <state> <event> <block message> <ask reason>
@@ -126,6 +127,13 @@ check_line() {
   # --- money: actual CLIs that move or configure spend, not file names ---
   if mogger_re "$CMD" '(^|[;&|]\s*|\s)(stripe\s+(charges|payment_intents|invoices|subscriptions|refunds|payouts|customers)\s+(create|update|delete|cancel|capture|confirm|pay|void)|aws\s+(ce|budgets|billing|cur|pricing)\s|gcloud\s+billing|az\s+(consumption|billing|costmanagement)|paypal\s|braintree\s|twilio\s+.*(buy|purchase))'; then
     gate "$MONEY" "blocked a money command" "this command moves or configures money. Requires human approval regardless of amount. Stop and describe what it would do." "Mogger: a command that moves or configures money. Approve only if you want it to run."
+  fi
+
+  # --- outbound sends: mail tools, chat/webhook posts, and scripts named send/remind/notify/blast/mail.
+  # A real send cannot be undone. A dry run (--dry-run, --dry, --check, -n) passes. Plain text match.
+  if mogger_re "$CMD" '(^|[;&|]\s*|\s)((sendmail|mailx?|mutt|swaks|msmtp)(\s|$)|mailctl\s+send|(python3?|node|ruby|bash|sh|\./)\s*[^;&|]*(send|remind|notify|blast|mailer|mail[_-])[a-z0-9_-]*\.(py|js|rb|sh)|curl\s+[^;&|]*(hooks\.slack\.com|discord(app)?\.com/api/webhooks|api\.sendgrid|api\.mailgun|api\.postmarkapp))' \
+     && ! mogger_re "$CMD" '(--dry-run|--dry|--check|--preview|\s-n(\s|$))'; then
+    gate "$SEND" "stopped a real send" "this command can send real email or messages and that cannot be undone. Run it with --dry-run first, show the output, and ask the human before any real send." "Mogger: this can send real email or messages. Approve only if you want it sent."
   fi
   return 0
 }

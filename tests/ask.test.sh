@@ -99,6 +99,16 @@ MONEY=$(bash_in 'stripe refunds create --charge ch_1')
 run require-approval.sh "$MONEY"; [ $RC -eq 2 ] && ok "money on: blocks" || bad "money on"
 MOGGER_MONEY_GUARD=ask run require-approval.sh "$MONEY"; [ $RC -eq 0 ] && is_ask && ok "money ask: ask decision" || bad "money ask"
 MOGGER_MONEY_GUARD=off run require-approval.sh "$MONEY"; [ $RC -eq 0 ] && [ -z "$OUT" ] && ok "money off: allows" || bad "money off"
+# --- send-guard: real sends ask (default); a dry run, a plain script and an unrelated mail word pass
+SEND=$(bash_in 'python3 reminders/send_reminders.py')
+run require-approval.sh "$SEND"; [ $RC -eq 0 ] && is_ask && ok "send default: asks before a real send" || bad "send default rc=$RC $OUT"
+MOGGER_SEND_GUARD=on run require-approval.sh "$SEND"; [ $RC -eq 2 ] && ok "send on: blocks" || bad "send on"
+MOGGER_SEND_GUARD=off run require-approval.sh "$SEND"; [ $RC -eq 0 ] && [ -z "$OUT" ] && ok "send off: allows" || bad "send off"
+MOGGER_SEND_GUARD=ask MOGGER_HEADLESS=on run require-approval.sh "$SEND"; [ $RC -eq 2 ] && ok "send ask headless: blocks" || bad "send headless"
+run require-approval.sh "$(bash_in 'python3 reminders/send_reminders.py --dry-run')"; [ $RC -eq 0 ] && [ -z "$OUT" ] && ok "send: --dry-run passes" || bad "send dry-run"
+run require-approval.sh "$(bash_in 'curl -X POST -d x https://hooks.slack.com/services/T/B/x')"; [ $RC -eq 0 ] && is_ask && ok "send: slack webhook asks" || bad "send slack"
+run require-approval.sh "$(bash_in 'python3 mailbox_report.py')"; [ $RC -eq 0 ] && [ -z "$OUT" ] && ok "send: unrelated script name passes" || bad "send false positive"
+run require-approval.sh "$(bash_in 'grep -r sender src/')"; [ $RC -eq 0 ] && [ -z "$OUT" ] && ok "send: grep for the word passes" || bad "send grep"
 MOGGER_PUSH_GUARD=ask MOGGER_DEPLOY_GUARD=ask MOGGER_MONEY_GUARD=ask MOGGER_MERGE_GUARD=ask run require-approval.sh "$(bash_in 'git status')"; [ $RC -eq 0 ] && [ -z "$OUT" ] && ok "all ask: harmless command untouched" || bad "harmless"
 
 # --- the same states on the GitHub MCP gate

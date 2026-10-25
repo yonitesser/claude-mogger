@@ -11,7 +11,7 @@ bad() { FAIL=$((FAIL+1)); printf '  FAIL %s\n' "$1"; }
 
 # Ceilings (characters). Current values at the time of writing are noted.
 MAX_ALWAYS=7900      # skill + agent descriptions, every turn (was ~12k at v1.7.0; trimmed to ~7.4k; +360 for the opt-in pentester, see CHANGELOG)
-MAX_SESSION=1980     # session-start output on the fixture project (was 1934; 1800 before the voice line, +171 chars on purpose, see CHANGELOG 1.10.0)
+MAX_SESSION=2120     # session-start output on the fixture project (was 1980; +150 chars on purpose: process rules + send rule, see CHANGELOG)
 MAX_ONE_SKILL=16000  # biggest single skill body (mogger:loop ~15k)
 
 out=$(bash "$ROOT/scripts/context-cost.sh" --json 2>&1)
