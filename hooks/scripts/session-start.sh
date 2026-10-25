@@ -86,7 +86,7 @@ if [ -f "${0%/*}/evals-nudge.sh" ]; then
 fi
 
 source "${0%/*}/claim-lib.sh"; claim_baseline
-echo "Least code, never least tests: skip it, reuse the repo (grep first), then stdlib, new code last. Test first for any behaviour change (keep old test names). Find the cause before you fix; plan multi-step work in 3 lines. Do what was asked; if you disagree, do it and say so. Before \"done\": show output proving each ask, plus one awkward input. Cite file:line for code claims; mark unchecked ones UNVERIFIED:. Mail or message senders: --dry-run first; a real send needs the human's OK."
+echo "Least code, never least tests: skip it, reuse the repo (grep first), then stdlib, new code last. Test first for any behaviour change (keep old test names). Find the cause before you fix; plan multi-step work in 3 lines. Do what was asked; if you disagree, do it and say so. Before \"done\": show output proving each ask, plus one awkward input. Cite file:line for code claims; mark unchecked ones UNVERIFIED:."
 
 mogger_event info "mogger is on for this session"
 # Voice (toggle: voice in .claude/mogger.json, MOGGER_VOICE=off). Few words on purpose: this line is paid for every session.
