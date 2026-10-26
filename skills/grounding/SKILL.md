@@ -47,7 +47,7 @@ Unverified assumptions that a task depends on go in TASKS.md under a
 - [ ] UNVERIFIED: <claim> — needed by task <id> — would verify: <file/command/docs>
 ```
 
-The builder appends to it. The reviewer must clear every open item (verify
+You append to it while building. The reviewer must clear every open item (verify
 it and tick it, or reject it) before giving a READY verdict. An open
 assumption is a NOT READY.
 

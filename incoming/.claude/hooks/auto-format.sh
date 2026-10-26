@@ -66,5 +66,5 @@ fi
 
 # Exit 0 — a formatter failure should never block Claude's edit.
 # Formatting is a nicety layered on top; correctness gating is the
-# tester's job, not this hook's.
+# the test run's job, not this hook's.
 exit 0

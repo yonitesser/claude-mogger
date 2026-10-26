@@ -143,7 +143,7 @@ echo "== files and frontmatter"
 fm() {  # fm <file> <key>: value of key inside first frontmatter block
   awk -v k="$2" 'NR==1 && $0!="---"{exit} NR>1 && $0=="---"{exit} NR>1 && index($0,k":")==1{sub("^"k":[ ]*","");print;exit}' "$1"
 }
-for f in skills/idea/SKILL.md skills/decisions/SKILL.md agents/planner.md; do
+for f in skills/idea/SKILL.md skills/decisions/SKILL.md; do
   [ -f "$ROOT/$f" ] && ok "exists: $f" || bad "exists: $f"
   [ -n "$(fm "$ROOT/$f" name)" ] && ok "frontmatter name: $f" || bad "frontmatter name: $f"
   [ -n "$(fm "$ROOT/$f" description)" ] && ok "frontmatter description: $f" || bad "frontmatter description: $f"
@@ -157,11 +157,11 @@ for sec in "## Goal" "## Users" "## Must have" "## Won't do (this round)" "## Da
   grep -qF "$sec" "$ROOT/templates/SPEC.md" && ok "SPEC template has '$sec'" || bad "SPEC template has '$sec'"
 done
 grep -q 'UNVERIFIED:' "$ROOT/templates/SPEC.md" && ok "SPEC template shows UNVERIFIED: label" || bad "SPEC UNVERIFIED label"
-grep -q 'SPEC.md' "$ROOT/agents/planner.md" && grep -q "invent requirements" "$ROOT/agents/planner.md" && ok "planner has SPEC.md section" || bad "planner SPEC section"
+grep -q 'SPEC.md' "$ROOT/skills/loop/planning.md" && grep -q "invent requirements" "$ROOT/skills/loop/planning.md" && ok "planning guide has SPEC.md section" || bad "planner SPEC section"
 grep -q 'DECISIONS.md' "$ROOT/skills/init/SKILL.md" && ok "mogger:init lists DECISIONS.md" || bad "mogger:init lists DECISIONS.md"
 grep -qi "cite" "$ROOT/skills/decisions/SKILL.md" && ok "decisions skill has cite-then-ask rule" || bad "cite rule"
 
-grep -q "## Requirements per task" "$ROOT/agents/planner.md" && ok "planner lists R requirements per task" || bad "planner R lines"
+grep -q "## Requirements per task" "$ROOT/skills/loop/planning.md" && ok "planner lists R requirements per task" || bad "planner R lines"
 grep -q "unresolved" "$ROOT/agents/reviewer.md" && grep -q "| requirement | verdict | evidence |" "$ROOT/agents/reviewer.md" && ok "reviewer writes check table" || bad "reviewer check table"
 grep -q "one-way door" "$ROOT/agents/reviewer.md" && grep -q "swallow errors" "$ROOT/agents/reviewer.md" && ok "reviewer notes one-way doors and swallowed errors" || bad "reviewer risk notes"
 grep -q "cannot both" "$ROOT/skills/idea/SKILL.md" && ok "idea skill names clashing requirements" || bad "idea clash rule"

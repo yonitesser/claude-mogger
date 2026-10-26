@@ -9,5 +9,5 @@ Format: `- <date>: <what went wrong> → <the rule that prevents it>`
 ## Corrections
 
 <!-- Example, delete once you have real ones:
-- 2026-09-08: builder used a new HTTP client instead of the existing wrapper → always grep for existing usage of a library before adding a new one
+- 2026-09-08: an implementer used a new HTTP client instead of the existing wrapper → always grep for existing usage of a library before adding a new one
 -->

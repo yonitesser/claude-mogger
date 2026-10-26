@@ -1,6 +1,6 @@
 ---
 name: verify-run
-description: Confirms the app actually runs (not just tests) with scripts/smoke-check.sh and the verifier agent. Load before calling a UI, server or CLI task done.
+description: Confirms the app actually runs (not just tests) with scripts/smoke-check.sh and its result file. Load before calling a UI, server or CLI task done.
 ---
 
 # Verify it runs
@@ -9,12 +9,12 @@ Tests passing is not the same as the app working. Before you call a UI, API,
 server, or CLI task done, prove it starts and responds.
 
 ## When
-After `tester` records a full-suite pass, before `reviewer` (or before you say
+After a full-suite pass is recorded, before `reviewer` (or before you say
 "done" if the task has no review step). Skip for docs-only or pure-refactor
 changes with no runtime surface, and say you skipped.
 
 ## How
-Delegate to `verifier` (Haiku). It runs `scripts/smoke-check.sh`, which:
+Run `scripts/smoke-check.sh` yourself. It:
 - resolves the start command: `MOGGER_SMOKE_CMD` (a command that must exit 0,
   for CLI/library projects), else `MOGGER_RUN_CMD`, `.claude/mogger.json`
   (`run`, `url`), STACK.md lines `run:` / `url:`, else autodetect
@@ -39,7 +39,7 @@ Playwright is installed; otherwise it is skipped with a note.
 ## Reporting
 Report evidence, not adjectives. Say "GET http://localhost:3000 -> 200 in 4s,
 no error lines", not "the app works". On failure quote the exact `errors[]`
-lines and send them to `builder`; same 2-fix-pass cap as the test loop.
+lines and fix the cause; same 2-fix-pass cap as the test loop.
 
 ## Optional gate
 `MOGGER_REQUIRE_SMOKE=on` makes `require-smoke-pass.sh` block `reviewer` until

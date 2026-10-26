@@ -37,7 +37,7 @@ one does:
 1. **Enforce discipline the model won't apply on its own.** Tests must
    actually pass — full suite, checked by exit code, not by the model
    saying so — before review. Scope creep is blocked at the tool call: a
-   builder cannot edit a file the current task didn't declare. A "done
+   the Lead cannot edit a file the current task didn't declare. A "done
    when" condition that's a real check, not an adjective.
 2. **Hard-gate anything irreversible.** `git push`, merges, deploys, and
    anything touching money are blocked at the tool-call level by hooks —
@@ -53,7 +53,7 @@ one does:
 4. **Keep the work focused.** Every agent has a `model:` assignment: Haiku
    reads files, greps the codebase, and runs tests; Sonnet builds, reviews,
    and scouts libraries; the orchestrating Lead plans and decides.
-   The seven Haiku agents (and the Sonnet docs-writer) also set `effort: low` — a second, independent
+   The five Haiku agents (and the Sonnet docs-writer) also set `effort: low` — a second, independent
    dial on reasoning depth, documented as a real subagent frontmatter
    field. Model aliases (`model: sonnet`) resolve to whatever's current
    automatically, so a new Sonnet release upgrades every Sonnet-tier
@@ -68,7 +68,7 @@ one does:
    `reviewer` returns a pass / fail / unresolved table, one row per
    requirement. A failed unit comes back in one fixed form (`UNIT`,
    `VERDICT`, `REASON`, `EVIDENCE`, `SCOPE`) and only the failed units go
-   back to the builder.
+   back to be fixed.
 5. **Remember corrections.** CONSTRAINTS.md is a permanent, append-only
    home for every "don't do that again." A `retro` agent proposes new
    entries from run history; a human approves them.
@@ -76,17 +76,15 @@ one does:
    own formatter/linter (prettier, ruff, gofmt, rustfmt, etc.) on each
    file Claude touches. Clean code isn't a prompt instruction, it's a
    hook.
-7. **Run independent work at the same time.** `planner` marks which tasks
-   have non-overlapping file sets; the Lead dispatches those builders
-   concurrently instead of one-at-a-time. Tests follow the same logic —
-   affected tests during the loop, full suite once before review.
+7. **Test only what changed, until the end.** Affected tests during the
+   loop, the full suite once before review.
 
 ## What's in the box
 
 ```
 .claude-plugin/         plugin.json + marketplace.json — install with two slash commands
 .mcp.json               bundles Context7 as a hosted remote MCP server — auto-registers on install
-agents/                 15 agents: planner, builder, reviewer, retro, library-scout, security-reviewer, pentester (opt-in, off by default), docs-writer (Sonnet) · tester, explorer, bulk-reader, code-writer, fact-checker, verifier, explainer (Haiku)
+agents/                 11 agents: reviewer, retro, library-scout, security-reviewer, pentester (opt-in, off by default), docs-writer (Sonnet) · explorer, bulk-reader, code-writer, fact-checker, explainer (Haiku). Plan, build, test and smoke are done by the Lead (skills/loop/planning.md, doing.md)
 hooks/hooks.json        45 hook entries: SessionStart, PreToolUse, PostToolUse, PostToolUseFailure, Stop, PreCompact
 hooks/scripts/          the actual bash — every one tested in tests/hooks.test.sh
 skills/loop     the orchestration loop + model routing (loads when you start a feature)
@@ -174,7 +172,7 @@ pushes or deploys.
 | Tests that prove nothing | `check-test-quality.sh` blocks empty, assertion-free and tautology tests | hook |
 | Plain, generic-looking UI | `design-mogger` rules in `mogger:standards` (7 short UI-only rules). Points to the optional Taste Skill and `ui-ux-pro-max`; neither is required | skill |
 | Fix loops | `fix-loop-guard.sh` stops after 3 identical failures and points to `mogger:rewind` | hook |
-| Only the happy path works | skill `mogger:edge-cases`; planner and tester now require unhappy-path checks | skill |
+| Only the happy path works | skill `mogger:edge-cases`; planning and testing now require unhappy-path checks | skill |
 | One giant file, copy-paste | `check-structure.sh` blocks oversize files and new copy-pasted blocks | hook |
 | No error handling / logs | `check-resilience.sh` blocks swallowed errors; scan for missing timeouts, N+1, no health check | hook + scan |
 | Weak database design | `database.sh`: no primary key, unindexed foreign keys, no RLS, no backup plan | scan |
@@ -291,7 +289,7 @@ both hooks still run. The preset says what to do about it.
 ## Routing estimate (optional, self-reported — read the caveat)
 
 `bash scripts/savings-report.py` reads `.claude/state/savings.jsonl` (the
-four logging agents (tester, explainer, fact-checker, docs-writer) log their own approximate input/output size at the end
+three logging agents (explainer, fact-checker, docs-writer) log their own approximate input/output size at the end
 of each turn) and prints a table plus a `savings-dashboard.html`, showing
 what those calls would have cost billed at your Lead model's rate instead
 of Haiku's. It is not a claim that mogger costs less than plain Claude.

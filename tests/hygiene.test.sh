@@ -599,7 +599,6 @@ grep -q "testsOf" "$ROOT/mods/mogger-status/hooks/register.tsx" && grep -q "test
 grep -q '"no change" is a good answer' "$ROOT/agents/retro.md" && grep -q 're-check before use' "$ROOT/agents/retro.md" && ok "retro: no-change answer and fact-vs-rule label" || bad "retro lost the no-change / fact-vs-rule lines"
 
 if grep -rq 'CLAUDE_PLUGIN_ROOT}/' "$ROOT/incoming/.claude/agents"; then bad "incoming agents still point at plugin-only paths"; else ok "incoming agents use manual-install paths"; fi
-grep -q "\.claude/hooks/log-savings.sh" "$ROOT/incoming/.claude/agents/tester.md" && ok "incoming tester logs via .claude/hooks" || bad "incoming tester lost the rewritten log path"
 
 T=$(jq -r '[.. | objects | select((.command // "") | test("stop-tests-added")) | .timeout][0]' "$ROOT/hooks/hooks.json")
 D=$(grep -o 'STOP_TESTS_TIMEOUT:-[0-9]*' "$ROOT/hooks/scripts/stop-tests-added.sh" | head -1 | grep -o '[0-9]*$')

@@ -1,19 +1,19 @@
 ---
 name: idea
-description: Spec-first interview for vague or big asks ("build me an app that..."): at most 5 questions, writes SPEC.md, hands to planner. Use when the ask is vague. Skip when the request is already specific.
+description: Spec-first interview for vague or big asks ("build me an app that..."): at most 5 questions, writes SPEC.md, hands to the loop's planning step. Use when the ask is vague. Skip when the request is already specific.
 ---
 
 # mogger idea: spec before plan
 
 A vague request produces a vague plan. This skill turns it into `SPEC.md`,
-which the `planner` agent then turns into `TASKS.md`.
+which you then turn into `TASKS.md` (see `skills/loop/planning.md`).
 
 ## 0. Should this run at all?
 
 Skip the interview when the request already names the thing, the place, and
 how to tell it worked (e.g. "add a `--json` flag to `cli.py list`; tests in
 `tests/test_cli.py` must pass"). Say "Request is specific, skipping the
-interview" and go straight to the planner. Run it when the request is big,
+interview" and go straight to planning. Run it when the request is big,
 open-ended, or the user said "mogger idea".
 
 ## 1. Read before asking
@@ -63,7 +63,7 @@ silence.
 
 ## 4. Hand off
 
-Once approved, delegate to the `planner` agent: "Read SPEC.md and write
-TASKS.md." Do not write code, and do not write TASKS.md yourself. If the
+Once approved, plan from it: read SPEC.md and write TASKS.md as
+`skills/loop/planning.md` says. Do not write code yet. If the
 project is new and picks a library or architecture along the way, record it
 with the `mogger:decisions` skill.

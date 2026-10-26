@@ -1,6 +1,6 @@
 ---
 name: loop
-description: Orchestration loop: how the Lead delegates to planner/builder/tester/reviewer, model per job, the human approval boundary, what hooks enforce. Load before feature or bug-fix work that you will delegate.
+description: The work loop: plan, build, test, review. The Lead does plan/build/test itself and delegates only reading and independent review. Model per job, the approval boundary, what hooks enforce. Load before feature or bug-fix work.
 ---
 
 # The mogger loop
@@ -11,63 +11,40 @@ reviewer gated on real test results; Stop blocked while tasks are open).
 This skill covers the parts hooks can't: *how* to run the loop so it stays
 on track and finishes.
 
-## How work runs — orchestration, not solo work
+## How work runs: one loop, few hand-offs
 
-You (the Lead) do not write code, run the test suite, or review diffs
-yourself for anything beyond a trivial one-line fix. You orchestrate the
-subagents and keep TASKS.md as the shared source of truth. This is
-enforced by hooks for the risky parts — but you should follow the loop
-below even for the parts hooks don't cover, because that's what keeps you
-out of the weeds and able to run for a long stretch without checking in.
+You (the Lead) plan, build and test in your own context, so nothing is lost
+in a summary between agents. You delegate only two kinds of work: reading
+(`explorer`, `bulk-reader`: you want the answer, not the file) and
+independent review (`reviewer`, `security-reviewer`, `fact-checker`: not
+seeing your reasoning is the point). TASKS.md is the shared source of truth.
 
 ### The loop
 
-1. **New feature/bug request comes in** → delegate to `planner`. It writes
-   TASKS.md with a `files:` list per task (hook-enforced scope), a
-   machine-checkable `done when:`, `[parallel-with: N]` on tasks that are
-   safe to run concurrently, and `[library-scout first]` on tasks that
-   would otherwise reinvent a solved problem. If it comes back with open
-   questions, stop and ask me — don't guess at requirements.
+1. **Feature or bug request** → plan it yourself. Read `planning.md` in this
+   folder for the TASKS.md format (`files:` list is hook-enforced scope,
+   machine-checkable `done when:`, `R` lines, `[library-scout first]`). Open
+   questions about requirements: stop and ask me, don't guess. A single small
+   fix needs no board.
 
-2. **Any task marked `[library-scout first]`** → delegate to
-   `library-scout` before the builder starts. Pass its recommendation to
-   the builder verbatim. "Write it yourself" is a valid, common answer —
-   don't re-run the scout hoping for a different one.
+2. **Task marked `[library-scout first]`** → run `library-scout` before you
+   build it, and follow its answer. "Write it yourself" is a valid answer.
 
-3. **Dispatch the work:**
-   - Tasks marked `[parallel-with: N]` that form a group → dispatch those
-     builders **concurrently, in a single message with multiple Task
-     calls**. This is the biggest wall-clock win available in this loop;
-     use it whenever planner marked a group.
-   - Everything else → one builder at a time, in order. Never hand a
-     builder the whole board.
-   - **Before dispatching any parallel group, verify the `files:` lists
-     don't overlap.** Planner marks them, but you own the final check —
-     two builders editing one file is a merge conflict you then have to
-     untangle by hand, which costs more than the parallelism saved. If
-     they overlap at all, run them sequentially and ignore the marking.
+3. **Build and test one task at a time.** Read `doing.md` in this folder:
+   build rules, the two-phase test run (affected tests while building, the
+   full suite once before review), the `last_test_result.json` marker, and the
+   smoke check. Failing tests: fix the real cause, run again. Two fix passes
+   for the same task, then stop and ask me.
 
-4. **After builder(s) finish** → delegate to `tester`. During the loop it
-   runs only the tests that match the changed files (`hooks/scripts/related-tests.sh`
-   picks them, and says `full` when it cannot); that's enough to catch a broken
-   task early. If tests fail, send the ACTUAL failure reason (not a vague
-   "fix the tests") back to `builder`. Cap this at 2 fix passes for the
-   same task — if it's still failing after 2 tries, stop and escalate to
-   me instead of retrying again. A third blind retry is just spending
-   tokens on the same mistake.
-
-5. **Before review, get a full-suite pass** → have `tester` run the
-   complete suite once (not just affected tests). This is hook-enforced:
-   `require-tests-pass.sh` rejects a `reviewer` dispatch whose recorded
-   test scope isn't `full`.
+4. **Before review, get a full-suite pass.** This is hook-enforced:
+   `require-tests-pass.sh` rejects a `reviewer` dispatch whose recorded test
+   scope isn't `full` or whose hook-recorded run did not pass.
 
    If I ask you to commit: one commit per finished task, with the tests
-   passing. Small commits keep review and `mogger:rewind` easy. Never
-   commit unasked.
+   passing. Never commit unasked.
 
-6. **Then** → delegate to `reviewer`. If NOT READY, send only the failed
-   units back to `builder`, one return form each (never the whole batch;
-   passed units stay untouched):
+5. **Then** → delegate to `reviewer`. If NOT READY, fix only the failed units,
+   one return form each (never the whole batch; passed units stay untouched):
 
    ```
    UNIT      <task or file>
@@ -77,23 +54,19 @@ out of the weeds and able to run for a long stretch without checking in.
    SCOPE     fix this unit only; do not touch other files or tasks
    ```
 
-   If READY, mark the task done, append one entry
-   to RUNS.md, and move on.
+   If READY, mark the task done, append one entry to RUNS.md, and move on.
 
-7. **When every task in TASKS.md is checked off** → stop. Report to me what
-   was built, what reviewer flagged for my attention, and that it's waiting
-   for my approval to merge/push/deploy. Do not attempt those yourself —
-   they're blocked, and even if they weren't, they're mine to approve.
+6. **When every task is checked off** → stop. Report what was built, what
+   reviewer flagged, and that it is waiting for my approval to merge/push/
+   deploy. Those are blocked and mine to approve.
 
-8. **Run `retro` on demand** (not automatically) when I ask for a check-in,
-   or if a pattern of repeated corrections is bothering you. It proposes
-   CONSTRAINTS.md/CLAUDE.md edits — it never applies them. I review and
-   apply by hand.
+7. **Run `retro` on demand** (not automatically) when I ask for a check-in.
+   It proposes CONSTRAINTS.md/CLAUDE.md edits; it never applies them.
 
 ### Companion steps (optional but recommended)
 
-- Vague request? Run `mogger:idea` first → SPEC.md → planner.
-- After tests pass on anything with a UI/server: dispatch `verifier` (smoke check) before reviewer.
+- Vague request? Run `mogger:idea` first → SPEC.md → plan from it.
+- After tests pass on anything with a UI/server: run the smoke check (see `doing.md`) before reviewer.
 - End of each task: dispatch `explainer` for the user. Record lasting choices with `mogger:decisions`.
 - Before calling the whole thing finished: `scripts/ship-check.sh` (report only).
 - Never assert a fact about the code you have not checked: see `mogger:grounding`.
@@ -129,7 +102,7 @@ first and volatile content last:
 Keeping the stable prefix byte-identical between calls is what lets it
 cache. Re-ordering it, re-summarizing it, or inserting a timestamp near
 the top breaks the prefix and forfeits the discount. When you delegate to
-a subagent repeatedly in a loop (builder → tester → builder), hand it the
+a subagent repeatedly in a loop (reviewer → fix → reviewer), hand it the
 same stable preamble each time rather than a freshly-worded one.
 
 ### Hard boundary
@@ -158,23 +131,19 @@ assignment is deliberate:
 |---|---|---|---|
 | Read a big file, answer one question from it | **haiku** (`effort: low`) | `bulk-reader` | Reading is I/O, not reasoning |
 | Find where code lives, trace a call path | **haiku** (`effort: low`) | `explorer` | Grep + paths, no judgment needed |
-| Run the test suite, record the exit code | **haiku** (`effort: low`) | `tester` | It runs a command and writes a JSON file |
 | Write boilerplate from an existing pattern | **haiku** (`effort: low`) | `code-writer` | Copying a shape, not designing one |
-| Implement a scoped task | **sonnet** | `builder` | Needs to understand code, not just move it |
-| Break a feature into tasks | **sonnet** | `planner` | Judgment about scope and order |
 | Decide library vs hand-rolled | **sonnet** | `library-scout` | Weighing tradeoffs, reading docs, saying no |
 | Review a diff for bugs and security | **sonnet** | `reviewer` | Judgment, but bounded — the diff is the input |
 | Mine history for repeated mistakes | **sonnet** | `retro` | Pattern-finding across text |
 | Orchestrate, make architecture calls | **opus** (or sonnet) | the Lead — you | The only place frontier reasoning earns its price |
 
 **The rule for you, the Lead:** if you're running on Opus, you do not
-Read files, Grep the codebase, or run tests yourself. Not for a quick
-check, not "just this once." Every file that enters your context is paid
+Read big files or sweep the codebase with Grep yourself. Small files and
+the files you are editing are fine. A big file in your context is paid
 for at Opus rates and stays there for the rest of the session. Delegate:
 
 - "Where is X?" → `explorer`
 - "What does this big file say about Y?" → `bulk-reader`
-- "Do the tests pass?" → `tester`
 - "Make a test file like that one" → `code-writer`
 
 Then reason about what they hand back. The hooks enforce part of this

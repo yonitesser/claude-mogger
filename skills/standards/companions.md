@@ -24,11 +24,11 @@ Here's where each one actually wins:
 **Superpowers is stronger at:**
 - **Requirements-gathering.** Its `brainstorming` skill interrogates the
   request with Socratic questions before any plan exists. This kit's
-  `planner` assumes the request is already well-specified and jumps
+  the planning step assumes the request is already well-specified and jumps
   straight to task breakdown — a real gap if the request is vague.
 - **TDD rigor.** `test-driven-development` enforces RED-GREEN-REFACTOR
   and explicitly deletes code written before its test existed. This kit's
-  `tester` only checks that tests pass after the fact — it doesn't care
+  the test step only checks that tests pass after the fact — it doesn't care
   whether the test was written first.
 - **Branch isolation.** `using-git-worktrees` gives each unit of work an
   isolated workspace. This kit works directly on whatever branch you're
@@ -50,8 +50,7 @@ Here's where each one actually wins:
   replaces.
 - **Model routing.** Nothing in Superpowers' skill list assigns
   cheaper models to I/O-only work. This kit's `bulk-reader`/`explorer`/
-  `tester`/`code-writer` run on Haiku so reads, searches, and
-  test runs stay out of the Lead's context. That's orthogonal to what
+  `code-writer` run on Haiku so reads and searches stay out of the Lead's context. That's orthogonal to what
   Superpowers does and not something adopting it gives you.
 
 **The honest recommendation: compose them, don't choose one.** Install
@@ -61,9 +60,9 @@ regardless (`require-approval.sh`, `protect-pipeline-files.sh`,
 `require-tests-pass.sh`, `stop-done-means-done.sh`) — they fire on the
 tool call itself, regardless of which skill or subagent triggered it, so
 they layer under Superpowers without conflict. Retire this kit's
-`planner`/`builder`/`reviewer` agents at that point — running both
+plan/build steps and `reviewer` agent at that point — running both
 loops on the same task is the actual redundancy, not the hooks. Keep
-`bulk-reader`/`explorer`/`tester`/`code-writer` (Haiku routing) since
+`bulk-reader`/`explorer`/`code-writer` (Haiku routing) since
 Superpowers has no equivalent. One adjustment: `require-tests-pass.sh`
 checks for a subagent named `reviewer` — point it at whichever Superpowers
 step does final review (`MOGGER_REVIEWER_NAME` env var) before you'd
@@ -85,7 +84,7 @@ Haiku routing, so they mostly stack rather than compete:
   (not the whole `bulk-reader` agent).
 - **No overlap:** headroom doesn't choose *which model* handles a task —
   it just shrinks whatever bytes flow through. `bulk-reader`/`explorer`/
-  `code-writer`/`tester` still matter on top of headroom, because they
+  `code-writer` still matters on top of headroom, because they
   route entire tasks to Haiku regardless of how compressed the content
   is. Keep them.
 - **No overlap:** `retro` + `CONSTRAINTS.md` require human approval before

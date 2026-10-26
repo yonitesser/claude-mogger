@@ -34,7 +34,7 @@ description: Coding standards: Karpathy principles, library choice via STACK.md 
   it and say so.
 - **Goal-driven execution**: turn imperative instructions into verifiable
   goals ("fix the bug" → "write a test that reproduces it, then make it
-  pass"). This is what makes `planner`'s "done when" rule actually work.
+  pass"). This is what makes the planning guide's "done when" rule actually work.
 
 ### Library selection — decide once, in STACK.md
 
