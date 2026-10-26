@@ -33,6 +33,6 @@ mogger_event block "stopped early: $OPEN tasks still open"
 NEXT=$(grep -m1 '^\s*- \[ \]' TASKS.md | sed 's/^\s*- \[ \] //')
 cat >&2 <<EOF
 NOT DONE: TASKS.md has $OPEN open task(s) and no blocker recorded. Next: "$NEXT"
-Either continue the loop (builder → tester → reviewer) on that task, or — if you are actually stuck — add a line "BLOCKED: <specific reason>" to TASKS.md (or set "## Status: awaiting-approval" if everything is built and you're waiting on a human merge). Then stop. Do not end the turn with silently unfinished work.
+Either continue the loop (build → test → review) on that task, or — if you are actually stuck — add a line "BLOCKED: <specific reason>" to TASKS.md (or set "## Status: awaiting-approval" if everything is built and you're waiting on a human merge). Then stop. Do not end the turn with silently unfinished work.
 EOF
 exit 2

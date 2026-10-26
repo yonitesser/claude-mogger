@@ -35,7 +35,7 @@ overwrites a file that already exists.
    `${CLAUDE_PLUGIN_ROOT}/templates/`. For each of `CONSTRAINTS.md`,
    `RUNS.md`, `STACK.md`, `DECISIONS.md`: if the project root doesn't have it, copy the
    template. If it does, leave it alone and say so. Also
-   `mkdir -p .claude/state` (tester writes its result marker there, and
+   `mkdir -p .claude/state` (the test marker is written there, and
    the Haiku agents append to `.claude/state/savings.jsonl` there too —
    touch that file into existence if missing so the first agent call
    doesn't fail on a missing directory, though the log script itself

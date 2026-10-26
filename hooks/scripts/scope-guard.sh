@@ -5,7 +5,7 @@
 # get to decide that a drive-by refactor is in scope.
 #
 # How it reads TASKS.md: finds the first unchecked task line and pulls its
-# "files:" field. Expected planner format:
+# "files:" field. Expected format (skills/loop/planning.md):
 #   - [ ] 3. Add retry logic — files: src/http.ts, src/config.ts — done when: ...
 #
 # Fails OPEN (allows the edit) when it can't determine scope, because a

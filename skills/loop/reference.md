@@ -6,7 +6,7 @@ Read only when needed. The loop itself is in `SKILL.md`.
 
 Claude Code subagent frontmatter supports an `effort` field
 (`low|medium|high|xhigh|max`) that controls reasoning depth, separately
-from which model runs. The seven Haiku agents above (and the Sonnet docs-writer) set `effort: low`
+from which model runs. The five Haiku agents above (and the Sonnet docs-writer) set `effort: low`
 — none of them do anything that benefits from more thinking; they read a
 file, grep, run a command, or copy a pattern.
 
@@ -15,21 +15,21 @@ file, grep, run a command, or copy a pattern.
 — which is exactly how this kit dispatches every subagent. Anthropic's
 own docs list it as a working, honored field, so this may be
 environment- or version-specific, but check rather than assume: after a
-`bulk-reader` or `tester` call, glance at that call's token count in your
+`bulk-reader` or `explorer` call, glance at that call's token count in your
 session's cost breakdown. If it looks the same as before this field
 existed, `effort` isn't landing on your setup and you're not losing
 anything by leaving it in — it just isn't helping yet either.
 
 Don't add `effort:` to the Sonnet-tier agents without a specific reason.
-`builder`, `reviewer`, and `library-scout` are doing judgment work;
+`reviewer` and `library-scout` are doing judgment work;
 capping their reasoning to save a fraction of a cent is the wrong trade.
 
 ## Model aliases move underneath you
 
 `model: sonnet` and `model: haiku` are aliases, not pinned versions —
 Claude Code resolves them to whatever the current model is. When Sonnet
-5.5 shipped, every Sonnet-tier agent in this kit (`builder`, `planner`,
-`reviewer`, `retro`, `library-scout`) started running on it automatically,
+5.5 shipped, every Sonnet-tier agent in this kit (`reviewer`, `retro`,
+`library-scout`) started running on it automatically,
 at Sonnet 5's unchanged per-token price, with no file edit required. This
 cuts both ways — a future alias change could shift behavior you didn't
 ask for. If an agent's output quality changes noticeably after a model
@@ -48,9 +48,8 @@ it on one project before assuming you need Opus everywhere. Reserve Opus
 for genuinely ambiguous, open-ended, high-judgment orchestration.
 
 **Tuning:** if a project is small and Sonnet is your Lead, the pattern still holds — Haiku for I/O, Sonnet for thought.
-If `planner` needs to make a genuinely hard architecture call on a large
-system, bump it to `model: opus` for that project — that's the one
-subagent where it can be worth it. Never bump `tester`, `explorer`, or
+If a large system needs a genuinely hard architecture call, bump `reviewer`
+to `model: opus` for that project. Never bump `explorer` or
 `bulk-reader` — there is no task they do that gets better with a smarter
 model.
 
@@ -92,7 +91,7 @@ bash "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/log-savings.sh" <agent> haiku INPUT_CH
 `OUTPUT_CHARS` is the length of the reply the Lead received. `INPUT_CHARS` is
 the size of what the agent had to read: use `wc -c` on the files named in the
 request (skip the log if you cannot tell). Agents that do have Bash
-(`tester`, `fact-checker`, `explainer`, `docs-writer`, `verifier`) still log
+(`fact-checker`, `explainer`, `docs-writer`) still log
 their own runs. Both kinds stay self-reported estimates.
 
 ## Optional: the routing estimate is a different thing than RUNS.md tokens

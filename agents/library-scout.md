@@ -64,7 +64,7 @@ STACK.md ENTRY: <the exact table row to add, if a library is recommended>
 
 ## Rules
 
-- Never install anything. You recommend; the human and the builder decide.
+- Never install anything. You recommend; the human and the Lead decide.
 - Never recommend a library you couldn't verify is currently maintained.
   If you can't confirm it, say "couldn't verify maintenance status" rather
   than assuming.

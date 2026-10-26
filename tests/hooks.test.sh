@@ -266,7 +266,7 @@ expect 0 require-tests-pass.sh "$(task_json reviewer)"                          
 echo "== agent frontmatter sanity (effort field)"
 VALID_EFFORTS="low medium high xhigh max"
 FAIL_LOCAL=0
-for f in "$ROOT/agents/tester.md" "$ROOT/agents/bulk-reader.md" "$ROOT/agents/explorer.md" "$ROOT/agents/code-writer.md"; do
+for f in "$ROOT/agents/bulk-reader.md" "$ROOT/agents/explorer.md" "$ROOT/agents/code-writer.md"; do
   E=$(grep -m1 '^effort:' "$f" | sed 's/effort:[[:space:]]*//')
   if [ -z "$E" ]; then
     echo "  FAIL $f                  missing effort: field"; FAIL_LOCAL=1

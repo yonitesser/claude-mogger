@@ -13,7 +13,7 @@ start so they are not re-argued from scratch.
 
 - Choosing a library, framework, architecture, data model, or pattern.
 - Rejecting an approach someone might propose again.
-- Resolving a dispute between builder and reviewer, or with the user.
+- Resolving a dispute between the build and the reviewer, or with the user.
 
 Do not record trivia (variable names, formatting) or anything already fully
 covered by `STACK.md`, unless the reason is non-obvious.

@@ -100,7 +100,7 @@ thing (exits non-zero / blocks the tool call), and only add what's missing.
 **Flexible — adapt to match what the project already has, or skip if
 redundant:**
 
-- The specific subagent names (`planner`, `builder`, `tester`, `reviewer`,
+- The specific subagent names (`reviewer`,
   `retro`, `bulk-reader`, `code-writer`). If the project already has
   subagents doing equivalent jobs under different names, keep the
   project's names and graft the missing behavior (see per-file notes below)
@@ -144,9 +144,9 @@ review/approval before a human looks at the work. Point this hook's
 `subagent_type` check at that agent's actual name (edit the
 `if [ "$SUBAGENT" != "reviewer" ]` line). If the project's test-running
 agent doesn't currently write a machine-readable result file, that's the
-one required change — see `tester.md` below for the pattern to copy.
+one required change — see `skills/loop/doing.md` for the pattern to copy.
 
-### `incoming/.claude/agents/tester.md`
+### `skills/loop/doing.md` (test section)
 **Intent:** shows the pattern for writing `.claude/state/last_test_result.json`
 with a real exit code, not a prose claim.
 **Merge action:** if the project has its own test-running subagent, don't
@@ -162,14 +162,14 @@ own gate.
 agent, confirm it's similarly read-only on git and gate it behind
 `require-tests-pass.sh`. Don't duplicate the role.
 
-### `incoming/.claude/agents/planner.md` and `builder.md`
-**Intent:** planner breaks work into small tasks with a machine-checkable
-"done when" condition (not "done when it works well"); builder does exactly
+### `skills/loop/planning.md` and `doing.md`
+**Intent:** planning breaks work into small tasks with a machine-checkable
+"done when" condition (not "done when it works well"); building does exactly
 one task at a time, doesn't look ahead, doesn't merge/push.
 **Merge action:** if the project's existing planning/coding agents already
 enforce small-scoped tasks and a real stop condition, no change needed.
 If they don't, the "done when must be a check, not an adjective" rule
-(planner.md) and the "one task at a time, no git access" rule (builder.md)
+(planning.md) and the "one task at a time, no git access" rule (doing.md)
 are the parts worth grafting in.
 
 ### `incoming/.claude/agents/library-scout.md`
@@ -256,7 +256,7 @@ task, no `files:` field, `MOGGER_SCOPE_GUARD=off`) so a half-written task
 board can never wedge a session.
 **Merge action:** add under the project's `Edit|Write` PreToolUse matcher,
 BEFORE `protect-pipeline-files.sh` (cheaper check first). Requires the
-project to use TASKS.md with planner's `files:` format — if the project
+project to use TASKS.md with the `files:` format of `skills/loop/planning.md` — if the project
 has a different task-board convention, either adapt the parsing in the
 script or leave this hook out; it's a no-op without a parseable board.
 
@@ -319,8 +319,8 @@ the user rather than silently overriding either one.
 2. Identify which of the three non-negotiable hooks are missing or weaker
    than what's in `incoming/.claude/hooks/`. Add only what's missing, into
    existing matcher blocks where possible.
-3. Identify which existing subagent plays each role (planner/builder/
-   tester/reviewer-equivalent). Graft in the specific missing behaviors
+3. Identify which existing subagent plays each role (planning/build/
+   test/reviewer-equivalent). Graft in the specific missing behaviors
    listed above rather than adding parallel agents.
 4. Add `retro` and (optionally) `bulk-reader`/`code-writer` as new agents
    only if nothing already fills those roles.

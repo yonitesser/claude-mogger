@@ -2,7 +2,7 @@
 # PostToolUse AND PostToolUseFailure — matcher: Bash
 # Writes the test evidence the reviewer gate trusts: .claude/state/test-evidence.json.
 # THIS HOOK writes it, from the real result of a test command that ran in Bash.
-# The tester agent's own marker (last_test_result.json) is only a claim; the gate
+# The model-written marker (last_test_result.json) is only a claim; the gate
 # (require-tests-pass.sh) also needs this file to say "pass". Edit/Write to the
 # evidence file is blocked by protect-pipeline-files.sh. This is tamper-resistant,
 # not tamper-proof: a shell command can still write the file.

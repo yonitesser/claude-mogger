@@ -29,7 +29,7 @@ the human; hand them this output and wait.
 CONSTRAINTS.md violations are not checked here; that is the reviewer's job.
 
 ## Using it
-1. Run tester (full scope), then verifier, then ship-check.
+1. Run the full test suite, then the smoke check, then ship-check.
 2. Show the human the output verbatim. Do not summarize FAILs into "mostly good".
-3. Fix FAILs through the normal builder/tester loop; WARNs are the human's call.
+3. Fix FAILs through the normal build and test loop; WARNs are the human's call.
 4. Never run push, merge, or deploy commands, even if everything passes.

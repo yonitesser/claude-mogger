@@ -21,7 +21,7 @@ Process:
    A fact about this one project ("the API returns cents") is not a rule:
    label it "fact, re-check before use" or leave it out.
 4. If you see a structural problem bigger than a one-line constraint (e.g.
-   planner keeps writing tasks that are too big), propose a specific edit to
+   tasks keep being written that are too big), propose a specific edit to
    CLAUDE.md instead.
 5. Output format:
 

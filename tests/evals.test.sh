@@ -185,8 +185,8 @@ echo "== shipped data is valid"
 OUT=$(cd "$PROJ" && MOGGER_EVAL_PLUGIN_ROOT="$ROOT" bash "$EV" validate 2>&1); RC=$?
 eq "validate exits 0 on the real tasks" "$RC" "0"
 has "validate: every gold passes, bad and blank fail" "OK: every task passes its gold answer"
-has "validate: 5 agents covered" "5 agents"
-for a in explorer bulk-reader fact-checker tester code-writer; do
+has "validate: 4 agents covered" "4 agents"
+for a in explorer bulk-reader fact-checker code-writer; do
   n=$(python3 -c 'import json,sys; print(len(json.load(open(sys.argv[1]))["tasks"]))' "$ROOT/evals/tasks/$a.json")
   [ "$n" -ge 5 ] && ok "at least 5 tasks for $a ($n)" || bad "at least 5 tasks for $a ($n)"
 done

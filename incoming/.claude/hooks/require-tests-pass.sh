@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # PreToolUse — matcher: Task
-# Reviewer may not run unless tester recorded a REAL pass (exit code 0) and
+# Reviewer may not run unless the tests were run and recorded a REAL pass (exit code 0) and
 # nothing changed since. The gate is a file the model didn't get to write
 # with its opinion — it wrote it with $?.
 source "${0%/*}/lib.sh"
@@ -33,23 +33,23 @@ fi
 MARKER=".claude/state/last_test_result.json"
 
 if [ ! -f "$MARKER" ]; then
-  mogger_event block "blocked review: no test result"; echo "BLOCKED: no test result at $MARKER. Delegate to tester first — reviewer cannot run on an unverified change." >&2
+  mogger_event block "blocked review: no test result"; echo "BLOCKED: no test result at $MARKER. Run the tests first and write the marker (see skills/loop/doing.md) — reviewer cannot run on an unverified change." >&2
   exit 2
 fi
 
 STATUS=$(json_get "$(cat "$MARKER")" '.status')
 if [ "$STATUS" != "pass" ]; then
-  mogger_event block "blocked review: tests did not pass"; echo "BLOCKED: last recorded test status is '${STATUS:-missing}', not 'pass'. Fix (builder), re-run tester, then reviewer." >&2
+  mogger_event block "blocked review: tests did not pass"; echo "BLOCKED: last recorded test status is '${STATUS:-missing}', not 'pass'. Fix, re-run the tests, then reviewer." >&2
   exit 2
 fi
 
-# The marker above is the tester agent's claim. A hook (record-test-run.sh) records
+# The marker above is the Lead's claim. A hook (record-test-run.sh) records
 # what the test command really returned; the gate needs that to say "pass" too.
 # MOGGER_EVIDENCE=off skips this (projects whose test command the hook can't see).
 EVID=".claude/state/test-evidence.json"
 if [ "${MOGGER_EVIDENCE:-on}" != "off" ]; then
   if [ ! -f "$EVID" ]; then
-    mogger_event block "blocked review: no hook-recorded test run"; echo "BLOCKED: the tester's marker says pass, but no test run was recorded by the hook ($EVID). Run the project's test command through Bash (e.g. npm test, pytest, go test). For a custom command set MOGGER_TEST_CMD_REGEX, or MOGGER_EVIDENCE=off to skip this check." >&2
+    mogger_event block "blocked review: no hook-recorded test run"; echo "BLOCKED: the marker says pass, but no test run was recorded by the hook ($EVID). Run the project's test command through Bash (e.g. npm test, pytest, go test). For a custom command set MOGGER_TEST_CMD_REGEX, or MOGGER_EVIDENCE=off to skip this check." >&2
     exit 2
   fi
   ESTATUS=$(json_get "$(cat "$EVID")" '.status')
@@ -62,11 +62,11 @@ if [ "${MOGGER_EVIDENCE:-on}" != "off" ]; then
 fi
 
 # An affected-tests-only pass is not enough to send something to review.
-# tester runs targeted subsets during the build loop for speed, then a
+# The Lead runs targeted subsets during the build loop for speed, then a
 # full suite once at the end — reviewer needs the full one.
 SCOPE=$(json_get "$(cat .claude/state/last_test_result.json)" '.scope')
 if [ -n "$SCOPE" ] && [ "$SCOPE" != "full" ]; then
-  mogger_event block "blocked review: tests ran on a part only"; echo "BLOCKED: last test run was scope '$SCOPE', not 'full'. Affected-only runs are for the build loop; reviewer requires a full-suite pass. Re-run tester with the complete suite." >&2
+  mogger_event block "blocked review: tests ran on a part only"; echo "BLOCKED: last test run was scope '$SCOPE', not 'full'. Affected-only runs are for the build loop; reviewer requires a full-suite pass. Re-run the complete suite." >&2
   exit 2
 fi
 
@@ -76,7 +76,7 @@ NEWER=$(find . -type f -newer "$MARKER" \
   -not -path './.venv/*' -not -path './target/*' -not -path './dist/*' -not -path './build/*' \
   -not -name 'RUNS.md' -not -name 'TASKS.md' -not -name 'STATUS.md' 2>/dev/null | head -1)
 if [ -n "$NEWER" ]; then
-  mogger_event block "blocked review: test pass is stale"; echo "BLOCKED: '$NEWER' changed after the last test run. The pass is stale. Re-run tester." >&2
+  mogger_event block "blocked review: test pass is stale"; echo "BLOCKED: '$NEWER' changed after the last test run. The pass is stale. Re-run the tests." >&2
   exit 2
 fi
 

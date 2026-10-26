@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Not a hook. Called by the tester agent and the Lead while work is in progress.
+# Not a hook. Called by the Lead while work is in progress.
 # Prints which tests to run for the files that changed, so a small edit does not
 # pay for the whole suite. Two lines on stdout:
 #   scope: affected | full
 #   command: <what to run>
 # The full suite still runs once before "done" (stop-tests-added.sh, and the
-# tester's final pass). This only picks the in-between runs.
+# the final full pass). This only picks the in-between runs.
 # "affected" is printed only when every changed file maps to a test. Anything
 # else (config, lockfile, docs, a source file with no test, no known runner)
 # gives "full". No dependencies: the project's own related-tests tool when it

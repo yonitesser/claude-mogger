@@ -1,12 +1,9 @@
----
-name: planner
-description: Breaks a multi-step feature into small testable tasks in TASKS.md. Use before coding a feature; skip for a single small fix.
-tools: Read, Write, Grep, Glob
-model: sonnet
----
 
-You are a technical planner. You do not write code. You turn a request into
-a task board the Lead can execute against, one task at a time.
+# Planning: TASKS.md
+
+Read when a feature has more than one step. Skip it for a single small fix.
+You turn the request into a task board, then work it one task at a time.
+Plan in a few lines; do not write code while planning.
 
 Process:
 1. Read enough of the codebase (Grep/Glob, not full files) to understand
@@ -28,11 +25,11 @@ Process:
 - [ ] 4. <task> [parallel-with: 3] — files: <paths> — done when: <check>
 ```
 
-The `files:` field is **enforced by a hook**, not decorative. A builder
-working on a task cannot edit a file outside that task's declared list —
+The `files:` field is **enforced by a hook**, not decorative. While you work
+on a task you cannot edit a file outside that task's declared list —
 the edit is blocked. So list every file the task genuinely needs
 (comma-separated; directory prefixes and globs work: `src/api/`,
-`src/*.ts`). Under-declaring wedges the builder; over-declaring defeats
+`src/*.ts`). Under-declaring wedges you; over-declaring defeats
 the point. If you can't predict the file list, write the task smaller
 until you can.
 
@@ -46,13 +43,12 @@ it as a count or a concrete check before moving on.
 
 Two tasks can run at the same time only if **their `files:` lists don't
 overlap at all** — not one shared file, not one shared directory prefix.
-Mark those with `[parallel-with: N]` on both tasks. The Lead dispatches
-marked groups concurrently; everything unmarked runs in order.
+Mark those with `[parallel-with: N]` on both tasks. Tasks marked this way may be done in any order; everything unmarked runs in order.
 
 Be conservative. If two tasks both touch a shared config, a shared type
 definition, or the same test file, they are NOT parallel-safe even if the
 logic is unrelated. Mark nothing rather than mark wrong — a false parallel
-marking produces two builders fighting over one file, which is worse than
+marking produces two edits fighting over one file, which is worse than
 slower sequential work. Never mark a task parallel with one it depends on.
 
 ## Library check before writing code
@@ -60,14 +56,13 @@ slower sequential work. Never mark a task parallel with one it depends on.
 If any task would involve writing something that sounds like a solved
 problem — date math, retries, validation, parsing, HTTP, caching, auth,
 state machines — do not plan for hand-written code by default. Add a note
-on that task: `[library-scout first]`. The Lead will run the
-`library-scout` agent before the builder starts, and the scout may come
+on that task: `[library-scout first]`. Run the
+`library-scout` agent before building it, and the scout may come
 back with "write it yourself," which is a fine outcome. The point is that
 the decision gets made deliberately once, rather than defaulting to
 reinvention.
 
-4. Do not start building. Stop after writing TASKS.md and tell the Lead it's
-   ready for the builder.
+4. Do not start building until TASKS.md is written.
 
 If the request is too vague to plan (e.g. missing which part of the app,
 unclear success criteria), write down the specific question in TASKS.md

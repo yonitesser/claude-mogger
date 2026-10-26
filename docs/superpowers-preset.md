@@ -19,17 +19,18 @@ external agent is the one calling tools, which is the whole premise.
 
 ## Turn OFF in mogger (Superpowers does these better)
 
-Stop dispatching these agents. Leave the files in place — you may want
-them back if you drop Superpowers.
+Stop dispatching these. Mogger's own plan, build and test steps now run in the
+Lead (`skills/loop/planning.md`, `doing.md`); there are no planner, builder or
+tester agents any more.
 
-| mogger agent | Superpowers replacement | Why theirs wins |
+| mogger part | Superpowers replacement | Why theirs wins |
 |---|---|---|
-| `planner` | `brainstorming` + `writing-plans` | Socratic requirements-gathering before any plan exists; mogger's planner assumes the request is already well-specified |
-| `builder` | `subagent-driven-development` | Fresh subagent per task with two-stage review (spec compliance, then code quality) |
+| the planning step | `brainstorming` + `writing-plans` | Socratic requirements-gathering before any plan exists; mogger's planning assumes the request is already well-specified |
+| the build step | `subagent-driven-development` | Fresh subagent per task with two-stage review (spec compliance, then code quality) |
 | `reviewer` | `requesting-code-review` | Severity-ranked, critical issues block progress |
-| the `[parallel-with: N]` dispatch rule | `dispatching-parallel-agents` | Purpose-built for it |
+| the `[parallel-with: N]` marking | `dispatching-parallel-agents` | Purpose-built for it |
 | — | `using-git-worktrees` | mogger has no equivalent; real isolation per unit of work |
-| — | `test-driven-development` | Enforces RED-GREEN-REFACTOR and deletes code written before its test. mogger's `tester` only checks that tests pass afterward |
+| — | `test-driven-development` | Enforces RED-GREEN-REFACTOR and deletes code written before its test. mogger's test step only checks that tests pass afterward |
 
 ## Keep ON in mogger (Superpowers has no equivalent)
 
@@ -46,8 +47,7 @@ triggered it — that's why this composition works at all:
   a `SessionStart` hook, so mogger's Stop and PreToolUse hooks don't
   double-fire against anything.
 
-**The Haiku-routed agents**: `bulk-reader`, `explorer`, `code-writer`,
-`tester`. Nothing in Superpowers' skill library assigns cheaper models to
+**The Haiku-routed agents**: `bulk-reader`, `explorer`, `code-writer`. Nothing in Superpowers' skill library assigns cheaper models to
 I/O-only work. This is untouched territory for them.
 
 **`library-scout`**, **`retro` + CONSTRAINTS.md**, **STACK.md**, and the
@@ -73,7 +73,7 @@ export MOGGER_GATE_ALL_TASKS=on
 This blocks *any* Task dispatch unless a full-suite test pass is on
 record, with built-in exemptions for the agents that have to run before
 tests can pass (`tester`, `builder`, `explorer`, `bulk-reader`,
-`code-writer`, `library-scout`, `planner`). Add more with a regex:
+`code-writer`, `library-scout`, `planner`; the first, second and last names are kept in the hook for older setups). Add more with a regex:
 
 ```bash
 export MOGGER_GATE_EXEMPT='brainstorm.*|writing-plans|.*-researcher'

@@ -26,7 +26,7 @@ fi
 MARKER=".claude/state/smoke.json"
 
 if [ ! -f "$MARKER" ]; then
-  mogger_event block "blocked review: no smoke result"; echo "BLOCKED: no smoke result at $MARKER. Delegate to verifier (scripts/smoke-check.sh) first — reviewer cannot run on a change nobody has seen run." >&2
+  mogger_event block "blocked review: no smoke result"; echo "BLOCKED: no smoke result at $MARKER. Run scripts/smoke-check.sh first — reviewer cannot run on a change nobody has seen run." >&2
   exit 2
 fi
 
