@@ -32,7 +32,7 @@ fi
 
 OK=$(json_get "$(cat "$MARKER")" '.ok')
 if [ "$OK" != "true" ]; then
-  mogger_event block "blocked review: smoke check did not pass"; echo "BLOCKED: last smoke check did not pass (see $MARKER). Fix (builder), re-run verifier, then reviewer." >&2
+  mogger_event block "blocked review: smoke check did not pass"; echo "BLOCKED: last smoke check did not pass (see $MARKER). Fix it, re-run scripts/smoke-check.sh, then reviewer." >&2
   exit 2
 fi
 
@@ -42,7 +42,7 @@ NEWER=$(find . -type f -newer "$MARKER" \
   -not -path './.next/*' -not -name '__pycache__' -not -name '*.pyc' \
   -not -name 'RUNS.md' -not -name 'TASKS.md' 2>/dev/null | head -1)
 if [ -n "$NEWER" ]; then
-  mogger_event block "blocked review: smoke pass is stale"; echo "BLOCKED: '$NEWER' changed after the last smoke check. The pass is stale. Re-run verifier." >&2
+  mogger_event block "blocked review: smoke pass is stale"; echo "BLOCKED: '$NEWER' changed after the last smoke check. The pass is stale. Re-run scripts/smoke-check.sh." >&2
   exit 2
 fi
 

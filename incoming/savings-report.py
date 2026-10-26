@@ -44,7 +44,7 @@ def main():
     rates, rates_path = load_pricing()
     if not LOG.exists():
         print(f"No {LOG} yet — nothing has been logged. This is normal on a fresh project;")
-        print("it fills in as bulk-reader/explorer/code-writer/tester agents run and self-report.")
+        print("it fills in as bulk-reader/explorer/code-writer agents run and self-report.")
         return
 
     rows = []
