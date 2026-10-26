@@ -72,8 +72,8 @@ export MOGGER_GATE_ALL_TASKS=on
 
 This blocks *any* Task dispatch unless a full-suite test pass is on
 record, with built-in exemptions for the agents that have to run before
-tests can pass (`tester`, `builder`, `explorer`, `bulk-reader`,
-`code-writer`, `library-scout`, `planner`; the first, second and last names are kept in the hook for older setups). Add more with a regex:
+tests can pass (`explorer`, `bulk-reader`, `code-writer`,
+`library-scout`; the old names `tester`, `builder`, `planner` and `verifier` stay in the hook for older setups). Add more with a regex:
 
 ```bash
 export MOGGER_GATE_EXEMPT='brainstorm.*|writing-plans|.*-researcher'
