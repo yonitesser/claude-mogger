@@ -204,3 +204,9 @@ Kingy AI) — all consistent on the numbers that matter here.
   reported "missing" on every file regardless of what was actually in
   them. Caught immediately because the harness prints `FAIL` per case
   instead of trusting a summary count. Fixed with `$ROOT`-anchored paths.
+
+## Batch 6 — Autoharness, self-writing skills (2026-10-27)
+
+| Tool | Verdict | Why |
+|---|---|---|
+| [tigerless-labs/autoharness](https://github.com/tigerless-labs/autoharness) | OUT (risk) | Real (MIT, Python only, no daemon). It learns from sessions and writes, merges, rewrites and archives skills on its own in `.claude/skills/` and `~/.claude/skills/`. Only a linter checks them; no person approves. One bad lesson then loads in every later session. It adds a session-start index that grows with each skill. Session text goes into skills and evidence files; the README does not say how it redacts secrets. A background run starts about every 50 tool calls, with no cost given. `retro` (a person approves each change), `decisions`, `handoff`, `RUNS.md` and `CONSTRAINTS.md` already cover the idea. Author claims unchecked (no benchmark). Judged from the README only; code and hook list not read. |
