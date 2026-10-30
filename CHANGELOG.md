@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- License change. Versions after 1.12.0 are under a proprietary license, copyright TesserTech LLC (Yoni Tesser), for sale on a marketplace. Copies of 1.12.0 and earlier keep the MIT License. `LICENSE`, `.claude-plugin/plugin.json` and the README badge are updated. No behaviour change.
+
 ## 1.12.0 — 2026-10-26
 
 - Docs catch-up after the agent fold. README no longer names the `verifier`, `tester`, `planner` or `builder` agents; the smoke-pass block messages point at `scripts/smoke-check.sh`; `docs/superpowers-preset.md` lists the current exempt agents. README cost wording is now "20-45% more per run" (from the vs-plugins A/B, `ab-long/vs-plugins/`), no claim of savings and no "passes more hard tasks". No behaviour change; old agent names stay in the gate exemptions for older setups.

@@ -13,7 +13,7 @@ Vibe coding is full of unseen problems until it's too late.
 <br/>
 
 [![tests](https://img.shields.io/badge/tests-2,946%20passing-ff5a1f?style=for-the-badge)](tests/)
-[![license](https://img.shields.io/badge/license-MIT-black?style=for-the-badge)](LICENSE)
+[![license](https://img.shields.io/badge/license-proprietary-black?style=for-the-badge)](LICENSE)
 [![curated](https://img.shields.io/badge/curated-not%20vibes-ff5a1f?style=for-the-badge)](CURATION.md)
 
 </div>
@@ -320,4 +320,4 @@ or a diff you can read — it's not in here.
 
 ## License
 
-MIT. Take it, fork it, get mogged.
+Proprietary. Copyright (c) 2026 TesserTech LLC (Yoni Tesser). See [LICENSE](LICENSE). Versions 1.12.0 and earlier stay under the MIT License.
