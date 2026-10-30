@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Single-skill edition for marketplaces that sell skills only (`agensi/`, built by `scripts/build-agensi-skill.sh`). One `mogger` skill carries the safety hooks in its frontmatter (push, merge, deploy, money, destructive commands, secrets, fake packages), plus every skill body and agent prompt as references, and the check scripts. An `install.sh` copies the guard scripts to `.claude/mogger-skill/` because a standalone skill has no plugin root. The plugin itself is unchanged. Tested: the installed copy blocks `git push origin main`, `npm publish` and a written token (exit 2) and lets `ls` through. NOT tested in a live Claude Code skill load: the frontmatter hooks.
+
 - License change. Versions after 1.12.0 are under a proprietary license, copyright TesserTech LLC (Yoni Tesser), for sale on a marketplace. Copies of 1.12.0 and earlier keep the MIT License. `LICENSE`, `.claude-plugin/plugin.json` and the README badge are updated. No behaviour change.
 
 ## 1.12.0 — 2026-10-26
