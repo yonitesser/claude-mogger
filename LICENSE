@@ -1,21 +1,38 @@
-MIT License
+Mogger Proprietary License
 
-Copyright (c) 2026 Jay
+Copyright (c) 2026 TesserTech LLC (Yoni Tesser). All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This software ("Mogger") is licensed, not sold. You may use it only if you
+obtained a copy from TesserTech LLC or from an authorized marketplace
+listing, and subject to these terms.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Grant. TesserTech LLC grants you a non-exclusive, non-transferable,
+revocable license to install and use Mogger for your own personal or
+internal business use, on the devices you control, and to change your own
+copy of its configuration for that use.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Limits. You may not, without written permission from TesserTech LLC:
+  - copy, publish, sell, rent, lend, sublicense or otherwise distribute
+    Mogger or any part of it, in source or any other form;
+  - post it in a public or shared repository, or give it to a person who
+    did not obtain their own license;
+  - use it to build a product or service that competes with Mogger;
+  - remove or change this notice or any copyright notice.
+
+Earlier versions. Copies of Mogger version 1.12.0 and earlier that were
+published under the MIT License stay under that license for those copies.
+This license applies to all later versions.
+
+Third-party material. Any third-party code or idea named in CURATION.md or
+CONSIDERED.md stays under its own license.
+
+No warranty. MOGGER IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR
+A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL TESSERTECH LLC
+BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY ARISING FROM THE USE OF
+MOGGER.
+
+Termination. This license ends at once if you break these terms. Then you
+must delete all copies.
+
+Contact: https://github.com/yonitesser/claude-mogger/issues
