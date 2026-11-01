@@ -1,0 +1,8 @@
+{
+  "name": "secret-guard",
+  "version": "1.0.0",
+  "description": "Blocks Claude Code from writing API keys, tokens and private keys into your files. One guard from the mogger kit.",
+  "author": { "name": "TesserTech LLC" },
+  "license": "MIT",
+  "keywords": ["hooks", "safety", "secrets"]
+}
