@@ -16,7 +16,7 @@ verifier agents. You do the work in your own context, so nothing is lost in a ha
 ## Test
 
 1. Find the project's real test command (package.json, Makefile, CI config). Do not guess.
-2. While building, run only the tests for the changed files: `bash ".claude/mogger-skill/hooks/scripts/related-tests.sh"` prints `scope:` and `command:`. Run that command. It says `full` itself when it cannot narrow. No output and exit 1 means the project has no test command: say so.
+2. While building, run only the tests for the changed files: `bash "<skill-dir>/hooks/scripts/related-tests.sh"` prints `scope:` and `command:`. Run that command. It says `full` itself when it cannot narrow. No output and exit 1 means the project has no test command: say so.
 3. Once before review, run the FULL suite. An affected-only pass does not clear review.
 4. Run the tests through Bash, so the hook records the real result (`.claude/state/test-evidence.json`; you cannot write that file). Take the exit code from `$?`, not from the text.
 5. Then write `.claude/state/last_test_result.json` (the review gate reads it, and also needs the hook's record to say pass):
@@ -27,4 +27,4 @@ verifier agents. You do the work in your own context, so nothing is lost in a ha
 
 ## Smoke (UI or server tasks)
 
-Run `bash ".claude/mogger-skill/scripts/smoke-check.sh"` (or `scripts/smoke-check.sh`) and read `.claude/state/smoke.json`. Report `SMOKE: PASS|FAIL`, the url, status, and the error lines verbatim. The script writes smoke.json from real exit codes; never write `ok: true` yourself.
+Run `bash "<skill-dir>/scripts/smoke-check.sh"` (or `scripts/smoke-check.sh`) and read `.claude/state/smoke.json`. Report `SMOKE: PASS|FAIL`, the url, status, and the error lines verbatim. The script writes smoke.json from real exit codes; never write `ok: true` yourself.

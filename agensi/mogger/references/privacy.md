@@ -18,7 +18,7 @@ lawyer. Say this line to the human every time you present the results.
   privacy policy / cookie banner?" (answer with findings, not opinions).
 
 ## Run
-`bash ".claude/mogger-skill/scripts/checks/privacy.sh"` (report-only; never modifies anything).
+`bash "<skill-dir>/scripts/checks/privacy.sh"` (report-only; never modifies anything).
 Lines are `LEVEL|check-id|message`:
 
 | check-id | meaning |

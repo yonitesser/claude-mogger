@@ -50,7 +50,7 @@ output size (your reply) in characters — a rough count is fine, this feeds
 an estimate, not an audit:
 
 ```
-bash ".claude/mogger-skill/hooks/scripts/log-savings.sh" fact-checker haiku INPUT_CHARS OUTPUT_CHARS
+bash "<skill-dir>/hooks/scripts/log-savings.sh" fact-checker haiku INPUT_CHARS OUTPUT_CHARS
 ```
 
 This is self-reported — nobody

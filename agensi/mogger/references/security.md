@@ -60,7 +60,7 @@ code; the hooks and scans check for what they can.
 
 ## Reading the scan
 
-`bash ".claude/mogger-skill/scripts/checks/security.sh" [dir]` and `bash ".claude/mogger-skill/scripts/checks/dep-audit.sh" [dir]`
+`bash "<skill-dir>/scripts/checks/security.sh" [dir]` and `bash "<skill-dir>/scripts/checks/dep-audit.sh" [dir]`
 are report-only and always exit 0. Each line is `LEVEL|check-id|message`:
 
 - **FAIL**: evidence of a real problem (secret behind a public prefix,

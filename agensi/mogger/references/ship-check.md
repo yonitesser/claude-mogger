@@ -5,7 +5,7 @@ description: Runs scripts/ship-check.sh and reports PASS/WARN/FAIL for ship read
 
 # Ship-readiness checklist
 
-`bash ".claude/mogger-skill/scripts/ship-check.sh"` (add `--strict` to exit 1 on any FAIL, e.g. in CI).
+`bash "<skill-dir>/scripts/ship-check.sh"` (add `--strict` to exit 1 on any FAIL, e.g. in CI).
 
 **It NEVER pushes, merges, tags, or deploys.** It reads the repo and prints
 PASS / WARN / FAIL / SKIP with evidence. The push/deploy decision stays with

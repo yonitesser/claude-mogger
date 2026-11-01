@@ -6,60 +6,60 @@ hooks:
     - matcher: "Bash"
       hooks:
         - type: command
-          command: 'bash "${CLAUDE_PROJECT_DIR}/.claude/mogger-skill/hooks/scripts/require-approval.sh"'
+          command: 'for d in "${CLAUDE_PROJECT_DIR}/.claude/skills/mogger" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/mogger"; do [ -f "$d/hooks/scripts/require-approval.sh" ] && exec bash "$d/hooks/scripts/require-approval.sh"; done; echo "mogger guard require-approval not found in .claude/skills/mogger" >&2; exit 1'
           onFailure: block
           timeout: 15
     - matcher: "Bash"
       hooks:
         - type: command
-          command: 'bash "${CLAUDE_PROJECT_DIR}/.claude/mogger-skill/hooks/scripts/danger-guard.sh"'
+          command: 'for d in "${CLAUDE_PROJECT_DIR}/.claude/skills/mogger" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/mogger"; do [ -f "$d/hooks/scripts/danger-guard.sh" ] && exec bash "$d/hooks/scripts/danger-guard.sh"; done; echo "mogger guard danger-guard not found in .claude/skills/mogger" >&2; exit 1'
           onFailure: block
           timeout: 15
     - matcher: "Bash"
       hooks:
         - type: command
-          command: 'bash "${CLAUDE_PROJECT_DIR}/.claude/mogger-skill/hooks/scripts/secret-guard-bash.sh"'
+          command: 'for d in "${CLAUDE_PROJECT_DIR}/.claude/skills/mogger" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/mogger"; do [ -f "$d/hooks/scripts/secret-guard-bash.sh" ] && exec bash "$d/hooks/scripts/secret-guard-bash.sh"; done; echo "mogger guard secret-guard-bash not found in .claude/skills/mogger" >&2; exit 1'
           onFailure: block
           timeout: 15
     - matcher: "Bash"
       hooks:
         - type: command
-          command: 'bash "${CLAUDE_PROJECT_DIR}/.claude/mogger-skill/hooks/scripts/verify-packages.sh"'
+          command: 'for d in "${CLAUDE_PROJECT_DIR}/.claude/skills/mogger" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/mogger"; do [ -f "$d/hooks/scripts/verify-packages.sh" ] && exec bash "$d/hooks/scripts/verify-packages.sh"; done; echo "mogger guard verify-packages not found in .claude/skills/mogger" >&2; exit 1'
           timeout: 30
     - matcher: "Bash"
       hooks:
         - type: command
-          command: 'bash "${CLAUDE_PROJECT_DIR}/.claude/mogger-skill/hooks/scripts/taint-guard.sh"'
+          command: 'for d in "${CLAUDE_PROJECT_DIR}/.claude/skills/mogger" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/mogger"; do [ -f "$d/hooks/scripts/taint-guard.sh" ] && exec bash "$d/hooks/scripts/taint-guard.sh"; done; echo "mogger guard taint-guard not found in .claude/skills/mogger" >&2; exit 1'
           timeout: 15
     - matcher: "mcp__.*__(merge_pull_request|enable_pr_auto_merge|delete_repository|delete_branch|push_files|create_or_update_file|delete_file)"
       hooks:
         - type: command
-          command: 'bash "${CLAUDE_PROJECT_DIR}/.claude/mogger-skill/hooks/scripts/require-approval-mcp.sh"'
+          command: 'for d in "${CLAUDE_PROJECT_DIR}/.claude/skills/mogger" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/mogger"; do [ -f "$d/hooks/scripts/require-approval-mcp.sh" ] && exec bash "$d/hooks/scripts/require-approval-mcp.sh"; done; echo "mogger guard require-approval-mcp not found in .claude/skills/mogger" >&2; exit 1'
           onFailure: block
           timeout: 15
     - matcher: "Read|Grep|Glob|Bash"
       hooks:
         - type: command
-          command: 'bash "${CLAUDE_PROJECT_DIR}/.claude/mogger-skill/hooks/scripts/secret-read-guard.sh"'
+          command: 'for d in "${CLAUDE_PROJECT_DIR}/.claude/skills/mogger" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/mogger"; do [ -f "$d/hooks/scripts/secret-read-guard.sh" ] && exec bash "$d/hooks/scripts/secret-read-guard.sh"; done; echo "mogger guard secret-read-guard not found in .claude/skills/mogger" >&2; exit 1'
           onFailure: block
           timeout: 15
     - matcher: "Edit|Write|MultiEdit|Bash"
       hooks:
         - type: command
-          command: 'bash "${CLAUDE_PROJECT_DIR}/.claude/mogger-skill/hooks/scripts/config-guard.sh"'
+          command: 'for d in "${CLAUDE_PROJECT_DIR}/.claude/skills/mogger" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/mogger"; do [ -f "$d/hooks/scripts/config-guard.sh" ] && exec bash "$d/hooks/scripts/config-guard.sh"; done; echo "mogger guard config-guard not found in .claude/skills/mogger" >&2; exit 1'
           onFailure: block
           timeout: 15
     - matcher: "Edit|Write"
       hooks:
         - type: command
-          command: 'bash "${CLAUDE_PROJECT_DIR}/.claude/mogger-skill/hooks/scripts/secret-guard.sh"'
+          command: 'for d in "${CLAUDE_PROJECT_DIR}/.claude/skills/mogger" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/mogger"; do [ -f "$d/hooks/scripts/secret-guard.sh" ] && exec bash "$d/hooks/scripts/secret-guard.sh"; done; echo "mogger guard secret-guard not found in .claude/skills/mogger" >&2; exit 1'
           onFailure: block
           timeout: 15
   PostToolUse:
     - matcher: "WebFetch|WebSearch|mcp__.*"
       hooks:
         - type: command
-          command: 'bash "${CLAUDE_PROJECT_DIR}/.claude/mogger-skill/hooks/scripts/taint-mark.sh"'
+          command: 'for d in "${CLAUDE_PROJECT_DIR}/.claude/skills/mogger" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/mogger"; do [ -f "$d/hooks/scripts/taint-mark.sh" ] && exec bash "$d/hooks/scripts/taint-mark.sh"; done; echo "mogger guard taint-mark not found in .claude/skills/mogger" >&2; exit 1'
           timeout: 15
 ---
 
@@ -71,13 +71,10 @@ frontmatter run on every tool call once this skill is loaded.
 Mogger costs more per run than plain Claude (about 20-45% more in our tests).
 It buys safety and proof, not savings.
 
-## Step 0: install the guards (once per project)
+## Where things are
 
-Run: `bash "${CLAUDE_SKILL_DIR}/install.sh"`
-
-It copies the guard scripts to `.claude/mogger-skill/` in the project. Until
-that folder exists the hooks do nothing. If the user's agent cannot run
-shell, tell them the guards are off and carry on with the rules below.
+`<skill-dir>` in the files under `references/` means this skill's folder:
+`${CLAUDE_SKILL_DIR}`. The guards run from there. No install step.
 
 ## Hard rules (the guards enforce the first four)
 
@@ -107,7 +104,7 @@ shell, tell them the guards are off and carry on with the rules below.
    checkable `done when:`).
 3. Build one task at a time: `references/loop-doing.md`. Run the affected
    tests while building, the full suite once before review.
-4. App, server or CLI task? Run `.claude/mogger-skill/scripts/smoke-check.sh`
+4. App, server or CLI task? Run `${CLAUDE_SKILL_DIR}/scripts/smoke-check.sh`
    before saying done.
 5. Review with an independent pass: use the role prompt in
    `references/agents/reviewer.md` (and `security-reviewer.md` for auth,
@@ -129,7 +126,7 @@ Full manual: `references/loop.md`. Read it for any feature or bug-fix work.
 | Growing a codebase, DB schema, paid API, shipping | `references/code-health.md` |
 | Choosing a library or architecture | `references/decisions.md` |
 | Context running low, session end | `references/handoff.md` |
-| "Is it ready to ship?" | `references/ship-check.md`, then `.claude/mogger-skill/scripts/ship-check.sh` |
+| "Is it ready to ship?" | `references/ship-check.md`, then `${CLAUDE_SKILL_DIR}/scripts/ship-check.sh` |
 | UI, server or CLI done | `references/verify-run.md` |
 | README or `.env.example` | `references/docs.md` |
 | User data, forms, analytics | `references/privacy.md` |
@@ -146,7 +143,7 @@ library-scout, retro, explainer, docs-writer, pentester).
 
 Each guard is `on` (block), `ask` (permission prompt) or `off`. Set them in
 `.claude/mogger.json` or with env vars. The list and the effect of each is in
-`.claude/mogger-skill/hooks/guards.tsv`. Safety guards warn before they go
+`${CLAUDE_SKILL_DIR}/hooks/guards.tsv`. Safety guards warn before they go
 off. The user decides; never turn one off yourself.
 
 Licence: proprietary, TesserTech LLC (Yoni Tesser). Do not copy or share.

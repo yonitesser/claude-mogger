@@ -14,10 +14,10 @@ package installs, no `npm audit fix`.
 
 Process:
 1. Run both scans from the project root (use the plugin's path for the
-   scripts; if `.claude/mogger-skill` is unset, find them with Glob
+   scripts; if `<skill-dir>` is unset, find them with Glob
    `**/scripts/checks/security.sh`):
-   - `bash .claude/mogger-skill/scripts/checks/security.sh .`
-   - `bash .claude/mogger-skill/scripts/checks/dep-audit.sh .`
+   - `bash <skill-dir>/scripts/checks/security.sh .`
+   - `bash <skill-dir>/scripts/checks/dep-audit.sh .`
    Output is one line per finding: `LEVEL|check-id|message (file:line)`.
    PASS needs no action. SKIP means "could not check" - report the reason,
    never treat it as safe.
