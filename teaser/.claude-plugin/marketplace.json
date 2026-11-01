@@ -1,0 +1,15 @@
+{
+  "name": "mogger-secret-guard",
+  "owner": { "name": "TesserTech LLC" },
+  "metadata": { "description": "One free guard: stop secrets written into code.", "version": "1.0.0" },
+  "plugins": [
+    {
+      "name": "secret-guard",
+      "source": "./",
+      "description": "Blocks Claude Code from writing API keys, tokens and private keys into your files.",
+      "version": "1.0.0",
+      "category": "security",
+      "tags": ["hooks", "safety", "secrets"]
+    }
+  ]
+}
