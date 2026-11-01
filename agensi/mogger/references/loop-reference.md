@@ -85,7 +85,7 @@ stay read-only or write-only), so they cannot log anything themselves. After
 one of them returns, the Lead runs one line:
 
 ```
-bash ".claude/mogger-skill/hooks/scripts/log-savings.sh" <agent> haiku INPUT_CHARS OUTPUT_CHARS
+bash "<skill-dir>/hooks/scripts/log-savings.sh" <agent> haiku INPUT_CHARS OUTPUT_CHARS
 ```
 
 `OUTPUT_CHARS` is the length of the reply the Lead received. `INPUT_CHARS` is
@@ -97,7 +97,7 @@ their own runs. Both kinds stay self-reported estimates.
 ## Optional: the routing estimate is a different thing than RUNS.md tokens
 
 RUNS.md's `tokens:` field is the real, actual session total from `/cost` —
-solid ground. `python3 ".claude/mogger-skill/scripts/savings-report.py"` is something weaker and
+solid ground. `python3 "<skill-dir>/scripts/savings-report.py"` is something weaker and
 should never be confused with it: an *estimate* of what Haiku-routed calls
 would have cost if billed at the Lead's model rate instead, based on
 self-reported (not verified) output length. No task here was ever run

@@ -6,13 +6,10 @@ frontmatter run on every tool call once this skill is loaded.
 Mogger costs more per run than plain Claude (about 20-45% more in our tests).
 It buys safety and proof, not savings.
 
-## Step 0: install the guards (once per project)
+## Where things are
 
-Run: `bash "${CLAUDE_SKILL_DIR}/install.sh"`
-
-It copies the guard scripts to `.claude/mogger-skill/` in the project. Until
-that folder exists the hooks do nothing. If the user's agent cannot run
-shell, tell them the guards are off and carry on with the rules below.
+`<skill-dir>` in the files under `references/` means this skill's folder:
+`${CLAUDE_SKILL_DIR}`. The guards run from there. No install step.
 
 ## Hard rules (the guards enforce the first four)
 
@@ -42,7 +39,7 @@ shell, tell them the guards are off and carry on with the rules below.
    checkable `done when:`).
 3. Build one task at a time: `references/loop-doing.md`. Run the affected
    tests while building, the full suite once before review.
-4. App, server or CLI task? Run `.claude/mogger-skill/scripts/smoke-check.sh`
+4. App, server or CLI task? Run `${CLAUDE_SKILL_DIR}/scripts/smoke-check.sh`
    before saying done.
 5. Review with an independent pass: use the role prompt in
    `references/agents/reviewer.md` (and `security-reviewer.md` for auth,
@@ -64,7 +61,7 @@ Full manual: `references/loop.md`. Read it for any feature or bug-fix work.
 | Growing a codebase, DB schema, paid API, shipping | `references/code-health.md` |
 | Choosing a library or architecture | `references/decisions.md` |
 | Context running low, session end | `references/handoff.md` |
-| "Is it ready to ship?" | `references/ship-check.md`, then `.claude/mogger-skill/scripts/ship-check.sh` |
+| "Is it ready to ship?" | `references/ship-check.md`, then `${CLAUDE_SKILL_DIR}/scripts/ship-check.sh` |
 | UI, server or CLI done | `references/verify-run.md` |
 | README or `.env.example` | `references/docs.md` |
 | User data, forms, analytics | `references/privacy.md` |
@@ -81,7 +78,7 @@ library-scout, retro, explainer, docs-writer, pentester).
 
 Each guard is `on` (block), `ask` (permission prompt) or `off`. Set them in
 `.claude/mogger.json` or with env vars. The list and the effect of each is in
-`.claude/mogger-skill/hooks/guards.tsv`. Safety guards warn before they go
+`${CLAUDE_SKILL_DIR}/hooks/guards.tsv`. Safety guards warn before they go
 off. The user decides; never turn one off yourself.
 
 Licence: proprietary, TesserTech LLC (Yoni Tesser). Do not copy or share.

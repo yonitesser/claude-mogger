@@ -32,7 +32,7 @@ overwrites a file that already exists.
    chain a second install.
 
 4. **Scaffold files, only if missing.** Templates live in the plugin at
-   `.claude/mogger-skill/templates/`. For each of `CONSTRAINTS.md`,
+   `<skill-dir>/templates/`. For each of `CONSTRAINTS.md`,
    `RUNS.md`, `STACK.md`, `DECISIONS.md`: if the project root doesn't have it, copy the
    template. If it does, leave it alone and say so. Also
    `mkdir -p .claude/state` (the test marker is written there, and
@@ -75,7 +75,7 @@ overwrites a file that already exists.
      orchestrates.
    - Context7 is available for current library docs; SkillSpector is
      installed (or the user has the one command to add it).
-   - `python3 ".claude/mogger-skill/scripts/savings-report.py"` shows an *estimate* of what the
+   - `python3 "<skill-dir>/scripts/savings-report.py"` shows an *estimate* of what the
      Haiku-routed calls would cost at the Lead's rate — self-reported by the agents, not verified,
      and clearly labeled as such in its own output. Not required reading,
      just available if the user is curious.
@@ -84,7 +84,7 @@ overwrites a file that already exists.
    time I do something you have to fix twice."
 
 8. **Offer the evals (last step).** Load `mogger:evals`. Run
-   `bash ".claude/mogger-skill/scripts/mogger-eval.sh" estimate` (if the script is missing, say
+   `bash "<skill-dir>/scripts/mogger-eval.sh" estimate` (if the script is missing, say
    the paid evals are not installed and skip). Show the estimate in plain
    words, say it costs money and nothing runs without a yes, and ask for a
    dollar cap. Do not run anything paid yourself. If the project uses the

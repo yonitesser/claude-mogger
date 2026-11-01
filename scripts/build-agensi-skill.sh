@@ -18,7 +18,7 @@ cp scripts/ship-check.sh scripts/smoke-check.sh scripts/smoke-browser.mjs script
 cp scripts/checks/*.sh "$out/scripts/checks/"
 
 # references: every skill body, sub-files, and agent prompts
-fix='s#\${CLAUDE_PLUGIN_ROOT}#.claude/mogger-skill#g'
+fix='s#\${CLAUDE_PLUGIN_ROOT}#<skill-dir>#g'
 for d in skills/*/; do
   n=$(basename "$d")
   for f in "$d"*.md; do
@@ -28,18 +28,6 @@ for d in skills/*/; do
   done
 done
 for f in agents/*.md; do sed "$fix" "$f" > "$out/references/agents/$(basename "$f")"; done
-
-# install.sh: copy guards into the project, where the frontmatter hooks look
-cat > "$out/install.sh" <<'INS'
-#!/usr/bin/env bash
-set -euo pipefail
-src="${0%/*}"
-dst="${CLAUDE_PROJECT_DIR:-$PWD}/.claude/mogger-skill"
-mkdir -p "$dst"
-cp -R "$src/hooks" "$src/scripts" "$dst/"
-chmod +x "$dst"/hooks/scripts/*.sh "$dst"/scripts/*.sh 2>/dev/null || true
-echo "mogger guards installed in $dst"
-INS
 
 # SKILL.md: frontmatter (hooks) + template
 {
@@ -52,6 +40,11 @@ import json
 h = json.load(open("hooks/hooks.json"))["hooks"]
 keep = {"require-approval","danger-guard","secret-guard-bash","secret-read-guard","secret-guard","config-guard","taint-guard","taint-mark","verify-packages","require-approval-mcp"}
 by = {}
+# ${CLAUDE_SKILL_DIR} is NOT set inside hook commands (tested, Claude Code 2.1.316),
+# so the command finds the skill itself: project install first, then user install.
+LOC = ('for d in "${CLAUDE_PROJECT_DIR}/.claude/skills/mogger" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills/mogger"; '
+       'do [ -f "$d/hooks/scripts/NAME.sh" ] && exec bash "$d/hooks/scripts/NAME.sh"; done; '
+       'echo "mogger guard NAME not found in .claude/skills/mogger" >&2; exit 1')
 for ev in ("PreToolUse", "PostToolUse"):
     for g in h.get(ev, []):
         for x in g["hooks"]:
@@ -64,7 +57,7 @@ for ev, items in by.items():
         print(f'    - matcher: "{m}"')
         print("      hooks:")
         print("        - type: command")
-        print(f'          command: \'bash "${{CLAUDE_PROJECT_DIR}}/.claude/mogger-skill/hooks/scripts/{n}.sh"\'')
+        print("          command: '" + LOC.replace("NAME", n) + "'")
         if x.get("onFailure"): print(f'          onFailure: {x["onFailure"]}')
         print(f'          timeout: {x["timeout"]}')
 PY

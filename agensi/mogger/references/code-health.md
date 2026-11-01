@@ -55,10 +55,10 @@ optional project directory:
 
 | Situation | Run |
 |---|---|
-| A file or feature keeps growing; before a refactor | `bash ".claude/mogger-skill/scripts/checks/structure.sh"` |
-| Before adding routes, jobs or integrations; before a demo or launch | `bash ".claude/mogger-skill/scripts/checks/resilience.sh"` |
-| Before or after touching models, migrations or the schema | `bash ".claude/mogger-skill/scripts/checks/database.sh"` |
-| Before first calling a paid API; before publishing a public route that reaches one | `bash ".claude/mogger-skill/scripts/checks/cost-risk.sh"` |
+| A file or feature keeps growing; before a refactor | `bash "<skill-dir>/scripts/checks/structure.sh"` |
+| Before adding routes, jobs or integrations; before a demo or launch | `bash "<skill-dir>/scripts/checks/resilience.sh"` |
+| Before or after touching models, migrations or the schema | `bash "<skill-dir>/scripts/checks/database.sh"` |
+| Before first calling a paid API; before publishing a public route that reaches one | `bash "<skill-dir>/scripts/checks/cost-risk.sh"` |
 | Before shipping | all four, then fix FAILs and read each WARN |
 
 Hooks (automatic, after Edit/Write): `check-structure.sh` blocks a file over

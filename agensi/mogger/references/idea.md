@@ -41,7 +41,7 @@ about those." Anything you found goes into SPEC.md as verified.
 
 ## 3. Write SPEC.md
 
-Copy `.claude/mogger-skill/templates/SPEC.md` to the project root and fill
+Copy `<skill-dir>/templates/SPEC.md` to the project root and fill
 it. Sections, in order: Goal (one sentence), Users, Must have, Won't do (this
 round), Data, Done when, Assumptions, Open questions.
 

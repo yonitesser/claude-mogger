@@ -6,12 +6,12 @@ description: List and flip mogger guards without editing code. Use on "mogger co
 # mogger config
 
 One file holds the switches: `.claude/mogger.json` in the project. This skill
-reads and writes it through `.claude/mogger-skill/scripts/mogger-config.sh`.
+reads and writes it through `<skill-dir>/scripts/mogger-config.sh`.
 Never edit hook scripts to change a guard.
 
 ## Steps
 
-1. **List.** `bash ".claude/mogger-skill/scripts/mogger-config.sh" list`.
+1. **List.** `bash "<skill-dir>/scripts/mogger-config.sh" list`.
    Show the user a short table: name, state (on, ask or off), and in plain
    words what ON, ASK and OFF do. Group it: safety guards, standard guards, opt-in gates.
 2. **Flip.** `... set <name> on`, `... set <name> ask` or `... set <name> off`.

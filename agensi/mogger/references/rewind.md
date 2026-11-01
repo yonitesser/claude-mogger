@@ -9,11 +9,11 @@ A hook snapshots the working tree (tracked + untracked, not ignored) before
 the first edit of each task, into `refs/mogger/checkpoints/<timestamp>`. The
 snapshots never touch your branch, index, or files. This skill restores one.
 
-The script lives at `.claude/mogger-skill/scripts/mogger-rewind.sh`.
+The script lives at `<skill-dir>/scripts/mogger-rewind.sh`.
 
 ## Steps
 
-1. **List.** `bash ".claude/mogger-skill/scripts/mogger-rewind.sh" list` —
+1. **List.** `bash "<skill-dir>/scripts/mogger-rewind.sh" list` —
    newest first, with the task each checkpoint was taken before. If it says
    "no checkpoints yet" or "not inside a git repository", stop and tell the
    user; do not improvise a revert with `git checkout .` or `git reset`.
