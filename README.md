@@ -28,6 +28,12 @@ full of "make Claude 1000x better" threads that are 80% noise. This is the
 20%, with receipts, and it doesn't ask your model nicely — it puts a bash
 script between it and anything that can't be undone.
 
+Why scripts and not more prose: a 2026 study of public CLAUDE.md files found
+only 4.4-16.6% of the security rules in them matched a built-in Claude Code
+control ([arXiv 2608.23550](https://arxiv.org/abs/2608.23550); hooks were not
+counted, and the study did not test them). Mogger's hooks are the extra code.
+Every guard and the tests that name it: [docs/guard-proof.md](docs/guard-proof.md).
+
 ## What this actually does
 
 
