@@ -61,7 +61,8 @@ while IFS= read -r seg; do
       # a full path to the working dir or any parent of it (the repo root, its parent...)
       if [[ $t == /* ]]; then
         tt=${t%/}; cwd=$(json_get "$INPUT" '.cwd'); cwd=${cwd:-$PWD}
-        [ -n "$tt" ] && [[ "$cwd/" == "$tt"/* ]] && block "blocked rm -r on the working dir or a parent: $t" "rm -r on '$t', which holds the working directory"
+        cwdp=$(cd "$cwd" 2>/dev/null && pwd -P)   # macOS: /var is a link to /private/var
+        [ -n "$tt" ] && { [[ "$cwd/" == "$tt"/* ]] || [[ "$cwdp/" == "$tt"/* ]]; } && block "blocked rm -r on the working dir or a parent: $t" "rm -r on '$t', which holds the working directory"
       fi
       [[ "$t" =~ $BAD ]] && block "blocked rm -r on $t" "rm -r on '$t'"
     done
