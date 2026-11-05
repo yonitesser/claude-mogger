@@ -155,6 +155,15 @@ git reset --hard
 EOF'; do
   expect 2 danger-guard.sh "$(bash_cmd "$c")" "still blocks: $c"
 done
+# Unquoted variable in a recursive delete (an empty or spaced value splits into other paths), and the repo root by full path.
+for c in 'rm -rf $D' 'rm -r -f $(dirname $R)/$N' 'cd x && rm -rf ${OUT}/old' 'rm -rf -- $D' 'find $T -type f -delete' \
+         'find $T -name x -exec rm -f {} +' 'rm -rf ${A:?} ${B}' "rm -rf $SANDBOX" "rm -rf $SANDBOX/" "rm -rf $(dirname "$SANDBOX")" "rm -rf $(git rev-parse --show-toplevel)"; do
+  expect 2 danger-guard.sh "$(bash_cmd "$c")" "blocks: $c"
+done
+for c in 'rm -rf -- "${D:?}"' 'rm -rf ${D:?}' 'rm -rf "$D"' 'rm -rf "$D/$N"' 'rm -rf build dist' 'rm -rf out/run' \
+         'find . -name "*.pyc" -delete' 'find "$T" -type f -delete' 'find $T -type f -print' "rm -rf $SANDBOX/build" 'echo $D' 'git rm -r --cached $D'; do
+  expect 0 danger-guard.sh "$(bash_cmd "$c")" "allows: $c"
+done
 MOGGER_DANGER_GUARD=off expect 0 danger-guard.sh "$(bash_cmd 'rm -rf /')"       "MOGGER_DANGER_GUARD=off allows it"
 expect 0 danger-guard.sh '{"tool_name":"Bash","tool_input":{}}'                 "fails open on empty command"
 

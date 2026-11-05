@@ -33,6 +33,7 @@ block() {  # block <short event text> <what was found>
 shopt -s nocasematch   # replaces lower-casing the text; `=~` and `case` both honour it
 # Text that is only data (a commit message, an echo) is taken out first, unless something could run it.
 mogger_prose_free "$CMD"
+RAW=$REPLY   # quotes still in place: check 1b needs to tell "$D" from $D
 CLEAN=${REPLY//[\"\'\`]/}
 CLEAN=${CLEAN//\$\{HOME\}/\$HOME}
 LC=${CLEAN//$'\n'/;}   # one line, so `$` and `^` in the patterns below mean end/start of the command
@@ -57,10 +58,37 @@ while IFS= read -r seg; do
   done
   if [ "$in_rm" = 1 ] && [ "$rec" = 1 ]; then
     for t in "${targets[@]}"; do
+      # a full path to the working dir or any parent of it (the repo root, its parent...)
+      if [[ $t == /* ]]; then
+        tt=${t%/}; cwd=$(json_get "$INPUT" '.cwd'); cwd=${cwd:-$PWD}
+        cwdp=$(cd "$cwd" 2>/dev/null && pwd -P)   # macOS: /var is a link to /private/var
+        [ -n "$tt" ] && { [[ "$cwd/" == "$tt"/* ]] || [[ "$cwdp/" == "$tt"/* ]]; } && block "blocked rm -r on the working dir or a parent: $t" "rm -r on '$t', which holds the working directory"
+      fi
       [[ "$t" =~ $BAD ]] && block "blocked rm -r on $t" "rm -r on '$t'"
     done
   fi
 done <<<"${CLEAN//$SEP/$'\n'}"
+
+# 1b. rm -r or find -delete with an UNQUOTED $VAR or $(...): an empty value or one with a space
+# turns into other paths (rm -rf $D with D="out/x <repo>" deletes the repo). "$D" and ${D:?} are fine.
+GUARDED='^(.*)\$\{[A-Za-z_0-9]+:\?[^}]*\}(.*)$'   # ${D:?} / ${D:?msg}: stops on an empty value
+while IFS= read -r seg; do
+  [[ $seg == *'$'* ]] || continue
+  [[ $seg =~ (^|[[:space:]/])git[[:space:]]+rm[[:space:]] ]] && continue
+  tail=""
+  if [[ $seg =~ (^|[[:space:]/])rm[[:space:]]+(.*)$ ]]; then
+    tail=${BASH_REMATCH[2]}
+    [[ " $tail" =~ [[:space:]](-[a-zA-Z]*[rR][a-zA-Z]*|--recursive)([[:space:]]|$) ]] || tail=""
+  fi
+  if [ -z "$tail" ] && [[ $seg =~ (^|[[:space:]/])find[[:space:]]+(.*)$ ]]; then
+    tail=${BASH_REMATCH[2]}
+    [[ " $tail " =~ [[:space:]](-delete|-exec(dir)?[[:space:]]+rm)[[:space:]] ]] || tail=""
+  fi
+  [ -z "$tail" ] && continue
+  while [[ $tail =~ ^([^\"\']*)(\"[^\"]*\"|\'[^\']*\')(.*)$ ]]; do tail="${BASH_REMATCH[1]} ${BASH_REMATCH[3]}"; done
+  while [[ $tail =~ $GUARDED ]]; do tail="${BASH_REMATCH[1]} ${BASH_REMATCH[2]}"; done
+  [[ $tail =~ \$[A-Za-z_{\(] ]] && block "blocked an unquoted variable in a recursive delete" "recursive delete with an unquoted \$VAR (quote it and guard it: rm -rf -- \"\${D:?}\")"
+done <<<"${RAW//[;|&]/$'\n'}"
 
 # 2. Disks and fork bombs
 mogger_re "$LC" 'dd[[:space:]]+[^;&|]*of=/dev/' && block "blocked dd to a device" "dd writing to a device"
