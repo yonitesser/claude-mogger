@@ -18,7 +18,7 @@ declare module 'claude-code' {
       note: string
       tests: 'pass' | 'fail' | null
       minute: number
-      bar: { robot: boolean; detail: boolean }
+      bar: { glow: boolean; detail: boolean }
     }
   }
 }

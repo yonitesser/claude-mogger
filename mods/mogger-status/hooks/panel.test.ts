@@ -66,6 +66,6 @@ test('bar options fall back to the defaults on anything odd', () => {
   expect(readBar(undefined)).toEqual(DEFAULT_BAR)
   expect(readBar('x')).toEqual(DEFAULT_BAR)
   expect(readBar(null)).toEqual(DEFAULT_BAR)
-  expect(readBar({ robot: false })).toEqual({ robot: false, detail: true })
-  expect(readBar({ robot: 'no', detail: 0 })).toEqual(DEFAULT_BAR)
+  expect(readBar({ glow: false })).toEqual({ glow: false, detail: true })
+  expect(readBar({ glow: 'no', detail: 0 })).toEqual(DEFAULT_BAR)
 })
