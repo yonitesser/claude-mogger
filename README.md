@@ -239,7 +239,7 @@ your own. Scope enforcement can be turned off with
 
 ## See that mogger is running
 
-Mogger shows a status line (`mogger: N guards fired, M blocked`), a bar above the prompt with the last thing it did, and a toast when it blocks something. On by default (needs a Claude Code version with mods). The mogger chad (a pixel-art robot) sits in the bar and reacts when a guard fires. Buttons in the bar (`Guards`, `Display`, `Hide`) open dropdowns that set each guard to on, ask or off (safety guards: on or ask only) and choose what the bar shows. On the desktop app the robot is drawn as a picture. It runs no command: it reads `.claude/state/mogger-events.log` and `hooks/guards.tsv`, and writes the guard switch file only when you pick a state. Source: `mods/mogger-status/`.
+Mogger shows a status line (`mogger: N guards fired, M blocked`), one quiet line above the prompt with the last thing it did, and a toast when it blocks something. On by default (needs a Claude Code version with mods). A slow glow pulses over the prompt (about 8 seconds a swell; a soft blur on the desktop app, a thin coloured line on the terminal and elsewhere). It turns red on a block and yellow on a warning for 4 seconds. Buttons in the line (`Guards`, `Display`, `Hide`) open dropdowns that set each guard to on, ask or off (safety guards: on or ask only) and choose what shows (glow, detail line). It runs no command: it reads `.claude/state/mogger-events.log` and `hooks/guards.tsv`, and writes the guard switch file only when you pick a state. Source: `mods/mogger-status/`.
 
 ## Bundled — no separate install
 

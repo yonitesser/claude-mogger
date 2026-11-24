@@ -2,7 +2,8 @@ import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register } from 'claude-code'
 
 import type { MoggerSummary } from '../types'
-import { ORANGE, TICK_MS, chadRows, chadSvg, headline, moodOf, toastText } from './chad'
+import { GLOW_TICK_MS, glowColor, rule } from './glow'
+import { ORANGE, headline, moodOf, toastText } from './voice'
 import { DEFAULT_BAR, isPickable, parseCatalog, parseConfig, readBar, rowOf, withPick } from './panel'
 import type { BarOptions, GuardRow } from './panel'
 import { LOG_PATH, TESTS_PATH, ageText, newBlocks, newestTs, parseLog, statusText, summarize, testsOf, testsText, voiceOn } from './log'
@@ -27,10 +28,6 @@ const CONFIG_PATH = '.claude/mogger.json'
 // newest event time already seen (seconds); -1 until the first read, so
 // old blocks from earlier sessions never toast.
 let seenTs = -1
-// Only the terminal draws the robot as text (half blocks); the desktop app, the editor and the phone
-// get a picture. A picture does not need to blink, so those surfaces redraw less, and a button press
-// is not lost to a redraw in the middle of the click.
-let isTerminal = true
 
 async function refresh($: EngineInterface): Promise<void> {
   let text = ''
@@ -126,7 +123,6 @@ async function setBar($: EngineInterface, next: BarOptions): Promise<void> {
 
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
-    isTerminal = e.surface === null || e.surface === 'terminal'
     try {
       const saved = await $.store.get('mogger.bar')
       await update($, barAtom, () => readBar(saved))
@@ -135,14 +131,10 @@ export const register: Register = on => {
     }
     await refresh($)
     $.clock.every(POLL_MS, () => refresh($))
-    // motion: ticks only change the picture while the chad moves or blinks
-    $.clock.every(TICK_MS, async () => {
-      const now = await $.clock.now()
-      const s = await read($, summaryAtom)
-      const mood = moodOf(s?.last?.kind, s?.last ? now - s.last.ts * 1000 : Infinity)
-      const frame = Math.floor(now / TICK_MS)
-      const want = mood === 'idle' ? (isTerminal && frame % 24 === 0 ? 24 : 1) : frame
-      if (want !== (await read($, frameAtom))) await update($, frameAtom, () => want)
+    // the pulse: one tick moves the glow one step (about 8 seconds for a full swell)
+    $.clock.every(GLOW_TICK_MS, async () => {
+      if (!(await read($, barAtom)).glow) return
+      await update($, frameAtom, f => f + 1)
     })
     return next(e)
   })
@@ -158,10 +150,8 @@ export const register: Register = on => {
       return next(e)
     }
     const { Box, Button, Text } = $.ui.resolve(e)
-    // Svg is drawn on the remote surfaces (desktop, editor, phone) and Select on all but the phone;
-    // the terminal's table has no Svg and the phone's no Select
+    // Select is drawn on all but the phone; the phone's table has none
     const table = $.ui.resolve(e) as unknown as Record<string, any>
-    const Svg = e.surface === 'terminal' ? undefined : table.Svg
     const Select = e.surface === 'mobile' ? undefined : table.Select
     const now = await $.clock.now()
     const last = s.last
@@ -176,7 +166,7 @@ export const register: Register = on => {
     const frame = await read($, frameAtom)
     const voice = await read($, voiceAtom)
     const mood = moodOf(last?.kind, last ? now - last.ts * 1000 : Infinity)
-    const rows = chadRows(mood, frame)
+    const pulse = glowColor(mood, frame)
     const seed = mood === 'idle' ? Math.floor((await read($, sinceAtom)) / 1000) : s.fired
 
     const bar = await read($, barAtom)
@@ -208,50 +198,37 @@ export const register: Register = on => {
 
     return (
       <Box flexDirection="column">
-        <Box alignItems="center">
-          {bar.robot && (
-            <Box flexDirection="column" marginRight={2}>
-              {Svg ? (
-                <Svg source={chadSvg(mood, frame)} alt="mogger, a robot with orange eyes" />
-              ) : (
-                rows.map((r, i) => (
-                  <Box key={`c${i}`}>
-                    {r.map((seg, j) => (
-                      <Text key={`c${i}-${j}`} color={seg.color} backgroundColor={seg.bg}>
-                        {seg.text}
-                      </Text>
-                    ))}
-                  </Box>
-                ))
-              )}
+        {bar.glow &&
+          (e.surface === 'desktop' ? (
+            // the desktop blurs a Box: a soft glow line that swells and fades
+            <Box mono height={1} width="100%">
+              <Box position="absolute" blur={2} width="100%" height={1} backgroundColor={pulse} />
             </Box>
-          )}
-          <Box flexDirection="column">
-            <Text bold color={ORANGE}>
-              {headline(mood, s.fired, s.blocked, voice, last ?? undefined, seed)}
-            </Text>
-            {bar.detail && (
-              <Text dimColor={isQuiet} color={isQuiet ? undefined : color}>
-                {line}{' '}
-              </Text>
-            )}
-            {bar.detail && tests !== null && (
-              <Text color={tests === 'fail' ? 'red' : 'green'}>{testsText(tests)} </Text>
-            )}
-            <Box>
-              <Button key="guards" label={`⚙ Guards ${panel === 'guards' ? '▴' : '▾'}`} variant="primary" onPress={() => toggle('guards')} />
-              <Text> </Text>
-              <Button key="bar" label={`◐ Display ${panel === 'bar' ? '▴' : '▾'}`} variant="primary" onPress={() => toggle('bar')} />
-              <Text> </Text>
-              <Button key="hide" label="✕ Hide" onPress={() => update($, isHidden, () => true)} />
-            </Box>
-          </Box>
+          ) : (
+            // other surfaces cannot blur: the same pulse as a thin coloured rule
+            <Text color={pulse}>{rule(e.props.bodyColumns ?? 60)}</Text>
+          ))}
+        <Box>
+          <Text bold color={ORANGE}>
+            {headline(mood, s.fired, s.blocked, voice, last ?? undefined, seed)}
+          </Text>
+          <Text> </Text>
+          <Button key="guards" label={`⚙ Guards ${panel === 'guards' ? '▴' : '▾'}`} variant="primary" onPress={() => toggle('guards')} />
+          <Text> </Text>
+          <Button key="bar" label={`◐ Display ${panel === 'bar' ? '▴' : '▾'}`} variant="primary" onPress={() => toggle('bar')} />
+          <Text> </Text>
+          <Button key="hide" label="✕ Hide" onPress={() => update($, isHidden, () => true)} />
         </Box>
+        {bar.detail && (
+          <Text dimColor={isQuiet} color={isQuiet ? undefined : color}>
+            {line}{tests !== null ? `  ${testsText(tests)}` : ''}{' '}
+          </Text>
+        )}
         {panel === 'bar' && (
           <Box flexDirection="column" marginTop={1}>
             <Text dimColor>What this bar shows (kept for next time):</Text>
             <Box flexWrap="wrap">
-              {pick('robot', 'Robot', onOff, bar.robot ? 'on' : 'off', v => setBar($, { ...bar, robot: v === 'on' }))}
+              {pick('glow', 'Glow', onOff, bar.glow ? 'on' : 'off', v => setBar($, { ...bar, glow: v === 'on' }))}
               {pick('detail', 'Detail line', onOff, bar.detail ? 'on' : 'off', v => setBar($, { ...bar, detail: v === 'on' }))}
             </Box>
           </Box>

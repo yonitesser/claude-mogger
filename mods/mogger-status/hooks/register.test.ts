@@ -21,8 +21,10 @@ test('band shows the last event when the log has lines', async ($, on) => {
   })
   const text = await ui.find({ type: 'Text', text: /formatted app.ts/ })
   expect(text).toBeDefined()
-  // the robot is drawn too: half-block cells in the chad's colours
-  expect(await ui.find({ type: 'Text', text: /[▀▄█]/ })).toBeDefined()
+  // the glow is a thin rule on the terminal
+  expect(await ui.find({ type: 'Text', text: /─/ })).toBeDefined()
+  // no robot: no half blocks
+  expect(await ui.find({ type: 'Text', text: /[▀▄█]/ })).toBeUndefined()
   await ui.unmount()
 })
 
@@ -125,24 +127,25 @@ test('awkward: a switch file that is not JSON is shown as a problem and never ov
   await ui.unmount()
 })
 
-test('Display explains itself and a pick hides the robot, kept for the next session', async ($, on) => {
+test('Display explains itself and a pick turns the glow off, kept for the next session', async ($, on) => {
   const { ui } = await setup($, on)
   await ui.press({ key: 'bar' })
   expect(await ui.find({ type: 'Text', text: /What this bar shows/ })).toBeDefined()
-  await ui.select({ key: 'sel-robot', value: 'off' })
-  expect(await ui.find({ type: 'Text', text: /[▀▄█]/ })).toBeUndefined()
+  await ui.select({ key: 'sel-glow', value: 'off' })
+  expect(await ui.find({ type: 'Text', text: /─/ })).toBeUndefined()
   await ui.unmount()
-  // a new session reads the stored choice back: still no robot, the text is there
+  // a new session reads the stored choice back: still no glow, the text is there
   await $.session.start({ cwd: '/tmp', surface: 'terminal', isInteractive: true } as never)
   const again = await $.ui.mount({ plugin: 'mogger', surface: 'terminal', component: 'AbovePrompt', props: { hasSurvey: false, isWorking: false } as never })
-  expect(await again.find({ type: 'Text', text: /[▀▄█]/ })).toBeUndefined()
+  expect(await again.find({ type: 'Text', text: /─/ })).toBeUndefined()
   expect(await again.find({ type: 'Text', text: /formatted app.ts/ })).toBeDefined()
   await again.unmount()
 })
 
-test('the desktop draws the robot as one picture, not rows of half blocks', async ($, on) => {
+test('the desktop draws the glow as a blurred Box, with the buttons still there', async ($, on) => {
   const { ui } = await setup($, on, { surface: 'desktop' })
-  expect(await ui.find({ type: 'Svg' })).toBeDefined()
-  expect(await ui.find({ type: 'Text', text: /[▀▄█]/ })).toBeUndefined()
+  expect(await ui.find({ type: 'Text', text: /─/ })).toBeUndefined()
+  expect(await ui.find({ type: 'Button', label: /Guards/ })).toBeDefined()
+  expect(await ui.find({ type: 'Svg' })).toBeUndefined()
   await ui.unmount()
 })
