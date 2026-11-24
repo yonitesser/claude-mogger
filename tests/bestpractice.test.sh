@@ -91,8 +91,8 @@ CH=$(python3 -c 'print(" && ".join(["true"]*80) + " && " + "gi"+"t stash clear")
 dg "$CH"; [ $RC -eq 2 ] && ok "80-step chain: git stash clear still blocked" || bad "chain bypass 2 rc=$RC"
 
 echo "== catalog"
-grep -qP '^lockfile-guard\tMOGGER_LOCKFILE_GUARD\tsafety\task\task\t' "$ROOT/hooks/guards.tsv" && ok "lockfile-guard row" || bad "no lockfile row"
-grep -qP '^syntax-check\tMOGGER_CHECK_SYNTAX\tstandard\ton\ton\t' "$ROOT/hooks/guards.tsv" && ok "syntax-check row" || bad "no syntax row"
+awk -F'\t' '$1=="lockfile-guard"&&$2=="MOGGER_LOCKFILE_GUARD"&&$3=="safety"&&$4=="ask"&&$5=="ask"{f=1} END{exit !f}' "$ROOT/hooks/guards.tsv" && ok "lockfile-guard row" || bad "no lockfile row"
+awk -F'\t' '$1=="syntax-check"&&$2=="MOGGER_CHECK_SYNTAX"&&$3=="standard"&&$4=="on"&&$5=="on"{f=1} END{exit !f}' "$ROOT/hooks/guards.tsv" && ok "syntax-check row" || bad "no syntax row"
 grep -q 'lockfile-guard.sh' "$ROOT/hooks/hooks.json" && grep -q 'check-syntax.sh' "$ROOT/hooks/hooks.json" && ok "both hooks are in hooks.json" || bad "hooks.json missing"
 
 printf '\n%d passed, %d failed\n' "$PASS" "$FAIL"; [ "$FAIL" -eq 0 ]
