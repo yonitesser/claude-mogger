@@ -56,11 +56,11 @@ export function withPick(cfgText: string | null, d: GuardDef, value: string): { 
   return { ok: true, text: `${JSON.stringify({ ...cfg, [d.name]: value }, null, 2)}\n` }
 }
 
-export type BarOptions = { robot: boolean; detail: boolean }
-export const DEFAULT_BAR: BarOptions = { robot: true, detail: true }
+export type BarOptions = { glow: boolean; detail: boolean }
+export const DEFAULT_BAR: BarOptions = { glow: true, detail: true }
 
 // Anything stored that is not a plain object of booleans falls back to the default.
 export function readBar(v: unknown): BarOptions {
   const o = typeof v === 'object' && v !== null ? (v as Record<string, unknown>) : {}
-  return { robot: o.robot !== false, detail: o.detail !== false }
+  return { glow: o.glow !== false, detail: o.detail !== false }
 }
