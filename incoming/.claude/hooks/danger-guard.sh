@@ -110,6 +110,13 @@ if mogger_re "$LC" 'git[[:space:]]+([^;&|]*[[:space:]])?clean[[:space:]]+[^;&|]*
 fi
 
 mogger_re "$LC" 'git[[:space:]]+([^;&|]*[[:space:]])?(checkout|restore)[[:space:]]+(--[[:space:]]+)?\.([[:space:]]|$)' && block "blocked git checkout/restore ." "git checkout/restore . (throws away every uncommitted change)"
+# 5a. Git commands that destroy the safety net: stash contents, reflog, history rewrites
+mogger_re "$LC" 'git[[:space:]]+([^;&|]*[[:space:]])?stash[[:space:]]+(drop|clear)([[:space:]]|$)' && block "blocked git stash drop/clear" "git stash drop/clear (stashed work is lost for good)"
+mogger_re "$LC" 'git[[:space:]]+([^;&|]*[[:space:]])?reflog[[:space:]]+(expire|delete)([[:space:]]|$)' && block "blocked git reflog expire/delete" "git reflog expire/delete (removes the way back from a bad reset)"
+mogger_re "$LC" 'git[[:space:]]+([^;&|]*[[:space:]])?gc[[:space:]]+([^;&|]*[[:space:]])?--prune=(now|all)' && block "blocked git gc --prune=now" "git gc --prune=now (deletes unreachable commits)"
+mogger_re "$LC" 'git[[:space:]]+([^;&|]*[[:space:]])?(filter-branch|filter-repo)([[:space:]]|$)' && block "blocked git history rewrite" "git filter-branch/filter-repo (rewrites all history)"
+mogger_re "$LC" 'git[[:space:]]+([^;&|]*[[:space:]])?update-ref[[:space:]]+([^;&|]*[[:space:]])?-d([[:space:]]|$)' && block "blocked git update-ref -d" "git update-ref -d (deletes a ref)"
+mogger_re "$LC" 'git[[:space:]]+([^;&|]*[[:space:]])?(checkout|switch)[[:space:]]+([^;&|]*[[:space:]])?(-f|--force|--discard-changes)([[:space:]]|$)' && block "blocked forced git checkout/switch" "git checkout/switch --force (throws away uncommitted changes)"
 # --no-verify skips the repo's own pre-commit and pre-push checks: do not retry a failed commit with it
 mogger_re "$LC" 'git[[:space:]]+([^;&|]*[[:space:]])?(commit|push|merge|am|cherry-pick)[[:space:]]+([^;&|]*[[:space:]])?--no-verify' && block "blocked --no-verify" "--no-verify (skips the repo's own checks; fix the failing check instead)"
 
